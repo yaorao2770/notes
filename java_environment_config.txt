@@ -1,0 +1,39 @@
+java 环境配置
+
+1. 查看java 版本
+
+	java -version
+
+	出现下列说明正确
+
+		java version "1.7.0_80"
+		java(TM) SE Runtime Environment (build 1.7.0_80-b15)
+		java HotSpot(TM) 64-Bit Server VM (build 24.80-bll, mixed mode)
+
+2. 配置环境变量
+
+	a) 系统变量 --> 新建 
+
+		JAVA_HOME
+
+		C:\Program Files\Java\jdk1.7.0_80
+
+	b) 点击 Path ,编辑，在最后面添加  
+
+		;%MAVEN_HOME%\bin
+
+	c) 新建用户变量 （查看是否有class_path,无则新建）
+
+	 	CLASS_PATH
+
+	 	.;%JAVA_HOME%\lib;%JAVA_HOME%\lib\tools.jar
+
+	一系列保存。
+
+	然后打开 cmd 运行 javac，看是否出现列表信息，说明成功。
+
+	有时候如果有打开的cmd，运行不成功，再重新打开一个新的CMD窗口运行 javac 即可。
+
+
+
+

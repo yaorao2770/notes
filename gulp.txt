@@ -1,0 +1,287 @@
+1. npm init 体局提示自动生成 package.json 文件
+
+2. npm install -g npm  
+
+3. npm install --save-dev gulp 在项目所在根目录生成 node_modules 目录
+
+4. npm install gulp-minify-css gulp-concat gulp-uglify gulp-rename gulp-asset-rev --save-dev
+	
+	安装本地需要的插件，并且会自动在package.json文件中加载该依赖，大致长下面的样子：
+
+		"devDependencies": {
+		    "gulp": "^3.9.1",
+		    "gulp-asset-rev": "0.0.15",
+		    "gulp-concat": "^2.6.1",
+		    "gulp-make-css-url-version": "0.0.13",
+		    "gulp-minify-css": "^1.2.4",
+		    "gulp-rename": "^1.2.2",
+		    "gulp-uglify": "^3.0.0"
+		  }
+
+	如果package.json下的 'devDependencies' 字段是空的，运行gulp任务时会出错,提示错误信息如下:
+
+		Error: Cannot find module 'gulp-concat'
+
+5. gulp  默认运行default任务
+	
+   gulp xxx  只运行xxx任务
+
+
+二. gulp.src 排除某个文件夹
+
+	gulp.src(['./source/*/*.js','!./source/lib/*.js'])
+
+	用数组表示，!为前缀表示非，上面代码排除了source/lib目录下的js文件
+
+	通配符路径匹配示例：
+
+		* 匹配所有文件，如：src/*.js 包含src下的所有js文件
+
+		**　匹配0个或多个子文件夹，如：src/**/*.js 包含src的0个或多个子文件夹下的js文件
+
+		{}  匹配多个属性，如: src/{a,b}.js 包含a.js和b.js文件
+
+							  src/*.{jpg,png,gif} src下的所有jpg/png/gif文件
+
+		!   排除文件，如：!src/a.js 不包含src下的a.js文件
+
+
+三. 自动将所需文件注入index页面
+
+	所需插件： inject = require('gulp-inject');
+
+	这个插件需在html页面，写好注入的模板，否则程序不知道该把文件插入到index的那个地方，如下：
+
+		<!-- inject:bowerSource:css -->
+
+			// 将插入css文件
+
+		<!-- endinject -->
+
+		<!-- inject:bowerSource:js -->
+
+			// 将插入js文件
+
+		<!-- endinject -->
+
+五. glob模式 （即匹配模式）
+
+	所谓的glob模式是指 shell 所使用的简化了的正则表达式。
+
+	gulp的glob使用的是 node-glob 语法（https://github.com/isaacs/node-glob）
+
+六. gulp-watch
+	
+	Cite: http://www.kkh86.com/it/gulp-build-dev-env/guide-base-sync-add-unlink.html
+	
+	文件变化监听，监听文件新增，修改，删除 ,gulp.watch方法不监听文件的新建和删除。
+
+	npm install --save-dev gulp-watch
+
+	示例代码：
+
+		var gulp = require('gulp'),
+			watch = require('gulp-watch');
+
+		gulp.task('default', function(){
+			watch('./source/*/*.js')
+				.on('add', function(file){
+					console.log('添加了 ' + file);
+				})
+				.on('change', function(file){
+					console.log('修改了 ' + file);
+				})
+				.on('unlink', function(file){
+					console.log('删除了 ' + file);
+				});
+		});
+
+		运行 gulp, 则这个任务不会停止，在监听到文件变化时，输出结果，如下：
+
+			删除了 D:\Code\Local\bower\10-17\venus-520sec-rest\src\main\webapp\source\controller\test.js
+
+			file参数则是将变化的文件的绝对路径输出，这样我们就可以实现同步新增和删除的效果
+
+	B) 文件变化监听，新建文件时，会自动压缩并添加到dist目录下，源文件删除时，dist目录下该文件也会同步删除
+
+		gulp.task('default',function(){
+
+			watch('./source/*/*.js')
+				.on('add',buildFileToDist)
+				.on('change',buildFileToDist)
+				.on('unlink',function(file){
+					console.log('删除文件',file + '\n');
+
+					var extname  = path.extname(file);
+					var basename = path.basename(file,extname);
+
+					console.log('文件扩展名' + extname +'\n');
+					console.log('文件名' + basename +'\n');
+
+					var delFilePath = './dist/js/' + basename + '.min' + extname;
+
+					console.log('要删除文件路径' + delFilePath +'\n');
+
+					fileSystem.existsSync(delFilePath) && fileSystem.unlink(delFilePath,errCallBack);
+
+				})
+		});
+
+		// 同步添加和删除文件。新增文件时,压缩并添加到dist目录下,删除源文件时，dist目录下也同步删除 
+		function buildFileToDist(file){
+			gulp.src(file)	
+				.pipe(rename({suffix:'.min'}))
+				.pipe(uglify().on('error',uglifyCallBack))
+				.pipe(gulp.dest('./dist/js/'))
+		};
+
+		// unlink()  回调函数
+		function errCallBack(err){
+			if(err){
+				throw err;
+			}
+			console.log('删除文件成功！' + '\n');
+		};
+
+		// uglify() 回调函数
+		function uglifyCallBack(error){
+			console.log(error.message + '\n出错行号：' + error.lineNumber);
+		};
+
+七. gulp-inject
+	
+	github: https://github.com/klei/gulp-inject#method-1-use-gulp-injects-starttag-option
+
+八. wiredep
+
+	npm install --wiredep --save-dev
+
+	引用：var wiredep = require('wiredep').stream;
+
+		  gulp.task('bower',function(){
+
+			gulp.src('./index.html')
+				.pipe(wiredep({
+					optional:'configuration',
+					goes:'here'
+				}))
+				.pipe(gulp.dest('./'))
+		   });
+
+	注意：
+
+		index.html 页面必须有以下模板：
+
+		<!-- bower:css -->
+		<!-- endbower -->
+
+		<!-- bower:js -->
+		<!-- endbower -->
+
+	wiredep首先去读取项目的bower.json文件，然后去读bower_conponent目录下各个bower.json，从而计算出依赖关系，然后注入到index.html页面
+
+	缺陷：bower_comopnent目录下的各个插件必须包括bower.json文件,同时，该文件内的 main必须有值，因为注入到index.html的引用是读取的这个字段，如：
+
+	{
+		"main":"./angular.js"
+	}
+
+	则注入后，是这个样子：
+
+	<script src="bower_components/angular/angular.js"></script>
+
+	如果 main 是这个样子：
+
+	{
+		"main": [
+		    "dist/js/bootstrap.js",
+		    "dist/css/bootstrap.css"
+		  ]
+	}
+
+	则注入后是：
+
+		<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+
+		<script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+
+	即注入css和js文件
+	
+	如果插件库下面没有bower.json文件或者该文件内没有main字段，则可以在自己项目的bower.json下添加以下字段：
+
+		"overrides": {
+	      	"angular-i18n": {
+	        	"main": "./angular-locale_zh-cn.js"
+	      	},
+	      	"echarts": {
+	        	"main": [
+	          		"./dist/echarts.js",
+	         	 	"./map/js/china.js",
+	          		"./map/js/province/shanghai.js"
+	        	]
+	      	}
+	  	}
+
+	 override本身是覆盖的意思，实际上，它的作用也是用来覆盖依赖包原有的配置。如果手动引入bower依赖包的文件的话，这个配置没什么用，但是当你使用如 wiredep这种自动注入工具时，该字段就很有用了，
+
+	 因为有的库文件中没有main入口文件字段，这是使用wiredep构建时，就不会将该插件注入到index中，这时我们可以在自己的项目的bower.json文件中添加类似如上的代码，这时候在运行 gulp bower，就会将缺失的库文件注入到index中
+
+九. main-bower-files
+
+	npm install --main-bower-files --save-dev
+
+三. gulpfile.js
+	
+	var gulp = require('gulp'),
+	    minifycss = require('gulp-minify-css'),
+	    assetrev = require('gulp-asset-rev'),
+		concat = require('gulp-concat'),
+		uglify = require('gulp-uglify'),
+		rename = require('gulp-rename');
+ 
+	// 压缩css
+	gulp.task('minifycss', function () {
+	    gulp.src('source/css/*.css') 		// 需要压缩的文件
+	        .pipe(rename({suffix:'.min'}))
+	        .pipe(minifycss())
+	        .pipe(gulp.dest('dist/css')) 	// 输出文件夹
+	});
+
+	// 压缩js
+	gulp.task('minifyjs',function(){
+		gulp.src('source/*/*.js')
+			.pipe(concat('main.js'))
+			.pipe(rename({suffix:'.min'}))
+			.pipe(uglify())
+			.pipe(gulp.dest('dist/js'))
+
+	});
+
+	// css文件后缀添加版本号
+	gulp.task('revCss',function(){
+		return gulp.src('dist/css/style.min.css')
+					.pipe(assetrev())
+					.pipe(gulp.dest('dist/css/'))
+	});
+
+	// js文件后缀添加版本号
+	gulp.task('revJs',function(){
+		return gulp.src('dist/js/main.min.js')
+					.pipe(assetrev())
+					.pipe(gulp.dest('dist/js/'))
+	});
+
+	// 替换html中的引用
+	gulp.task('revHtml',['revCss','revJs'],function(){
+		gulp.src('./index.html')
+			.pipe(assetrev())
+			.pipe(gulp.dest('./'))
+	});
+
+
+	// gulp.task('default',['minifycss','minifyjs']); 
+	gulp.task('default',['revHtml']); 
+
+
+
+

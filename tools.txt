@@ -1,0 +1,4 @@
+1. 当前浏览器对ES6的支持：
+
+	http://ruanyf.github.io/es-checker/
+	

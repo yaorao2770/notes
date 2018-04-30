@@ -1,0 +1,39 @@
+
+1. Back in August 2012 I wrote a post on building a command line tool in NodeJs.
+	That post is now over two years old and plenty has changed, hence i thought it worth writing a new post building the same tool.showing how i`d do it now.
+
+	重点词汇：
+
+	plenty	充裕，富裕；大量很多
+	hence	从此，因此，所以
+	command line 命令行
+	post	邮寄，信，张贴
+
+2. Answer the prompts if you wish. or just hit enter a bunch of times to get a template package.json file that you can fill out at you own leisure.
+
+	leisure 	闲暇,悠闲,空闲时间
+	fill out 	填写，充实，长胖，鼓起
+	a bunch of 	一群，一束，一堆
+	prompts 	促使，提示
+
+3. We need to make a couple of edits to it.
+
+	a couple of 两个，几个
+
+	我们需要对它做几次编辑。
+
+4. the bin object, which maps commands to files.
+
+	maps	映射
+
+	映射命令到文件
+
+5. frontend backend
+
+	前端 	后端
+
+	frontend dependencies  前端依赖
+
+	post-message 弹窗消息
+
+	override 覆盖，推翻，优先于，无视，践踏

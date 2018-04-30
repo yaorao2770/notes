@@ -1,0 +1,570 @@
+知识汇总：
+
+1. ajax
+	
+	上传进度和下载进度调用的是两个事件,progress事件
+
+	onprogress事件处理程序会接收到一个event对象，其target属性是XHR对象，但包含着三个额外的属性：
+
+		lengthComputable是一个表示进度信息是否可用的布尔值，
+
+		position表示已经接收的字节数，
+
+		totalSize表示根据Content-Length相应头部确定的预期字节数。
+
+	有了这些信息，我们就可以为用户创建一个进度指示器了
+
+	function progress(e) {
+        if (e.lengthComputable) {
+            progressVar = Math.round(e.loaded * 100 / e.total);
+            console.log("progress: " + progressVar + "%");
+            if (e.loaded = e.total) {
+              console.log("File upload finished!");
+            }
+        }
+    };
+
+2. 关于文本文件的BOM
+
+	UTF-8和 UTF-8（不带BOM）是两种格式文本，带BOM的utf-8多出了三个字节前缀，0xEF0xBB0xBF
+
+	有了这三个字节前缀的文本或字符串，程序可以自动判断他为utf_8格式，并按照utf_8格式来解析文本或字符串,
+
+	否则一个文本或字符串在位置编码的情况下，需要按照字符编码规范去一个个验证。
+
+3. angularjs 输入框内按下回车会触发其他button的点击事件，
+
+	解决办法： button 标签添加 type='button'
+
+	Default type for the button element is 'submit' : 
+
+		<button></button> ==== <button type='submit'></button>
+
+	when you hit enter,the first button is submitted.
+
+
+4. self指向当前数组
+
+	angular.forEach(entity.modSecIds, function(element, index, self) {
+		
+		if(!element){
+			self.splice(index,1);
+		}
+	});
+
+
+5. $location.search('code',null)
+
+	URL： http://192.168.111.171/ftz/#/MONGODB?code=KvZ4GQ
+
+	$location.search('code',null) 可以将code 从当前url中删除
+	
+		  http://192.168.111.171/ftz/#/MONGODB
+
+
+6. concat()
+
+	用于连接两个或多个数组元素，返回值一个新数组
+
+	arrayObj.concat(array1,array2,...); 参数可以是数组
+
+	或
+
+	arrayObj.concat(1,2,3,...);	也可以是具体的值
+
+
+	eg:    var a = [1,2,3];
+
+		   console.log( a.concat(4,5) ); // [1,2,3,4,5]
+
+
+		   var b = ['apple','banana'];
+
+		   console.log( a.concat(b) ); // [1,2,3,'apple','banana']
+
+
+
+7. sort(fn)
+
+	数组排序,参数必须是函数,返回值，排序后的数组
+
+	a - b  --->  升序（小到大）
+
+	b - a  --->  降序 
+
+	arrayObj.sort(sortByFn)
+
+	a)  arr.sort()  是按照字母顺序排序的
+
+		var arr = [1,1000,10,25,40,5];
+
+		console.log(arr.sort()); // [1, 10, 1000, 25, 40, 5]  可以看到并不是按照数值大小排序，而是字母顺序
+
+	b) arr.sort(fn)   按照数值大小排序
+
+		function sortNum(a,b){
+			return a-b;
+		};
+
+		var arr = [1,1000,10,25,40,5];
+
+		console.log(arr.sort(sortNum)); // [1,5,10,25,40,1000]
+
+
+8. map(fn)
+
+	数组方法, 将原数组映射成新数组，返回值是一个数组
+
+	arrayObj.map(function(el){
+		return el*2;
+	});
+
+	eg:		s var users = [
+			  {name: "张含韵", "email": "zhang@email.com"},
+			  {name: "江一燕",  "email": "jiang@email.com"},
+			  {name: "李小璐",  "email": "li@email.com"}
+			];
+
+			var email = users.map(function(user){
+				return user.email;
+			});
+			
+			console.log(email); // ["zhang@email.com", "jiang@email.com", "li@email.com"]
+
+			console.log(users)  //  还是原来的users
+
+
+9. Object.defineProperty() 
+
+	方法会直接在一个对象上定义一个新属性或者修改已有的属性，并返回这个对象。
+
+	set / get
+
+	writeable --- true / false
+
+	enumable  --- 用于是否可以 for...in 或 Object.keys()
+
+		1.	var arr5 = [1,2,3,4,5];
+
+			arr5.length = 0;
+
+			console.log(arr5); // []，所有的元素都被删除了
+
+
+		2.	var arr5 = [1,2,3,4,5];
+
+			Object.defineProperty(arr5,'length',{
+				writable:false
+			});
+
+			arr5.length = 0;
+		
+			console.log(arr5); // [1,2,3,4,5]，不能修改length属性
+
+		3. 利用该API实现双向数据绑定
+
+			var a = {};
+
+			Object.defineProperty(a,'b',{
+
+				newValue:'',
+
+				set:function(newValue){
+					this.newValue =  newValue;
+				},
+				get:function(){
+					return this.newValue;
+				}
+
+			});
+
+			a.b = 'join';
+			console.log(a.b); // join
+
+			a.b = 'apple'; // apple
+
+		4. HTML:
+
+				<div id='test'>测试<>
+
+			JS:
+
+				var view = document.getElementById('test');
+
+				var i = 0;
+
+				var data = {};
+
+				Object.defineProperty(a,'view',{
+
+					set:function(newValue){
+						view.textContent = newValue;
+					},
+					get:function(){
+						
+					}
+
+				});
+
+				setInterval(function(){
+					i++;
+					data['view'] = '更新界面'+i;
+				},1000);
+
+
+10. isNaN() 用于检查是否是数值,是数值返回false, 不是数值返回true
+	
+	// 返回false，会进行隐形转换
+	console.log( isNaN(0) );
+	console.log( isNaN(2) );
+	console.log( isNaN('3') );		// 转换成3
+	console.log( isNaN(true) );		// 转换成1
+	console.log( isNaN(false) );	// 转换成0
+	console.log( isNaN('') ); 		// 转换成0
+
+	// 返回true
+	console.log( isNaN(NaN) );
+	console.log( isNaN('apple') );
+
+
+11. 编程技巧
+
+	I. 当一个函数包含超过三个形参时，要记住调用函数中实参的正确顺序并不容易。
+
+		解决办法：将形参定义为一个对象，需要的字段都作为该对象的属性，这样就不用记顺序了
+
+		eg:      function test($scope, entity, action, isBig){
+					 ....
+				 }
+
+
+				 var paramsValue = {
+				 	scope:$scope,
+				 	entity:entity,
+				 	action:action,
+				 	isBig:isBig
+				 };
+
+				 function test(paramsValue){
+				 	...
+				 };
+
+				 test(paramsValue);
+
+
+	II. 要回抛错
+
+		throw new Error('这是一个自定义错误！');
+
+	III. 	(function(){
+				...
+			}());
+
+			当与别人协同开发时，为了避免变量冲突和污染，最好将代码卸载以上格式的函数中，
+			我们可以称之为 模块，可以避免全局变量污染。
+
+			注意， function左边的括号，不可以省略，因为如果不写这个左圆括号，js解释器会视图将关键字function解析为函数声明语句，而包裹在括号中，解释器才会正确的将其解析为函数表达式。使用圆括号是习惯用法，尽管有时候没有必要，但也不应当省略。
+
+
+12. WebSocket
+
+	HTTP协议是一种无状态协议，服务器本身不具有识别客户端的能力，必须借助外部机制，比如session和cookie，才能与特定客户端保持对话，这多少带来一些不便，尤其在服务器端与客户端需要持续交换数据的场合（比如网络聊天），为了解决这个问题，HTML5提出了浏览器的WebSocket API。
+
+	WebSocket的主要作用是：允许服务器端与客户端进行全双工(full-duplex)的通信，举例来说，HTTP协议有点像发电子邮件，发出后必须等待对象回信，而WebSocket则像是打电话，服务器和客户端可以同时向对方发送数据，他们之间存在着一条持续打开的数据通道。
+
+
+	WebSocket协议完全可以取代Ajax方法，用来向服务器端发送文本和二进制数据，而且还没有“同域限制”。
+
+	WebSocket不适用HTTP协议，而是使用自己的协议，
+
+		A） 浏览器发出的WS请求头信息类似于下面的样子：
+
+			GET / HTTP/1.1
+			Connection:Upgrade
+			Upgrade:websoket
+			Host:example.com
+			Origin:null
+			Sec-WebSocket-Key: sN9cRrP/n9NdMgdcy2VJFQ==
+			Sec-WebSocket-Version:13
+
+
+		解读：  有一个HTTP头是Upgrade. HTTP1.1协议规定，Upgrade头信息表示将通信协议从HTTP/1.1 转向该项所指定的协议。
+
+				Connection:Upgrade，就表示浏览器通知服务器，如果可以，就升级到ws协议
+
+				Origin用于验证浏览区域名是否在服务器许可的范围内。
+
+				Sec-WebSocket-Key，则是用于握手协议的密钥，是base64编码的16字节随机字符串
+
+
+		B） 服务器端的ws响应头：
+
+			HTTP/1.1 101 Switching Protocols
+			Connectino:Upgrade
+			Upgrade:websocket
+			Sec-Websocket-Accept:fFBooB7FAkLlXgRSz0BT3v4hq5s=
+			Sec-WebSocket-Origin: null
+			Sec-WebSocket-Location: ws://example.com/
+
+		解读：	服务器端同样用 Connectino:Upgrade 通知浏览器需要改变协议。
+
+				Sec-Websocket-Accept，是服务器在浏览器提供的 Sec-WebSocket-Key 字符串后面，添加 'fFBooB7FAkLlXgRSz0BT3v4hq5s=' 字符串，然后再取 sha-1 的hash值。 浏览器将对这个值进行验证，以证明确实是目标服务器回应了ws请求。
+
+				Sec-WebSocket-Location表示进行通信的WS网址
+
+
+
+
+	· 完成握手后，ws协议就在TCP协议之上，开始传送数据
+
+	· WS协议需要服务器支持，目前比较流行的实现是给予node.js 的socket.io。
+		至于浏览器端，目前主流浏览器都支持ws协议（IE10+）,
+
+
+	` 代码实现
+
+		// 1.客户端检查浏览器是否支持WS
+		if( window.WebSocket !== undefined ){
+
+			// WS代码  2. 与服务器建立连接
+			var ws = new WebSocket('ws://localhostL8081');
+
+			// 3. ws 是 WebSocket的实例对象，该对象有一个 readySate属性，表示目前的状态，有四个值 
+
+				0：正在连接
+				1: 连接成功
+				2：正在关闭
+				3：连接关闭
+
+
+			// ws一共支持四个消息：onopen onmessag onclose onerror
+	        // 当browser和ws连接成功后，会触发onopen消息
+	        ws.onopen = function(evt) { 
+	            onOpen(evt) 
+	        }; 
+
+	        // 当browser接收到ws发送来的数据时，就会触发onmessage消息，event中包含server传输过来的数据
+	        ws.onmessage = function(evt) { 
+	            onMessage(evt) 
+	        }; 
+
+	        // 当browser接收到ws发送的关闭连接请求时，就会触发onclose消息
+	        ws.onclose = function(evt) { 
+	            onClose(evt) 
+	        }; 
+
+	        // 如果连接失败，发送，接受数据失败或者和处理数据出现错误，browser会触发onerror消息
+	        ws.onerror = function(evt) { 
+	            onError(evt) 
+	        }; 
+
+	        function onOpen(evt) { 
+		        writeToScreen("连接"); 
+		        doSend("WebSocket rocks"); 
+		    }  
+		 
+		    function onClose(evt) { 
+		        writeToScreen("断开"); 
+		    }  
+		 
+		    function onMessage(evt) { 
+		        writeToScreen('<span style="color: blue;">RESPONSE: '+ evt.data+'</span>'); 
+		        websocket.close(); 
+		    }  
+		 
+		    function onError(evt) { 
+		        writeToScreen('<span style="color: red;">ERROR:</span> '+ evt.data); 
+		    }  
+		 
+		    function doSend(message) { 
+		        writeToScreen("SENT: " + message);  
+		        websocket.send(message); 
+		    }  
+		 
+		    function writeToScreen(message) { 
+		        var pre = document.createElement("p"); 
+		        pre.style.wordWrap = "break-word"; 
+		        pre.innerHTML = message; 
+		        output.appendChild(pre); 
+		    }  
+
+
+		}
+
+
+	Socket.io是目前最流行的WebSocket实现，包括服务器和客户端两个部分。它不仅简化了接口，使得操作更容易，而且对于那些不支持WebSocket的浏览器，会自动降为Ajax连接，最大限度地保证了兼容性。它的目标是统一通信机制，使得所有浏览器和移动设备都可以进行实时通信。
+
+	其本质是先通过HTTP/HTTPS协议进行握手后创建一个用于交换数据的TCP连接，服务端与客户端通过此TCP连接进行实时通信。
+
+
+	c) 浏览器查看 ws 的传输过程
+
+		netWort -> filter(是个icon) -> WS -> 只显示ws协议的请求 -> 点击单个请求的 Frames 可以看到发送给服务器以及服务器返回的数据(发送给服务器的数据的背景色是绿色)
+
+	d) 请求头  和 响应头
+
+		HTTP/1.1 101 Web Socket Protocol Handshake
+		Access-Control-Allow-Credentials: true
+		Access-Control-Allow-Headers: content-type
+		Access-Control-Allow-Headers: authorization
+		Access-Control-Allow-Headers: x-websocket-extensions
+		Access-Control-Allow-Headers: x-websocket-version
+		Access-Control-Allow-Headers: x-websocket-protocol
+		Access-Control-Allow-Origin: null
+		Date: Tue, 19 Sep 2017 09:30:12 GMT
+		Sec-WebSocket-Accept: O3ZaRYPPdjoMFNU/FVXmWi2lEO0=
+		Server: Kaazing Gateway			--- 是一种提供跨平台跨浏览器WebSocket支持的网关，由Java编写
+		Connection: Upgrade 			--- 下面两条表示，使用的是 ws协议，而非http协议
+		Upgrade: websocket
+
+
+
+		GET ws://echo.websocket.org/ HTTP/1.1
+		Host: echo.websocket.org
+		Connection: Upgrade
+		Pragma: no-cache
+		Upgrade: websocket
+		Origin: file://
+		Sec-WebSocket-Version: 13 
+		Sec-WebSocket-Key: mSPm9O/nmD4KfW4b5fbpfA==     --- 对应请求头中的 Sec-WebSocket-Accpet 	
+															返回客户端，就表示ws连接成功
+		Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits
+
+
+
+	e) WebSocket 协议采用的是 101状态码，server可能返回 两种101 reason-phrase (原因短句)
+
+		1）HTTP/1.1 101 Switching Protocol
+
+		2）HTTP/1.1 101 Web Socket Protocol Handshake
+
+	f) 与HTTP协议的请求/响应模式不同，ws在建立连接之前有一个 handshake (opening handshake) 过程，在关闭连接诶之前也有一个handshake过程（close handshake）过程，建立连接之后，双方即可双向通信。
+
+	在ws协议发展过程中前前后后就出现了多个版本的握手协议：
+
+		1）基于 flash 的握手协议
+
+			使用场景是IE的多数版本，因为IE的多数版本不都不支持ws协议，以及ff,chrome等浏览器的低版本，还没有原声的支持ws，此处，server唯一要做的是，就是准备一个 WebSocket-Location域给client，没有加密，可靠性很差。
+
+			request header:
+
+				GET / ls HTTP/1.1
+				Upgrade: WebSocket
+				Connection: Upgrade
+				Host: www.example.com
+				Origin: http://www.example.com
+
+			response header:
+
+				HTTP/1.1 101 Web Socket Protocol Handshake
+				Upgrade: WebSocket
+				Connection: Upgrade
+				WebSocket-Origin: http://www.example.com
+				WebSocket-Location: http://www.example.com/ls
+
+
+
+		2）基于 md5 的握手协议
+
+			request header:
+
+				GET /demo HTTP/1.1
+				Host: example.com
+				Connection: Upgrade
+				Sec-WebSocket-Key2: 
+				Upgrade: WebSocket
+				Sec-WebSocket-Key1: 
+				Origin: http://www.qixing318.com
+				[8-byte security key]
+
+			response header:
+
+				HTTP/1.1 101 WebSocket Protocol Handshake
+				Upgrade: WebSocket
+				Connection: Upgrade
+				WebSocket-Origin: http://www.qixing318.com
+				WebSocket-Location: ws://example.com/demo
+				[16-byte hash response]
+
+		3）基于 sha 的握手协议
+		
+			也是目前见的最多的一种方式，这里的版本号目前是需要13以上的版本
+
+			request header:
+
+				GET /ls HTTP/1.1
+				Upgrade: websocket
+				Connection: Upgrade
+				Host: www.qixing318.com
+				Sec-WebSocket-Origin: http://www.qixing318.com
+				Sec-WebSocket-Key: 2SCVXUeP9cTjV+0mWB8J6A==
+				Sec-WebSocket-Version: 13
+
+			response header:
+
+				HTTP/1.1 101 Switching Protocols    ---所有非101的状态码都表示handshake并未完成。
+				Upgrade: websocket
+				Connection: Upgrade
+				Sec-WebSocket-Accept: mLDKNeBNWz6T9SxU+o0Fy/HgeSw=
+
+
+
+
+13. DOM事件
+	
+	oninput   onpropertychange   onchange
+
+	a) onchange触发需满足两个条件
+
+		当前对象属性改变，并且由键盘或鼠标事件触发的（脚本触发无效）
+
+		当前对象失去焦点(onblur)触发
+
+	b) onpropertychange 只要当前对象属性发生改变，都会触发事件，IE专属
+
+	c) oninput 是 onpropertychange 的非IE浏览器版本，支持ff, opera等浏览器，但有一点不同，他绑定对象时，并非该对象属性改变都能出触发事件，value值发生改变是有效
+
+
+14. ng-repeat 对象时，并不是按照顺序来的，其实就是因为Object类型for in时没有固定顺序的，是无序的
+
+	Object类型for in时没有固定顺序的
+
+	优先使用数组而不是Object类型来表示有顺序的集合，(确实，对象的数据结构定义就是无序集合)
+
+	为什么：
+
+			ECMA 标准并没有规定对js的Object类型中的属性的存储顺序，但是在使用for..in循环中对Object中的属性进行遍历的时候，确实是需要依赖于某种顺序的。正式因为ECMA没有对这个顺序进行明确的规范，所以每个js执行引擎都能够根据自身的特点进行实现。那么在不同的执行环境中就不鞥保证for..in循环的行为一致性了。
+
+
+
+	如果你确实需要保证运行的结果是建立在数据的顺序上，优先使用数组类型来表示数据，而不是直接使用Object类型。同时，也尽量避免使用for..in循环，而使用显式的for循环：
+
+	 
+	总结：
+		在使用for..in循环时，不要依赖于遍历的顺序。
+		当使用Object类型来保存数据时，需要保证其中的数据是无序的。
+		当需要表示带有顺序的集合时，使用数组类型而不是Object类型。
+
+
+15. 101状态码
+
+		服务器已经理解了客户端的请求，并将通过Upgrade 消息头通知客户端采用不同的协议来完成这个请求。在发送完这个响应最后的空行后，服务器将会切换到在Upgrade 消息头中定义的那些协议。 　　只有在切换新的协议更有好处的时候才应该采取类似措施。例如，切换到新的HTTP 版本比旧版本更有优势，或者切换到一个实时且同步的协议以传送利用此类特性的资源。
+
+	WebSocket 协议采用的是 101状态码
+
+16. echarts
+
+	每个折点都显示数值:  在 series中添加 itemStyle : { normal: {label : {show: true}}},
+
+17. shebang 符号（#!）
+	
+	该符号在unix类的操作系统才有意义
+
+	#!/user/bin/env python 和 #!/user/bin/python 的区别
+
+
+	#!/user/bin/python 是告诉操作系统执行这个脚本的时候,调用/user/bin下的Python解释器
+
+	#!/user/bin/env python 这种用法是为了防止用户没有讲Python装在默认的/user/bin路径下。当系统看到这一行的时候，首先会到env设置里查找python的安装路径，再调用对应路径下的解释器程序完成操作。（推荐这种写法）
+
+

@@ -1,0 +1,83 @@
+1. 新建分支并push 到远程分支
+
+	git checkout -b webapp-cy  创建一个新分支 webapp-cy
+
+	git branch		查看本地分支，以及当前分值
+
+	git branch -r 	查看远程分支
+
+	git push origin webapp-cy:webapp-cy		将本地分支webapp-cy push到远程分支webapp-cy上,
+											如果远程分支没有webapp-cy，则自动创建该分支
+
+		如果运行 git push origin a:b 这条命令出错时：
+
+			error: dst ref refs/heads/A receives from more than one src. 
+
+			error: failed to push some refs to 'git@github.com:ningyu/algos.git'
+
+		可能的错误时，a:b 之间不要有空格，如：a :b a: b 都是错误的，
+
+
+	新建的分支，每次提交，都要指明将本次代码提交到远程的哪个分支上:
+
+	git push origin cy:webapp-cy
+
+2. 删除本地分支
+
+	git branch -D xxx
+
+3. 拉取分支代码
+
+	git checkout -b cy (新建本地分支 cy 并切换到该分支)
+
+	git reset --hard origin/webapp-cy  (将本地分支的指针指向远程仓库 origin/webapp-cy, 这样就拉取了远程分支的代码)
+
+4. 合并分支有冲突时，可以放弃合并
+
+	git merge --abort
+
+	执行完这个操作，原先文件中多出来的冲突表示符就会消失
+
+5. 对比两个分支差异，加上 --stat 是显示文件列表, 否则是文件内容diff
+
+	git diff branch1 branch2 --stat   (两个本地分支比较)
+
+	dit diff cy origin/webapp-cy	   (本地分支和远程分支比较)
+
+
+6. git merge
+
+	git merge 既不是取交集，也不是取并集，而是文件更改历史重放所有的修改。
+
+	比如这样的分支结构：
+
+			   A----B----C
+			  /
+		D----E----F----G
+
+
+	然后执行：
+
+		git checkout master
+		git merge topic
+
+	那么 merge 的时候就是做了以下事情：
+
+		首先找到它们共同的 commit E
+		开始在 master 分支上从 A 到 C 重放所有修改
+
+
+	如果 A 到 C 的过程中修改了 F 到 G 里面任何一个文件，那么就很可能会冲突，除非它们对同一个文件的修改完全一样。
+	回到题主的问题。如果 B 删除了文件 foo，而 A 里面并没有任何提交跟 foo 相关，那么 foo 就会被删除；如果 A 里面修改了 foo，那么合并就会冲突，git 仓库会进入 MERGE 状态。你可以通过 git status 来看到具体状态是怎样。
+
+7. 起别名：
+
+	git config --global alias.ci commit
+
+8. 创建git仓库有两种方法：
+
+	git init
+
+	git clone
+
+9. gitignore 初次项目也是需要提交到远程的

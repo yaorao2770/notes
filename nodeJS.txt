@@ -1,0 +1,24 @@
+
+1. path模块
+
+	nodejs的path对象，用来处理目录
+
+	http://blog.csdn.net/wbiokr/article/details/73612207
+	
+	path.dirname(agr); 返回文件目录 
+
+	...
+
+2. fs 模块
+
+3. commander 包
+
+	是npm依赖排名前十之一的模块，主要作用为命令行辅助，类似模块还有optimist
+
+	npm install commander
+
+	特点：  help自动生成
+
+			强制选项
+
+			选项参数解析

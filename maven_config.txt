@@ -1,0 +1,19 @@
+maven 安装以及环境变量配置
+
+1. 下载，解压，好像没有一步步的安装
+
+2. 配置环境变量
+
+	新建系统变量：
+
+		MAVEN_HOME
+
+		C:\WebServer\Maven\apache-maven-3.3.9
+
+
+	Path 添加：
+
+		;%MAVEN_HOME%\bin
+
+
+3. 安装完mvn之后，不用安装 jetty， 在git项目运行的时候 mvn clean jetty:run 服务器就启动了
