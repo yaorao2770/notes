@@ -1,0 +1,545 @@
+Vue.js
+	
+	npm install --global vue-cli		全局安装 vue-cli
+
+	vue init webpack my-project			创建一个基于 webpack 模板的新项目
+	
+	cd my-project
+
+	npm run dev
+
+1. 点击事件
+	v-on:click='test'
+	@click='test'		无参,括号可加可不加
+	@click='test(1, $event)'	有参
+
+2. 属性绑定
+
+	v-bind:title='title'
+	
+   	:title='title'
+
+   	<div @click="change" :title="title">{{msg}}</div>
+
+3. 双向数据绑定
+	
+	<div id ='root'>
+		<input type='text' v-model='value'> {{value}}
+	</div>
+
+	new Vue({
+		el:'#root',
+		data:{
+			value:''
+		}
+	})
+
+4. v-for
+
+	<li v-for='(item, index) of lists' :key='item.id'>{{index}}---{{item.name}}</li>
+
+	data:{
+		lists:[
+			{id:1, name:'join'},
+			{id:2, name:'apple'},
+			{id:3, name:'lily'}
+		]
+	}
+
+	循环对象：
+
+		<li v-for='(value, key, index) of objs'>{{key}}:{{value}}</li>
+
+		data:{
+			objs:{
+				name: 'join',
+				age:30,
+				sex:'man'
+			}
+		}
+
+	<li v-for='(item,index) in computedList' :key='item.msg' :data-index='index'>
+
+	渲染后，li元素上会多出一个自定义属性 data-index=1
+
+5. 父组件向子组件传递值，通过属性( [props] )的形式传递
+
+	子组件像父组件传递消息，通过自定义事件传递
+
+	props: {	// 推荐写法，也可以是数组
+	    todo: {
+	      type: Object,
+	      required: true
+	    }
+	},
+
+		<ul>	
+			<todo-item v-for='(item, index) of lists' 
+					   :content='item' 
+					   :index='index'
+					   @delete='delItem'></todo-item>
+		</ul>
+
+		子组件：
+			Vue.component('todo-item',{	
+				props:['content', 'index'],	// 接受外部传递进来的属性
+				template:'<li @click="showIndex">{{content}}</li>',
+				methods: {
+					showIndex: function(){
+						this.$emit('delete', this.index);	// 发布订阅模式
+					}	
+				}
+			});
+
+		父组件：
+
+			methods: {
+				delItem: function(i){
+					console.log('要删除的index:',i);
+					this.lists.splice(i, 1);
+				}
+			}
+
+6. 过渡效果
+
+	1. <transition-group>组件
+
+		列表过渡（配合v-for使用），且v-ofr必须有 :key 字段
+
+		name属性可以自定义css前缀
+
+		tag属性的意思，在html渲染的时候，将<transition-group>元素渲染成什么tag
+
+		CSS: 
+			.list-item{
+				display: inline-block;
+				margin-right: 10px;
+			}
+			.list-enter-active, .list-leave-active{
+				transition: all 1s;
+			}
+			.list-enter, .list-leave-to{
+				opacity: 0;
+				transform: translateY(30px);
+			}
+
+		HTML:
+
+			<transition-group name='list' tag='p'>
+				<span v-for='item in items' :key='item' class="list-item">{{item}}</span>
+			</transition-group>
+
+7. 自定义指令
+	
+	<input type="text" v-focus>
+
+	1. 全局指令
+
+		// 注册一个全局自定义指令 v-focus
+		Vue.directive('foucs',{
+			inserted: function(el,binding,vnode){ 当被绑定的元素插入到DOM中时,聚焦元素
+				el.focus();
+			}
+		});
+
+	2. 局部指令
+
+		new Vue({
+			el: '#root',
+			directives: { 
+				focus: {
+					inserted: function(el){ 
+						el.focus();
+					}
+				}
+			}
+		});
+
+	3. 指令的钩子函数及钩子函数的参数
+
+		函数： 
+			bind
+
+			inserted
+
+			update
+
+			componentUpdated
+
+			unbind
+
+		参数：
+			el	指令所绑定的元素,可以用来直接操作DOM
+
+			binding	一个对象,包含以下属性：name/value/oldValue/expression/arg/modifiers
+
+			vnode	Vue编译生成的虚拟节点
+
+			oldVnode	上一个虚拟节点,仅在 update 和 componentUpdated 钩子中可用。
+
+		注意：除了el之外，其他参数都应该是只读的，切勿修改。
+
+8. <template>
+	
+	1. 与v-for使用
+
+		<div v-for='item in [1,2,3,4]'>
+			<a href="">百度</a>
+			<p>搜索引擎</p>
+		</div>
+
+		上面的代码会渲染成4段，但是div本身是无意义标签，所以我们这里用template代替div，最终渲染后的dom则只有四段 <a>和<p>
+
+	2. 该标签下只能有一个根标签做包裹元素
+
+		<template>
+			<p>你好</p>
+			<a>百度</a>
+		</template>
+
+		以上的写法会报错，正确的写法是：
+
+		<template>
+			<div>				// 只能有一个包裹元素
+				<p>你好</p>
+				<a>百度</a>
+			</div>
+		</template>
+
+	3. 同上：
+
+		Vue.component('greet',{
+			template: `				// 报错,同2一样，这里也只能有一个根元素
+				<p>你好</p>
+				<a>百度</a>
+			`,
+			template: `				
+				<div>				// 只能有一个包裹元素
+					<p>你好</p>
+					<a>百度</a>
+				</div>
+			`,
+			data: function(){
+				return {}
+			}
+		});
+
+
+
+2. 组件 component
+	分为 全局组件 和 局部组件
+
+	全局组件：即直接挂载在 Vue.component,  可以在全局任何vue的实例下使用
+	局部组件：即直接在 vue的实例中以components 参数注册，只能在特定的vue实例中使用
+
+	HTML:
+		<div id="box">
+			<todo-item></todo-item>
+		</div>
+
+	JS:
+		// 全局注册  
+		function globalRegistComponent(){
+
+			Vue.component('todo-item',{
+				template:'<div @click="change">{{ msg }}</div>',
+				data:function(){
+					return {msg:'我的组件'}
+				},
+				methods:{
+					change:function(){
+						console.log(this)
+					}
+				}
+			});
+
+			var vm = new Vue({
+				el:'#box'
+			});
+		};
+
+		// 局部注册组件  
+		function localRegistComponent(){
+
+			var todoComponent = {
+				template:'<div @click="change">{{ msg }}</div>',
+				data:function(){
+					return {msg:'我的组件'}
+				},
+				methods:{
+					change:function(){
+						console.log(this)
+					}
+				}
+			};
+
+			var vm = new Vue({
+				el:'#box',
+				components:{
+					'todo-item':todoComponent
+				}
+			});
+		};
+
+3. template 		（参考 component.html ）
+	vue中没有templateUrl ，可能是由于这是ajax请求模板，增加了http请求次数，也可能是 vue的 html和js 密切联系的原因。
+
+	ng-HTML:
+			<div ng-controller='modelA'>
+				<a href='#/home'>主页</a>
+				<a href='#/page'>其他</a>
+			</div>
+
+			<script type='text/ng-template' id='home.html'>
+				<h1>这里是主页</h1>
+			</script>													------- 内嵌模板 
+			<script type='text/ng-template' id='home.html'>
+				<h1>这里是哈哈哈哈哈</h1>
+			</script>
+
+	ng-JS:
+			.config(['$routeProvider',function(routeProvider){
+				routeProvider
+							.when('/home',{
+								templateUrl:'home.html'
+							})
+							.when('/page',{
+								templateUrl:'page.html'
+							})
+							.otherwise({
+								directTo:'/home'
+							})
+			}])
+
+	vue-HTML:
+			方式一： <script type='text/template' id='home'>
+							<h1>这里是主页</h1>
+					 </script>										 	-------- script方式的 内嵌模板
+					 <script type='text/template' id='page'>
+							<h1>这里是f页fdafaa</h1>
+					 </script>
+
+			方式二： <template id='home'>
+							<h1>这里是主页</h1>
+					 </template>										-------- <template> 标签
+					 <template id='page'>
+							<h1>这里是fadfaas</h1>
+					 </template>
+
+			<div id='app'>
+						<-- a="temp1" 中 temp1 就是 组件 -->
+				<button @click='a="temp1"'>主页</button>
+				<button @click='a="temp2"'>其他</button>
+
+				<components :is='a'></components>
+			</div>
+
+	vue-JS:
+			var app = new Vue({
+				el:'#app',
+				data:{
+					a:'temp1'  		--- 这里定义默认显示哪个组件
+				},
+				components:{
+					'temp1':{
+						template:'#home' 	---- 注意,这里引用内嵌模板时，跟 ng 不同的是 #xxx 来辨别模板，
+					},							 而ng中可以定义成 xxx.html 的名称
+					'temp2':{
+						template:'#page'
+					}
+				}
+			});
+
+4. tab 选项卡
+	参考 dynamicSwitchingComponent.html 
+
+5. 实例代理其data中所有的属性
+
+	每个实例都会代理其 data对象里所有的属性， 意思是：
+	var vm = new Vue({
+		data:{
+			msg:'togg'
+		}
+	});
+
+	vm.msg = 12;   ------ 这种写法是可以的，
+
+6. watch
+
+	1. 可以内嵌在实例中，也可以单独拿出来实例外面写
+	2. 监听单变量，
+			var vm = new Vue({
+				data:{
+					num:1
+				},
+				watch:{
+					num:function(v1,v2){
+						console.log(v1,v2); 
+					}
+				}
+			});
+	3. 监听对象和数组
+			var vm = new Vue({
+				data:{
+					obj:{ age:24 }
+				},
+				watch:{
+					obj:{
+						deep:true, 					----- deep：true 表示深度监听
+						handler:function(v1,v2){	----- 该对象发生变化时，回调handler方法
+							console.log(v1,v2);			  handler中的 v1 v2 是相同的值
+						}
+					}
+				}
+			});
+
+	4. 监听对象和数组的具体属性( 活用computed )
+			我们知道用handler的方式监听对象内的属性，得到的是v1 v2 值是一样的，要想得到不一样的值，
+			可以用computed 属性
+
+			var vm = new Vue({
+				data:{
+					obj:{ age:24 }
+				},
+				computed:{
+					age:function(){
+						return this.obj.age;
+					}
+				},
+				watch:{
+					age:function(v1,v2){
+						console.log(v1,v2);			------ V1  V2 的值不一样
+					}
+				}
+			});
+
+	HTML:	<div id='app'>
+				<p>{{ num }}</p>		---- 监听单变量
+				<p>{{ obj.age }}</p>	---- 监听对象内变量
+				<button @click='addNum'>增加</button>
+			</div>
+
+	JS:		new Vue({
+				el:'#app',
+				data:{
+					num:1,
+					obj:{ age:24 }
+				},
+				methods:{
+					addNum:function(){
+						this.num += 1;
+					}
+				},
+				watch:{						------ 检测到 num 发生变化后，执行该回调函数
+					num:function(v1,v2){
+						console.log(v1,v2); 	----- 检测单变量
+					},
+					obj:{						----- 检测对象
+						deep:true,
+						handler:function(v1,v2){
+							console.log(v1,v2);
+						}
+					}
+				}
+			});
+
+
+			app.$watch('num',function(v1,v2){	------- 或者单独拿出来写watch函数也可以
+				console.log(v1,v2)
+			});
+
+			app.$watch('obj',function(v1,v2){	------- X 错误的，单独写的时候不能直接监听对象，什么都不会输出
+				console.log(v1,v2)
+			});
+
+			app.$watch('obj.age',function(v1,v2){	----- 可以直接监听对象内的某个属性
+				console.log(v1,v2)
+			});
+
+7. v-html  v-text
+
+	可以使用这个 来加载 html ，ng 中会提示 不安全的脚本，需使用$sce 服务或者 ngSanitize 模块
+
+8. {{}} 表达式
+
+	{{ number + 1 }}
+	{{ ok ? 'YES' : 'NO' }}
+	{{ message.split('').reverse().join('') }} ---- 支持正则表达式
+
+9. 事件修饰符 以.指明的特殊后缀
+		
+	@mousemove.stop='stopMoving'
+	@mousemove.stop
+
+	后面写不写函数都一样
+
+		<!-- 阻止单击事件冒泡 -->
+		<a v-on:click.stop="doThis"></a>
+		 
+		<!-- 提交事件不再重载页面，event.preventDefault() -->
+		<form v-on:submit.prevent="onSubmit"></form>
+		 
+		<!-- 修饰符可以串联 -->
+		<a v-on:click.stop.prevent="doThat">
+		 
+		<!-- 只有修饰符 -->
+		<form v-on:submit.prevent></form>
+
+		eg: 
+
+			<div class="canvas" @mousemove='go($event)'>
+				{{x}} {{y}} -
+				<span @mousemove.stop='stopMoving'>stop moving</span>
+			</div>
+
+			new Vue({
+				el: '#root',
+				data: {
+					age: 20,
+					x: 0,
+					y: 0
+				},
+				methods:{
+					add: function(){
+						this.age ++;
+					},
+					go: function(event){
+						this.x = event.offsetX;
+						this.y = event.offsetY;
+					},
+					stopMoving: function(){
+						console.log(111)
+					}
+				}
+			});
+
+
+	<input type="text" v-model='aa' @keyup.shift.enter='save(aa)'> shift+enter才可以发送消息
+
+
+10. 组件文件命名
+
+	要么是单词大写开头，要么是 kabob-case（烤肉串）
+
+	components/
+		MyCompoennt.vue 	√
+		my-component.vue 	√
+		myCompoenent.vue 	×
+		mycompoenent.vue 	×
+
+11. style总是放在最后
+
+	<!-- ComponentB.vue -->
+	<template>...</template>
+	<script>/* ... */</script>
+	<style>/* ... */</style>
+
+12. $ref 本地模板变量·
+
+	<input ref='name' type="text"  @keyup.enter='save'>{{name}}
+
+	save: function(aa){
+		console.log(aa);
+		this.name = this.$refs.name.value;
+	}
+				

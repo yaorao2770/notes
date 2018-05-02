@@ -1,10 +1,14 @@
+
+=========== gulp 相关说明===========
+
+
 1. npm init 体局提示自动生成 package.json 文件
 
 2. npm install -g npm  
 
-3. npm install --save-dev gulp 在项目所在根目录生成 node_modules 目录
+3. npm install --save-dev gulp 在项目所在根目录生成 node_modules 目录,--save-dev 安装并写入 package.json 的"dependencies"和"devDependencies"字段中
 
-4. npm install gulp-minify-css gulp-concat gulp-uglify gulp-rename gulp-asset-rev --save-dev
+4. npm install gulp-minify-css gulp-concat gulp-uglify gulp-rename gulp-asset-rev gulp-inject gulp-watch wiredep main-bower-files --save-dev
 	
 	安装本地需要的插件，并且会自动在package.json文件中加载该依赖，大致长下面的样子：
 
@@ -21,6 +25,9 @@
 	如果package.json下的 'devDependencies' 字段是空的，运行gulp任务时会出错,提示错误信息如下:
 
 		Error: Cannot find module 'gulp-concat'
+
+
+5. npm uninstall xxx 全局卸载模块 (带-g参数总是卸载不成功，提示 up to date in 0.07s)
 
 5. gulp  默认运行default任务
 	
@@ -230,6 +237,52 @@
 
 	npm install --main-bower-files --save-dev
 
+十. nodejs 的 package.json 中执行gulp命令,
+
+	可以执行gulp <taskName> 执行gulp任务，也可以在package.json中配置 scripts 字段来间接指定node去执行gulp，如下：
+
+		package.json：
+
+		{
+		  "name": "test-chalk",
+		  "version": "1.0.0",
+		  "description": "test chalk ",
+		  "main": "index.js",
+		  "scripts": {									
+		    "minicss": "./node_modules/.bin/gulp minifycss",
+		    "minijs": "./node_modules/.bin/gulp minifyjs"
+		  },
+		  "bin": {
+		    "test-chalk": "index.js"
+		  },
+		  "author": "cy",
+		  "license": "ISC",
+		  "devDependencies": {
+		    "chalk": "^2.3.0",
+		    "gulp": "^3.9.1"
+		  },
+		  "dependencies": {
+		    "gulp-minify-css": "^1.2.4",
+		    "gulp-uglify": "^3.0.0"
+		  }
+		}
+
+		其中，最主要的配置是： 
+
+		"scripts": {									
+		    "minicss": "./node_modules/.bin/gulp minifycss",        minifycss是gulpfile.js里面的taskName
+		    "minijs": "./node_modules/.bin/gulp minifyjs"
+		 },
+
+		 关于./node_modules/.bin/gulp minifycss 路径的理解，可以是：
+
+		 所有通过npm 安装的包，插件，都会在node_modules目录的.bin目录下有映射，这里的通过
+
+		 npm run minicss 命令行运行时，实际上是去调用gulpfile.js 里面的 taskName
+
+		 scripts 字段的定义的key是通过 npm run xx运行的。
+
+		 
 三. gulpfile.js
 	
 	var gulp = require('gulp'),

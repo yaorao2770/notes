@@ -275,7 +275,7 @@
 
 	WebSocket协议完全可以取代Ajax方法，用来向服务器端发送文本和二进制数据，而且还没有“同域限制”。
 
-	WebSocket不适用HTTP协议，而是使用自己的协议，
+	WebSocket不是用HTTP协议，而是使用自己的协议，
 
 		A） 浏览器发出的WS请求头信息类似于下面的样子：
 
@@ -340,7 +340,7 @@
 			// ws一共支持四个消息：onopen onmessag onclose onerror
 	        // 当browser和ws连接成功后，会触发onopen消息
 	        ws.onopen = function(evt) { 
-	            onOpen(evt) 
+	            websocket.send(evt); 
 	        }; 
 
 	        // 当browser接收到ws发送来的数据时，就会触发onmessage消息，event中包含server传输过来的数据
@@ -358,10 +358,6 @@
 	            onError(evt) 
 	        }; 
 
-	        function onOpen(evt) { 
-		        writeToScreen("连接"); 
-		        doSend("WebSocket rocks"); 
-		    }  
 		 
 		    function onClose(evt) { 
 		        writeToScreen("断开"); 
@@ -374,11 +370,6 @@
 		 
 		    function onError(evt) { 
 		        writeToScreen('<span style="color: red;">ERROR:</span> '+ evt.data); 
-		    }  
-		 
-		    function doSend(message) { 
-		        writeToScreen("SENT: " + message);  
-		        websocket.send(message); 
 		    }  
 		 
 		    function writeToScreen(message) { 
@@ -438,7 +429,7 @@
 
 		2）HTTP/1.1 101 Web Socket Protocol Handshake
 
-	f) 与HTTP协议的请求/响应模式不同，ws在建立连接之前有一个 handshake (opening handshake) 过程，在关闭连接诶之前也有一个handshake过程（close handshake）过程，建立连接之后，双方即可双向通信。
+	f) 与HTTP协议的请求/响应模式不同，ws在建立连接之前有一个 handshake (opening handshake) 过程，在关闭连接之前也有一个handshake过程（close handshake）过程，建立连接之后，双方即可双向通信。
 
 	在ws协议发展过程中前前后后就出现了多个版本的握手协议：
 
@@ -568,3 +559,371 @@
 	#!/user/bin/env python 这种用法是为了防止用户没有讲Python装在默认的/user/bin路径下。当系统看到这一行的时候，首先会到env设置里查找python的安装路径，再调用对应路径下的解释器程序完成操作。（推荐这种写法）
 
 
+18. setDate(1~31)
+
+	可以获取该月某一天的时间格式：
+
+	var curDate = new Date();
+
+	curDate.setDate(12);  // 该方法的参数是必须的，12说明获取该月12号的date格式
+
+	console.log(curDate); // Sun Nov 12 2017 16:24:14 GMT+0800 (中国标准时间)
+
+
+19. getDate()
+
+	返回某月的某一天，1~31
+
+
+20. 获取明天的当前时间
+
+	var today = new Date();
+
+  	nextWeek.setDate(nextWeek.getDate() + 7);  // 获取一周之后的时间
+
+21. js 生成dom节点
+
+	var html = '';
+
+	html += '<ul class="list">';
+
+	for(var i=1; i<9; i++){
+		html += '<li><img src="imgs/' +i+ '.jpg"></li>';
+	}
+
+	html += '</ul>';
+
+	$('.box').html(html);  // html() 方法可以渲染标签,如果这里使用append(),则是原样显示到界面上，一堆字符串,并不会渲染
+
+
+22. $.extend 和 angular.extend()
+
+	功能是一样的,以$.extend说明用法
+
+	var obj1 = {name:'apple', age:34};
+
+	var obj2 = {age:45};
+
+	var obj3 = $.extend({}, obj1, obj2);  //  obj2覆盖obj1的相同属性  {name:'apple',age:45}
+
+
+23. 自己封装JQ插件
+
+	jq提供了两种方法可以在jq上添加方法
+
+	$.fn.extend()  -> $('#img').preload();  // 需要先选择一个元素
+
+	$.extend()	   -> $.preload();			// 不需要元素
+
+	eg:   $.extend({
+				preload:function(imgs, opts){
+					new PreLoad(imgs, opts);
+				}
+		  })
+
+		  $.preload(imgs,{
+		  	each:function(){
+		  		....
+		  	}
+		  })
+
+
+24. 点击空白处去销售事件冒泡
+
+	$('button').on('click',function(event){
+
+		event.stopPropagation();  // 取消事件冒泡
+
+		$('h1').show();
+	});
+
+	// 点击空白处关闭h1，需要取消事件冒泡，否则h1一直显示不出来
+	$(document).on('click',function(){
+		$('h1').hide();
+	});
+
+
+25. 事件的绑定和清除
+
+		// 键盘事件
+		document.onkeydown = function(e){
+			if(e.keyCode == 38){ // rotate
+				game.rotate();
+			}else if(e.keyCode == 39){ // right
+				game.right();
+			}else if(e.keyCode == 40){ // down
+				game.down();
+			}else if(e.keyCode == 37){ // left
+				game.left();
+			}else if(e.keyCode == 32){ // space
+				game.fall();
+			}
+		};
+
+		// 清除键盘事件
+		document.onkeydown = null; (一般来讲，直接置为Null,可以初始化所有的something)
+
+
+		if(timer){ 		// 关掉定时器
+			clearInterval(timer);
+			timer = null;	（可以看到timer重置为null）
+		}
+
+
+26. js中的堆内存（heap）和栈内存（stack）
+
+	JS运行的时候会有堆内存（heap）和栈内存（stack），当我们new实例化一个类的时候，这个new出来的对象就保存在heap里面，而这个对象的引用则存储在stack中。程序通过stack里的引用找到这个对象。
+
+	var arr = [1,2,3];
+
+	其中arr是[1,2,3]的引用，保存在stack中，heap里存储的内容是[1,2,3]
+
+27. 内存泄漏（memory leak）和内存溢出（out of memory）
+
+	内存溢出，是指程序在申请内存时，没有足够的内存空间供其使用，比如说栈，栈满时在做进栈必定产生空间溢出，叫上溢，栈空时再做退栈也产生空间溢出，称为下溢，就是分配的内存不足以放下数据项序列，称为内存溢出。
+
+	内存泄漏是指，你想系统申请分配内存进行使用，可是使用完以后却不归还（dlete）,结果你申请到的那块内存你自己也不能在访问（也许你把它的地址弄丢了），而系统不能再次将他分配他需要的程序。
+
+	一次性内存泄漏并没有什么危害，因为他不会堆积，真正有危害的是内存泄漏的堆积，这会最终耗尽系统所有的内存。
+
+	先保障交互逻辑，在调整细节。
+
+
+28. localStorage 和 sessionStorage 在IE中也是支持的，但是必须是服务器上的文件，就是通过服务器打开，不支持本地文件
+
+29. ngResource
+		
+	.constant('BASEURL', "http://192.168.64.219:8081/")
+
+	第一种写法：
+
+		var User = $resource('/user/:userId', {userId:'@id'});
+		var user = User.get({userId:123}, function(){
+			user.abc = true;
+			user.$save();
+		});
+
+	第二种写法：
+
+		var url = dataUrl + 'interface';
+        var url1 = dataUrl + 'interface/:id';
+        var url2 = dataUrl + 'interface/module';
+        return $resource(url, {}, {
+            'getAll': { method: 'JSONP', url: url+'?callback=JSON_CALLBACK',params:{}},
+            'getOne': { method: 'JSONP', url: url1+'?callback=JSON_CALLBACK'},
+            'update': { method: 'PUT', url: url1 },
+            'delete': { method: 'DELETE', url: url1 },
+            'getApi': { method: 'JSONP', url: url2+'?callback=JSON_CALLBACK',params:{}}
+        });
+
+    总结：
+
+		HTTP GET “类”动作: Resource.action([parameters], [success], [error])
+		non-GET “类”动作: Resource.action([parameters], postData, [success], [error])
+		non-GET 实例动作: instance.$action([parameters], [success], [error])
+
+		Success回调以(value, responseHeaders)参数调用。Error回调以(httpResponse)参数回调。
+
+
+	问题:
+
+		1. $resource(url, params?, 自定义方法{})
+
+			第二个参数是什么？
+
+			.factory('UserCardResource', ['$resource', function ($resource) {
+
+				var url = '/user/:userId/card/:cardId';   { userId: 12, cardId: '@id' }
+
+				var url2 = '/card/user/:userID/:id';      {userID:123,id:'@id'}
+
+			    return $resource(
+			    	url,
+			    	{ userId: 12, cardId: '@id' },
+			        { charge: { method: 'post', params: { charge: true }, isArray: false } });
+			}]);
+
+			参数解说：
+				参数1：url 必须，url中带有:项的是根据参数2来进行配置的,如果设置的没有出现在url模板中，将会以search query的方式添加，
+					eg: 
+						url：/card/user/:userID/:id  ---  {userID:123, name:'john', id:'@id'}
+						最终的url会变成： /card/user/123？name='john'
+
+					如果参数值是以@开头的，那么其真实值将会从数据对象中提取？？？
+					
+				参数2：可空，配置url中带有：项的参数params，即url里面的参数
+				参数3：可空，为自定义资源方法
+
+			cardId: '@id' ??? @id是什么意思?
+
+			将resource封装成服务后，调用：
+
+			cardResource.action([parameters], [success], [error])
+
+			第一个参数是params，如果没有可以不填，可以直接写successCallback，	
+
+			[success], function(data header){....}
+
+30. js的根对象是：Object.prototype对象,它是一个空的对象，在js中遇到的每个对象实际上都是从这个对象clone而来，就是他们的原型，
+
+31. 原型链并不是无限长的，我们尝试访问对象a的address属性（实际上a并没有这个属性），而对象b和它构造器的原型上都没有address属性，name这个请求会被最终传递到哪里？
+
+	实际上当请求达到A.prototype，并且在A.prototype中也没有找到address属性的时候，请求会被传递到A.prototype的构造器原型Object.prototype,显然Object.prototype中也没有该属性，但是Object.prototype的原型是null，说明这时候原型链的后面已经没有别的节点了，所以该次请求就到此打住，a.address返回undefined。
+
+
+32. call 和 apply
+	
+	x.showName.call(y,m,n);
+
+	用x代替y,也就是x的方法放在y上执行。m,n是参数
+
+	eg:
+		function add(m,n){
+			return m + n;
+		};
+
+		function sub(m,n){
+			return m - n;
+		};
+
+		console.log( add(5,3) ); 				// 8
+		console.log( add.call(sub,5,3) );		// 8，用add替换sub
+		console.log( add.apply(sub,[5,3]) );	// 8
+
+		console.log( sub.apply(add,[5,3]) );	// 2
+		console.log( sub.call(add,5,3) );		// 2
+
+		
+
+33. 应用测试
+
+	应用测试有很多类型，最为常见的是单元测试和端对端测试（也称为集成测试）、
+
+	单元测试是测试代码自身行为的一种测试。
+
+	集成测试是模仿用户行为的一种测试。比如登录系统，创建帖子，退出系统等这些操作都可以自动化，并且可以用眼睛看到其过程是怎么发生的。
+
+	angular2	e2e模块就是端对端测试模块
+
+
+34. RPC架构
+
+	Remote Promote Call, 一种进程间通信方式，允许像调用本地服务一样调用远程服务。
+
+	PRC框架的主要目标就是让远程服务调用更简单、透明。RPC框架负责屏蔽底层的传输方式（TCP或者UDP）.
+
+	序列化方式（XML/JSON/二进制）和通信细节。开发人员在使用的时候只需要了解谁在什么位置提供了什么
+
+	服务接口即可，并不需要关心底层通信细节和调用过程。
+
+35. 图片算法
+
+	通常在网页中看到的图片有两种加载方式：一种从模糊然后逐渐清晰，另一种逐行加载显示清晰的图片。
+	造成这种方式的原因是如偏的压缩算法不同，第一种是小波算法，第二种是离散余弦变换。
+
+	从用户体验上来京第一种加载方式无疑更加友好，制作方式，就是用PS导出时做些配置：
+
+	PNG图片使用PS导出时，勾选交错；
+	JPG图片使用PS导出时，勾选连续；
+
+	导出的图片就是从模糊到清晰的效果了，通常称为交错式PNG和渐进式JPG。（有人说没有这个选项？）
+
+	另外一种方式：
+
+		<img src="缩略图.jpg" name="pic" width="800" height="600" id="news" />
+
+		然后用js处理：
+
+		var img = new Image();//新建一个图片对象 
+		img.src = "原图.jpg"; //最终显示的大图
+		img.onload = function() { 
+			document.getElementById('news').src = this.src; 
+		}
+
+36. 相对协议
+
+	如果你的网站同时准备了https资源和http资源，name可以使用相对协议帮你实现当网站引入的都是http资源，网站域名更换为https后的无缝切换。
+
+	如： <img src='//domain.com/img/logon.png'>
+
+	简而言之，就是讲URL的协议（http,https）去掉，只保留//及后面的内容
+
+	注意：如果是浏览本地文件，浏览器通过file://协议发送请求,导致请求失败，因此本地测试最好是搭建一个本地服务器
+
+37. placeholder="{{fn.sample}}" 
+
+38. CSS技术方案
+
+	css全局作用域问题：css的规则都是全局的,协作开发时可能会冲突，我们的追求是sandBoxed（沙箱化）
+
+	说到底就是css作用域的问题，
+
+	技术方案： sass / less / postCss / css Modules / styled-component / stylus / BEM约定 等
+
+	BEM： block element modifier 块 元素 修饰符
+
+	而vue中则是提供了scoped是关键词来解决作用域问题
+
+		<template>
+		  <button class="button button-close">X</button>
+		</template>
+
+		<!-- 使用 `scoped` 特性 -->
+		<style scoped>
+		.button {
+		  border: none;
+		  border-radius: 2px;
+		}
+
+		.button-close {
+		  background-color: red;
+		}
+		</style>
+
+39. ES5方法
+
+	1. Date.now() 获取当前时间戳
+
+		console.log(Date.now());			// ES5 1524903182416			
+		console.log(new Date().getTime());	// ES3 1524903182416
+
+	2. JSON.parse()	 json的序列化和反序列化
+
+		eval('({"a": 3})')		// ES3
+		JSON.parse('{"a":3}') 	// ES5
+
+	3. String.trim()
+
+		var str = ' 123  456  ';
+		var trim = str.trim();
+		console.log('|'+trim+'|');
+		console.log('|'+str+'|');
+
+	4. 继承
+
+		ES5:
+
+			var Rectangle = function (id, x, y, width, height) {
+			    Shape.call(this, id, x, y);
+			    this.width  = width;
+			    this.height = height;
+			};
+			Rectangle.prototype = Object.create(Shape.prototype);
+			Rectangle.prototype.constructor = Rectangle;
+
+		ES3:
+
+			var Rectangle = function (id, x, y, width, height) {
+			    Shape.call(this, id, x, y);
+			    this.width  = width;
+			    this.height = height;
+			};
+			Rectangle.prototype = new Shape();
+
+		总结：ES5使用了Object.create()可以实现正确的继承，而ES3缺乏Object.create则只能写出不完美的继承（子类还未实例化父类已经实例化执行了构造函数，构造函数不带参数可能报错）
+
+40. 原型链
+	
+	每个JS版本的实现方法略有不同，应比较阐述
+
+	https://blog.csdn.net/iispring/article/details/62219444

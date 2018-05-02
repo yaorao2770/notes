@@ -1,0 +1,1460 @@
+
+
+代码规范：
+
+	var _this = this;
+
+	其中_this的写法，变量前面有_一般多用于局部变量，这样也可以避免与全局变量冲突
+
+
+============  TypeScript  ============
+
+配置编辑器编译ts文件
+
+	tsconfig.json
+
+		{
+			"compilerOpetions": {
+				"target": "es5",
+				"module": "commonjs",
+				"emitDecoratorMetadata": true,
+				"experimentalDecorators": true,
+				"outDir": "build",
+				"lib": ["es6"],
+				"sourceMap": true		-- build时,会要求你输入编译哪个ts文件
+			},
+			"files":[
+		    	"testServer/server/*.ts"
+		    ],
+			"exclude": [
+				"node_modules"
+			]
+		}
+
+
+1. 基本数据类型：string number boolean array enum any viod
+
+2. 变量定义
+	var num:number = 12;
+	var str:string = 'hello';
+	var bool:boolean = true;
+
+	枚举类型: 是为一组数值定义一组更友好的名称,
+		a) 	enum Color{
+				Red, Green, Pink
+			};
+			var en1:Color  = Color.Green; // 1
+			var en2:string = Color[1];   // Green
+
+		b)	enum Color1{
+				Red = 1, Green, Pink
+			};
+			var en3:Color1 = Color1.Green; // 2, 默认下标从0开始，但是可以手动设置起始下标
+
+		c)	enum Color2{
+				Red = 3, Green = 5, Pink = 7
+			};
+			var en4:string = Color2[1];  // undefined, 因为下标是从3开始，且只有3,5,7
+
+	数组类型：
+		a)	数据类型+[]表示
+			var arr1:number[]  = [1,2,3];
+			var arr2:string[]  = ['john','mike'];
+			var arr3:boolean[] = [true,false];
+			var arr4:any[] 	   = [1,'mike',true,{name:'day'}]; 
+
+		b)	泛型数组表示
+			var arr5:Array<number> = [1,2,3];
+			var arr6:Array<any> = [1,'mike',true,{name:'day'}];
+
+	Any类型：动态数据类型，通常TS不会检查any类型，因此一些第三方的数据或lib，可以定义为any
+		var notSure:any = 12;
+		notSure = 'Hello';
+		notSure = {name:'df'};
+
+	Void类型：和any相对的数据类型,没有任何数据类型，常用于一个方法没有返回值
+		function show():void {
+			console.log(12);
+		};
+
+3. interface 接口
+	1. TS中，接口是用作约束作用的，在编译成js时，所有的接口都会被擦掉，因为JS中并没有接口的概念
+	2. 表示形式： interface + 首字母大写{ 后面是对象字面量} (eg: interface DefineParams{}) 
+	3. 对象字面内只能描述: 对象属性, 方法, 函数, 数组
+	4. 使用定义好的接口时，对象的属性必须和定义好的接口的必要属性一致，不能多也不能少
+	4. 接口的使用，在方法中，如 function add(num:Num){...} 形参需明确规定是Num接口类型，在定义实参时，变量也要明确定义为接口类型，如 let num:Num = {x:1,y:2}
+	
+ 	   	A) 接口描述对象属性:
+
+	 	   	interface DefineObject{
+				price:number; 		--- 描述的是对象属性，即下面test1的形参book是一个对象类型，且必须包含price
+				press?:string;		--- ? 表示可选属性，不是必须有的属性 book:{price:23} 和 															book:{price:23,press:'商务印书馆'}都是正确的
+
+				run();
+			};
+
+			function test1( name:string, age:number, book:DefineParams){ ... }
+
+		B) 接口描述函数：
+			interface DefineFun{
+			 	(name:string, age:number) : boolean;  --- (这里是函数形参) : 这里是return返回值
+			};
+
+			let test2:DefineFun = function test2(name:string, age:number){
+				return true;
+			};
+
+			test2('john',23);
+
+		C) 定义只读属性
+			interface Point{
+				readonly x:number;
+				readonly y:number;
+			};
+
+			function getPoint(p:Point){
+				console.log(p.x,p.y);
+			};
+
+			let point:Point = {x:1,y:2};
+			point.x = 23;  // 报错，因为x,y是只读属性，一旦定义不能修改
+
+
+			正常接口属性是可以修改的
+
+			interface Point{
+				x:number;
+				y:number;
+			};
+
+			function getPoint(p:Point){
+				console.log(p.x,p.y);
+			};
+
+			let point:Point = {x:1,y:2};
+			point.x = 23;  
+
+		D) 定义可选属性
+			interface Person{
+				name?:string;
+				age?:number;
+			};
+
+			function getInfo(p:Person){
+				console.log(p.name,p.age);
+			};
+
+			let person:Person = {name:'apple'};
+			console.log(getInfo(person)); // apple
+
+		E) 接口描述函数类型
+			interface GetStr{
+				(x:number, y:number):string;   // 两个形参树number类型，返回值是string类型
+			};
+
+			let myStr:GetStr = function(gradeNum:number, classNum:number){
+				return `${gradeNum}年级${classNum}班`;
+			};
+
+			console.log(myStr(3,2));   // 3年级2班
+
+		F) 接口描述数组类型
+			interface StringArr{
+				[index:number]:string;  // 该数组元素类型是string,并且只能通过number类型来索引,
+										// [index:number]是索引器
+
+				// age:number 需要注意的是，当接口定义的是数组类型时，则该接口中定义的其他属性的类型都有必须是该数组元素的类型,当前接口的元素类型是string，所以age为number类型是错的
+			};
+
+			let myStr:StringArr = ['apple','phone'];
+			let str1:string = myStr[11];
+			console.log(str1);
+
+		G) 接口的类类型
+			所谓的类类型，就是一个类去实现接口，而不是直接把接口拿来用。
+			interface IClock{
+				curTime:Date;   // 这个接口中有一个属性和方法
+				getTime();
+			}
+
+			class Time implements IClock{
+				curTime:Date;
+				getTime(){
+					console.log(this.curTime);
+				};
+			};
+
+			let time = new Time();
+			time.curTime = new Date();
+			time.getTime();
+
+		H) 接口之间的继承，且可以多继承
+			接口跟类一样是可以相互继承的，可以让我们从一个接口中赋值成员到另一个接口中，可以更灵活地将接口分割到可重用的模块中。
+
+
+			interface Shape{
+				color:string;
+			};
+
+			interface Pen extends Shape{
+				width:number;
+			};
+
+			let circle = <Pen>{};   // 注意，使用继承后的接口需要这样写。即创建一个对象并制定泛型，
+									// 即创建一个Pen类型的对象
+			circle.color = 'pink';
+			circle.width = 100;
+
+
+			// 多继承
+
+			interface Circle extends Pen,Shape{
+				point:number[];			// number类型的数组
+			};
+
+			let arr = <Circle>{};
+			arr.color = 'red';
+			arr.width = 100;
+			arr.point = [1,2,3];
+
+
+		I) 定义一个混合类型的接口
+			所谓的混合类型就是在一个接口中定义多种类型，比如属性，函数，数组等。
+
+			interface Counter{
+				(start:number):string;
+				interval:number;
+				reset():void;
+			};
+
+			function getCounter():Counter{
+				let counter = <Counter>function(start:number){};
+				coutner.interval = 123;
+				counter.reset = function(){};
+				return counter;
+			};
+
+			let c = getCounter();
+			c(10);
+			c.reset();
+			c.interval = 1;
+
+		J) 接口中如何定义对象, account就是一个对象
+
+			interface User{
+				name:string;
+				account: {
+					email:string;
+					confirm:string;
+				}
+			}
+
+	function test( name:string, age:number, book:{label:string}){}
+	test方法定义了 3个形参分别的类型, 
+		name是string类型， 
+		age是number类型， 
+		book是对象类型，
+	而且其中必须包括label属性，且label必须是string类型的
+
+4. 解构和展开
+	
+	在开发过程中，我们经常遇到这样的问题，需要将对象某个属性的值赋给其他两个变量
+	解构是一种表达式，将数组或者对象中的数据赋给另一个变量。
+
+	ES3中，
+	a) 数组解构
+
+		let input = [1,2,4];
+		let [first,second] = input;
+		console.log(first,second); // 1,2
+
+		// 可以用...表示剩余的值,值还是数组形式
+		let [first, ...rest] = input;
+		console.log(first,rest); // 1, [2,4]   注意，这里打印reset的值树数组，而 ...reset的值是 2,4
+
+	    // 正常情况下，交换变量值，需要一个临时变量
+	    var a = 1;
+	    var b = 2;
+	    var temp;
+	    temp = a;
+	    a = b;
+	    b = temp;
+	    console.log(a, b);	// 2  1
+
+	    // ES6中，使用解构将会便捷很多
+	    var c = 1;
+	    var d = 2;
+	    [c ,d] = [d, c]; 	// 注意，这里没有let 或者 var 声明
+	    console.log(a, d);	// 2  1
+
+	    [first,second] = [second,first];
+	    console.log(first,second); // 2,1
+
+	    let [x, , y] = [1,2,3];
+	    console.log(x,y);		// 1, 3
+
+	    let [m, n, ...z] = ['a'];
+	    console.log(m, n, z);		// a  undefined []	如果解构不成功，变量的值就等于undefined
+
+
+
+	    // 作用于函数参数
+	    function test([first,second]:number[]){
+	    	console.log(first,second); // 1,2
+	    };
+	    test(input);
+
+	b) 对象解构
+
+		let obj = {
+			a:'john',
+			b:12,
+			c:'running'
+		};
+
+		// {a,b} 必须跟对象的属性名一致,
+		let { a, b } = obj;
+		console.log(a,b) // john, 12
+
+		// 不过可以起别名
+		let {a:myName, b:age} = obj;
+		console.log(myName,age); // john,12
+
+		// 无声明赋值
+		var tom, merry;
+		({tom, merry = {tom:12, merry:24}}); 	// 注意：需要（）包裹
+		console.log(tom, merry);	// 12  24
+
+
+	c) 数组展开,展开的语法用...
+
+		let input1 = [1,2,3];
+		let input2 = [4,5,6];
+		let inputColl = [...input1, ...input2, ];
+		console.log(inputColl); // [1,2,3,4,5,6,7]
+
+		// 数组展开是浅拷贝(即值引用),改变原来的数组并不会影响展开后的数组集合
+		let input1 = [4,4,4];
+		console.log(inputColl); // [1,2,3,4,5,6,7]
+
+	d) 对象展开
+
+		- 从左到右展开,如有重复key:value，后面的会覆盖前面的
+		- 展开对象后得到的对象可以获取展开前对象的方法和属性
+		- 展开的是类的实例，得到的对象会丢失类的方法
+
+			let obj2 = { food:'fish', fruit:'purple'};
+			let obj3 = { name:'baidu', addr:'beijing'};
+			let objColl = {...obj2, ...obj3, food:'beaf'};
+			console.log(objColl);
+			// {food: "beaf", fruit: "purple", name: "baidu", addr: "beijing"}
+
+			// 展开对象后得到的对象可以获取展开前对象的方法和属性
+			let obj = {
+				name:'join',
+				age:12,
+				run:function(){
+					console.log(111);
+				}
+			};
+
+			let clone = {...obj};
+			console.log(clone.name);
+			console.log(clone.run());
+
+			// 展开的是类的实例，得到的对象会丢失类的方法
+			class Obj1{
+				addr = '台湾',
+				sing(){
+					console.log(222);
+				}
+			};
+			let myObj = new Obj1();
+			let cloneObj = {...myObj};
+			console.log(cloneObj.addr);
+			// console.log(cloneObj.sing());
+
+5. 块作用域	（block-scoped）
+	
+	1. 在ts中只要是{}之间都是块作用域
+	2. 在块作用域内声明的变量在外面是访问不到的
+	3. let声明的变量不可以在声明前读 、 写
+	4. ts变量声明有var let const,原生js中没有块级作用域，只有函数作用域和全局作用域，而且还存在var声明的变量提升问题
+
+	5. 变量提升：即变量可以在声明之前使用，值为undefined
+	6. let声明的变量一定要在声明后使用，否则报 refrenceError错误
+	8. 只要块级作用域内存在let命令，它所声明的变量就绑定(binding)在这个区域。
+		ES6明确规定，如果在区块中存在let和const命令，这个区块对这些命令声明的变量从一开始就形成了封闭作用域，凡是在声明前就用这些变量，会报错。这一现象在语法上称为 '暂时性死去'(temporal dead zone，简称TDZ)
+
+		var tmp = 123;
+		if(true){
+			tmp = 234;	// 报错,这里已存在全局变量tmp,但块级作用域内又声明了tmp,
+							导致后者绑定在这个块级作用域内了，
+							所以let声明变量前，对其赋值报错
+			let tmp;
+		}
+
+	9. 块级作用域声明的let变量，在外面访问不到
+		if(true){
+			let a = 10;
+		}
+		cosnole.log(a); // 报错
+
+
+		a++;	//  error: illegal to use 'a' before it`s declared;
+		let a;
+
+	4. 当let出现在循环体时，不仅在循环里引入一个新的变量环境,而是针对每次迭代都会创建一个新的作用域,功能类似于闭包
+
+		for(let a = 0; a < 10; a++){
+			setTimeout(function(){
+				console.log(a); // 0-10
+			},1008*a);
+		}
+
+		for(var a = 0; a < 10; a++){
+			setTimeout(function(){
+				console.log(a); // 10个10
+			},1008*a);
+		}
+
+		for(var a = 0; a<10;a++){
+			function(i){
+				setTimeout(function(){
+					console.log(i); // 1 - 10， 闭包
+				},100*i);
+			}(i);
+		}
+
+6. 常量
+
+	const num = 10;
+	num = 111; // error, 只读，
+
+	const obj = { name:'john', age:12 };
+	obj = {name:'mike'}; // error
+
+	obj.name = 'mike';   // OK，可以重写对象的属性，但不可直接修改整个对象
+
+7. 多行字符串
+
+	将需要换行的多行字符串包裹在反引号``中，可以任意换行不报错。
+
+	而在js中必须在换行处添加\或者+ 拼接才可以
+
+9. 屏蔽或者暂时性死区，参考 5
+
+	在一个嵌套作用域中引入一个新名字的行为成为屏蔽
+
+	function test(value,x){
+
+		if(value){
+			let x = 10;
+			return x;
+		}
+
+		return x;
+	};
+
+	test(true,1); 	// 10 为什么没有执行第二个return,因为if块作用域里面let定义的变量外面是访问不到的
+	test(false,1);	// 1
+
+10. 只读属性
+
+	1. 一些对象属性只能在对象刚创建的时候修改其值，可以在属性名前用 readonly 指定
+
+	2. 格式： readonly 变量:类型 （readonly和变量 之间用空格分割）
+
+	3. 使用定义好的只读属性，可以将该接口赋值给一个对象字面量来创建初始的值
+
+	4. 只读数组 ReadonlyArray<number>
+
+		interface Point{
+			readonly x:number;
+			readonly y:number;
+		};
+
+		// 可以赋值给一个对象字面量来构造一个Point. 赋值后 x y 的值再也不能改变了
+		let obj:Point = {x:23,y:43};
+
+		obj1.x = 23; // error,只读，不可以修改'
+
+
+		// 只读数组
+		let arr1:number[] = [1,2,3];
+		let arr2:ReadonlyArray<number> = arr1;
+
+		arr2.length = 100;  // 这三种情况都是错误的
+		arr2[0] = 12;
+		arr2.push('2');
+
+11. 联合类型,即变量可以声明多个类型
+
+	let test:string | number;
+	test = 12;
+	test = 'string';
+
+12. [proName:string]:any;
+
+	接口中可以添加任意个数的属性。
+
+	interface Person{
+		name:string;
+		[proName:string]:any;
+	};
+
+	let per:Person = {
+		name:'join',
+		age:12,
+		sex:'man'
+	};
+
+13. function add(...name:string[]):string{...}
+
+	...name:string[] 当你不确定到底有多少个参数时，可以用此表达式
+
+	使用： add('apple','join','pink');  写实参的时候还是字符串，尽管形参是string[]
+
+============  函数  ============
+
+1. lambda 表达式
+	
+	a) 箭头函数就是lambda 表达式  () => something;
+
+	b) lambda 总是有正确的上下文环境,因为编译成JS后,可以看到，lambda函数中与 var _this = this;
+
+	  	var fn5 = {	
+	  		age:12,
+	  		add:function(){
+	  			return function(){
+	  				this.age ++;
+	  				console.log(this.age);
+	  			};
+	  		};
+	  	};
+
+	  	console.log(fn5.add()()); // 空  因为this的上下文这时候并不是fn5
+
+	  	这时候可以改为 lambda 写法：
+
+	  	var fn5 = {
+
+	  		age:12,
+	  		add:function(){ 
+	  			return () => {   	// 上面的fn5的return是一个函数，这里我们用对象代替
+	  				this.age ++;
+	  				console.log(this.age);
+	  			};
+	  		};
+	  	};
+
+	  	console.log(fn5.add()()); //  13 
+
+	  	以为编译后JS为:
+
+	  	var fn5 = {
+	  		age:12,
+	  		add:function(){
+	  			var _this = this;  // 多了这一句，所以lambda写法总是能有正确的上下文环境
+	  			return {
+	  				_this.age++;
+	  				console.log(_this.age);
+	  			};
+	  		};
+	  	};
+
+	  	上面 fn5 换成更TS的写法：
+
+	  	class Fn5{
+
+	  		constructor(public age:number){};
+
+	  		add = () => {
+	  			this.age++;
+	  			console.log(this.age);
+	  		};
+	  	};
+
+	c) 没有参数时：var add = () => {console.log(x)};
+
+	d) 只有一个参数时,可省略()：var add = x => {console.log(x)};
+
+	e) 多个参数时：var add = (x,y,z) => {console.log(x)};
+
+	eg:
+		1. 
+			let arr:numebr[] = [1,2,3,4,5,6];
+			var result = arr.filter(el => el%2===0);
+
+			编译成JS： 	var result = arr.filter(function(el){
+							return el % 2 === 0;
+						});
+
+
+		2. lambda消除this指针问题
+
+			var person = {
+				name:'join',
+				age:23,
+				say:function(){
+					return function(){
+						return this.name;	// undefined
+					};
+				},
+				sayLambda:function(){
+					return () => return this.name;		// join
+				},
+				hi:function(){
+					return this.name;		// join
+				}
+			};	
+
+2. lambda 表达式中 return 的两种写法
+	
+	() => {something};  return { ... } 对象
+
+	() => something;	return ...		
+
+3. 函数的完整写法
+	
+	就是等式左右两边都会写全类型，左边总是 (x:number,y:number)=>number
+
+	let fn6 = (name:string,age:number) => string = function(name:string,age:number):string {
+		return name + age;
+	};
+
+	` 推断类型,如果在赋值语句的一边指定了类型但是另一边没预约类型的话，ts编译器会自动识别出类型
+
+	let add:(width:number, height:number) => number = function(x:number,y:number){
+		return x+y;
+	}
+
+	如上，赋值语句右边并没有写全返回值类型，但是可以推断出是number
+
+	注意：TS中每个函数参数都是必须的，我们定义几个，就需要几个实参。而在js中参数可传可不传，如不传，值为undefined。
+
+		  如果形参中有可选参数，必须放在必须参数的后面
+
+		  可选参数如不传，值为undefined
+
+	// () => xxx; 定义了函数参数的类型，所以具体实现时，参数的参数只要类型与定义的一样,命名可以不一样
+	// 如下面的, a,b 就跟 name,age 可以不一样
+
+	let fn7 = (name:string,age:number) => string = function(a:string,b:number):string {
+		return a + b;
+	};
+
+4. 函数简写
+
+	// 左边指定类型，右边没有指定
+	let fn3:(age:number, sex:string) => string = function(age,sex):string{
+		return '李磊';
+	};
+
+	// 右边指定类型，左边没有指定
+	let fn4 = function(width:number,height:number):number{
+		return width * height;
+	};
+
+5. 返回值类型是函数类型的必要部分，如果函数没有任何返回值，也必须指定返回值类型为void，而不能留空
+
+6. 实参个数 === 形参个数，否则报错，
+
+	如果不知道形参到底有多少个，可以以 ... 语法代替,注意...value 的类型是 string[],但是写实参时，还是正常写参数就行，fn9('Lilei',[12,'man','china']);
+	function fn9( name:string, ...value:string[] ):string{
+		return ...value.join('');
+	};
+
+	fn9('Lilei',12,'man','china');
+
+7. 参数默认值
+
+	1.	默认参数放在后面
+
+		function fn10(name:string,age=12){
+			return name+age;
+		};
+
+		fn10('诸葛',10); // 诸葛10
+		fn10('诸葛'); // 诸葛12
+
+	2. 默认参数放在前面
+
+		function add(x='hello', y:number, z?:string):void{
+			console.log(x,y,z);
+		};
+
+		add(undefined, 10);		// hello 10  undefined 
+		add('apple', 20, 'pink');	// apple  20  pink
+
+	总结：当用户没有传递默认参数或传递到的值为undefined时，他们叫做有默认初始值的参数
+		默认参数不一定要放在最后，但是如果放在了普通参数的前面，恰好我们不想给默认参数传递其他值的话，则必须传入undefined来获得默认值
+
+8. 函数形参和实参
+
+		function a(...value){
+			console.log(value); // [1,2,3,4]
+		};
+
+		a(1,2,3,4); 
+
+		...用来声明任意数量的形参，并且在方法内部打印时，可以得到一个数组，如果不用...即使声明多个实参，内部打印的时候依然只能得到相对数量的形参
+
+		function b(v1,v2){
+			console.log(v1,v2);  // 1,2
+			console.log(arguments); // 可以得到所有的实参，数组形式 [1,2,3]
+		};
+
+		b(1,2,3);
+
+
+============  类和接口  ============
+
+1. 接口和类的区别
+
+	接口中可以声明 属性，方法，函数，数组，但是只做声明，不做实现
+
+	但是类中声明并实现方法, 这叫 混合类型的接口
+
+
+		// 下面这个例子不太懂
+		interface Counter {
+		    (start: number): string;	// 函数
+		    interval: number;
+		    reset(): void;				// 方法
+		};
+
+		function getCounter(): Counter {
+		    let counter = <Counter>function (start: number) {
+		    	console.log(111);
+		    };
+		    counter.interval = 123;
+		    counter.reset = function () { 
+		    	console.log(22);
+		    };
+		    return counter;
+		};
+
+2.  implements
+	
+	` 该关键词用于类实现接口时使用
+
+	` 不同类之间可以有一些共有的特性，这时候就可以把特性提取成接口，用 implements 关键字来实现
+
+	` 是一个类实现接口的关键词，它用来实现接口中定义的抽象方法，实现一个接口，必须实现该接口中的所有方法
+
+		interface Clock{
+			curTime:Date;
+			setTime(d:Date);
+		};
+
+		class MyClock implements Clock{
+
+			curTime:Date;
+
+			constructor(h:number, m:number){};
+	 
+			setTime(d){ 	// 该方法必须实现，因为接口中定义，
+				this.curTime = d;
+				console.log(this.curTime);
+			};
+
+		};
+
+		let clock = new MyClock(12,23);
+		console.log(clock.setTime(new Date));
+
+
+		1. 基本例子
+
+			class Alarm{	// 接口中定义的属性、函数、方法等，在引用该接口时必须实现
+				alert();
+			};
+
+			class Door{
+
+			};
+
+			class SecurityDoor extends Door implements Alarm{	// SecurityDoor继承了Door并且引用了Alarm接口 
+				alert(){
+					console.log('SecurityDoor alert');
+				}
+			};
+
+			class Car implements Alarm{
+				alert(){
+					console.log('car alert');
+				}
+			};
+
+			let myCar = new Car();
+			let mySecurityDoor = new SecurityDoor();
+
+			myCar.alert();
+			mySecurityDoor.alert();
+
+		2. 一个类可以同时引用多个接口
+
+			interface Light{
+				lightOn();
+				lightOff();
+			};
+
+			class Camera implements Alarm,Light{
+				lightOn(){
+					console.log('camera lightOn');
+				}
+				lightOff(){
+					console.log('camera lightOff');
+				}
+				alert(){
+					console.log('camera alert');
+				}
+			};
+
+			let c = new Camera();
+			c.lightOn();
+			c.lightOff();
+			c.alert();
+
+3. abstract 修饰符
+
+	1. 抽象类不能直接实例化
+
+	2. 抽象类中的抽象方法，必须在子类中实现
+
+	3. 该关键词用于定义抽象类和抽象类中的抽象方法
+
+	4. 不同于interface , 抽象类可以包含成员的实现细节
+
+	abstract class Auto{
+		engine:string;
+
+		constructor(engine:string){
+			this.engine = engine;
+		};
+
+		abstract start();
+	};
+
+	class SUV extends Auto{
+		constructor(engine){
+			super(engine);
+		};
+
+		start(){
+			console.log(222);
+		};
+	};
+
+	let suv = new SUV('v5'); 
+	let suv = new Auto('v5'); // X,不可以直接实例化抽象类
+	console.log(suv.start());
+
+4. protected 修饰符
+
+	类中的构造函数也可以被标记成protected，
+
+	这意味着该构造函数只能子类实例化，不能直接被实例化
+
+	如下： Person就不能直接被实例化
+
+	class Person{
+		protected name:string;
+		protected constructor(name:string){
+			this.name = name;
+		};
+
+	};
+
+	class Man extends Person{
+		private department:string;
+		constructor(name:string,department:string){
+			super(name);
+			this.department = department;
+		};
+		say(){
+			return 'hello , im from china';
+		};
+	};
+
+	let join = new Man('join','devolpment');
+	console.log(join);
+
+	let mike = new Person('23','34'); // 不可以直接实例化，因为构造函数是protected
+
+5. 不能直接被实例化的类有两种：
+
+	1. 该类中的构造函数是protected
+
+	2. 该类是抽象类		abstract class Person
+
+6. 对象类型：Object
+	
+	两种创建方式
+
+	1.
+
+		let obj2:Object = {};
+		obj2.name:'ming';   // 这种是错的，不能用点记法赋值和查看属性,只能用[]法赋值
+
+		obj2['name'] = 'join';
+		obj2['age'] = 23;
+		obj2[333] = 23;
+
+	2.
+
+		interface Myobj{
+			x:number;
+			y:number;
+		};
+
+		let myObj = <Myobj>{};
+		myObj.x = 10;
+		myObj.y = 10;
+		console.log(myObj);	// {x:10, y:10}
+
+7. 类型断言 / 泛型 / 强制类型转换 ----- <>
+
+	尖括号表示法，有的称为 类型断言， 有的称为泛型， 有的称为强制类型转换
+
+	反正就是少写一个接口中定义的属性也不会报错，但是错写和多写是会报错的
+
+	interface Test4{
+		width:number;
+	};
+
+	interface Test5{
+		height:number;
+	};
+
+	interface Test6 extends Test4,Test5{	--- 接口扩展，即接口间的继承
+		color:string;
+	};
+
+	let circle:Test6 = {	--- 这种写法是普通的写法，不能少写，多写，错写
+		width:12,
+		height:23,
+		color:'red'
+	};
+	console.log(circle);
+
+	let rect = <Test6>{}; 	--- 这种写法,少写一个接口中定义的属性也不会报错,但是错写和多写是会报错的
+	rect.width  = 123;
+	rect.color  = 'blue';
+	console.log(rect);
+
+
+
+	接口表示函数，使用该接口时有两种用法：
+
+	interface Search{
+		(source:string, subString:string):boolean;
+	};
+
+	let mySearch:Search = function(src:string,subSrc:string):boolean{
+		return true;
+	};
+	
+	这种也叫类型断言，泛型，强制类型转换，<...>尖括号表示
+	let MyTest = <Search>function(src:string,subSrc:string):boolean{
+			
+8. 接口中创建一个构造函数，怎么应用该接口
+
+	创建一个带有构造签名的接口,即为接口定义构造函数
+
+	这时候，就不能使用implements 关键字了，因为接口中的构造函数是静态的(static)
+
+	而类仅能实现接口中的实例部分，所以正确的写法是，先创建一个类，
+
+	然后创建一个新变量，类型是接口类型，然后指向类，这时候再实例化这个变量
+
+	
+
+	interface Test1{
+		new (h:number, m:number);
+	};
+
+	// class Test2 implements Test1{
+	 
+	// }  错误的，因为Test2类只能实现接口中的实例部分，但是接口中的构造函数属于静态的，
+
+	class Test2{
+		curTime:Date;
+		constructor(h,m){};
+	};
+
+	let test3:Test1 = Test2;
+	let newTest = new test3(23,33);
+	console.log(newTest);
+
+9. 接口表示函数类型
+
+	interface Fun{
+		(v1:string,v2:number):boolean;
+	};
+
+	// 如果接口规定函数类型时，应用该接口时就必须是函数表达式的方式
+	let show:Fun = function(v1,v2){
+		return true;
+	};
+
+10. 接口表示数组
+
+	interface Arr1{
+		[index:number]:string;  // 表示该数组的元素必须是string类型
+	};
+
+	interface Arr2{
+		[index:number]:number;  // 表示该数组的元素必须是number类型
+	};
+
+	let arr1:Arr1 = ['a','f','b'];
+	let arr2:Arr2 = [2,3,4];
+
+11. 类
+
+	1. class 首字母大写{ ... }
+
+	2. 面向对象的三大特性：封装、继承和多态。
+
+		多态的意思是，子类可以重写父类的方法，比如Animal的run()方法，在Dog中重写，这样run()方法在不同的类中就有不用的功能,这就是多态。
+
+	3. super()
+
+		如果子类中包含constructor函数，就必须在该函数中调用super(),他会执行基类的constructor函数
+
+		super(name);	// 调用父类的属性
+		super.say();	// 调用父类的方法
+
+	4. 静态属性和方法  static
+
+		这些属性和方法只存在类本身上而不是类的实例上，在JS中原生表示：
+
+			function Animal(name){
+				this.name = name;
+			};
+
+			Animal.prototype.move = function(meters){
+				console.log(this.name + 'move ' + meters);
+			};
+
+			Animal.color = 'red'; // color就是静态方法,格式是构造函数+ 点属性或方法表示,再Animal的实例中不能获取color,因为它只存在Aniaml上
+
+	5. 成员属性和成员方法
+
+		指的就是可以被类的实例获取到的属性和方法。
+
+	6. 类中有constructor区别
+
+		没有constructor就没有this,那怎么实现赋值？可以直接实例化一个对象,然后就像正常对象赋值一样赋值。
+
+			class Employee{
+				fullName:string;
+			};
+
+			var employee = new Employee();
+
+			employee.fullName = 'join';
+
+		有constructor,可以用this赋值
+
+			class Employee{
+				fullName:string;
+
+				constructor(fullName:string){
+					this.fullName = fullName;
+				};
+			};
+
+			var employee = new Employee('join');
+
+
+
+			// 基类
+			class BaseClass{
+
+				name:string;
+				age:number;
+
+				contructor(name:string,age:number){
+					this.name = name;
+					this.age = age;
+				};
+
+				sayName(){
+					console.log('基类',this.name);
+				};
+			};
+
+			// 子类
+			class SubClass extends BaseClass{
+
+				job:string;
+
+				constructor(name:string,age:number,job:string){
+					super(name,age);
+					this.job = job;
+				};
+
+				sayName(){
+					console.log('重写父类方法',this.name);
+				};
+
+				findJob(){
+					console.log('subClass',this.job);
+				};
+			};
+
+			var sub = new SubClass('join',23,'student');
+			console.log(sub);
+			console.log(sub.sayName()); // 如果子类中没有重写父类的方法,也会原封不动的继承过来
+
+
+			class Animal{
+
+				name:string;
+
+				constructor(name){
+					this.name = name;
+				};
+
+				move(meters:number=0){
+					console.log(this.name + ' move ' + meters);
+				};
+			};
+
+			子类: 如果子类中没有重写父类的方法,表示直接继承该方法
+
+				class Dog extends Animal{
+
+					constructor(name){
+						super(name);
+					};
+
+				};
+
+				var dog = new Dog('大黄');
+				console.log(dog.move(123)); // 大黄 move 123
+				console.log(dog);
+
+
+			子类：在子类中super.method() 也表示继承父类该方法
+
+				class Dog extends Animal{
+
+					constructor(name){
+						super(name);
+					};
+
+					// 这段写与没写表达的意思都一样,都是直接继承父类move方法
+					move(meters){
+						super.move(meters);
+					};
+
+				};
+
+				var dog = new Dog('大黄');
+				console.log(dog.move(123)); // 大黄 move 123
+				console.log(dog);
+
+			子类：重写move()
+
+				class Dog extends Animal{
+
+					constructor(name){
+						super(name);
+					};
+
+					// 这段写与没写表达的意思都一样,都是直接继承父类move方法
+					move(meters){
+						console.log('super'+ meters);
+					};
+
+				};
+
+				var dog = new Dog('大黄');
+				console.log(dog.move(123)); // super 123
+				console.log(dog);
+
+	7. 类中定义的构造函数的参数属性
+	
+		a) 下列Fn1 先声明后赋值, Fn2 定义并初始化
+
+		b) 定义：通过给构造函数参数加访问修饰符的方式，实现定义并初始化一个成员，
+				 注意修饰符不能省略，即使是public
+
+			class Fn1{
+				age:number;
+				constructor(age:number){
+					this.age = age;
+				};
+			};
+
+			等于：
+
+			class Fn1{
+				constructor(public age:number){};
+			};
+
+	8. 类中方法的两种写法
+
+		a) say(){ ... } 编译成JS后，变成原型链上的公共方法
+
+			class Fn3{
+
+				constructor(public age:number){};
+
+				add(){
+					console.log(this.age);
+				};
+			};
+
+			编译成JS：
+
+			function Fn3(){
+				this.age = age;
+			};
+
+			Fn3.prototype.add = function(){
+				console.log(this.age);
+			};
+
+		b) say = () => something; 编译成JS后变成实例方法， this.say = funtion(){ ... };
+
+			class Fn4{
+				
+				constructor(public age:number){};
+
+				say = () => console.log(this.age);
+			};
+
+			编译成JS：
+
+			function Fn4(){
+				this.age = age;
+				this.say = function(){
+					console.log(this.age);
+				};
+			};
+
+12. TS中可用的循环：
+
+	1. for...in		用于循环key,  可循环数组和对象，不允许break
+
+	2. for...of		用于循环value, 只能循环数组类型,允许break,从编译的js来看，实则就是for循环，所以只能循环数组
+
+	3. forEach	    不允许break
+
+	4. every 和 some 	返回值是boolean
+
+13. 函数重载
+
+	实际上就是对形参的可能值的约束，以便在类型系统中实现提前对方法的静态检查
+
+	在静态语言中应用普遍
+
+	定义：用相同的方法名实现不同但类似的功能，即方法名相同，但参数类型、个数都不同，与返回值无关
+
+	function pickCard(x):any{
+
+		if(typeof x === 'object'){
+			return 2;
+		}
+
+		if(typeof x === 'number'){
+			return {suit:'diamonds',card:9};
+		}
+
+	};
+
+	pickCard( [{suit:'heards',card:3}] ); // 2, 返回数字
+	pickCard( 5 );	// 返回对象
+
+	通过以上例子可以看出，形参x的可能值有两种：对象 、 数字
+
+	并且通过不同类型的x返回不同值
+
+	这个类型系统中怎么表示，才可能通过静态检查发现存在的问题，这就是函数重载，就是对形参类型的可能值的约束
+
+	function pickCard( x:{suit:string, card:number}[] ):number;   这两个就是重载列表，
+	function pickCard( x:number ):{suit:string, card:number};	  这两个就是重载列表，
+	function pickCard( x ):any{									  这个是具体实现
+
+		if(typeof x === 'object'){
+			return 2;
+		}
+
+		if(typeof x === 'number'){
+			return {suit:'diamonds',card:9};
+		}
+
+	};
+	pickCard( [{suit:'heards',card:3}] ); // 2, 返回数字
+	pickCard( 5 );	// 返回对象
+
+
+	function add(x:number, y:number):number;
+	function add(x:string):string;
+	function add(x:any):any{
+		typeof x ==='number' ? console.log('number') :console.log('string');
+	};
+
+14. 模块 import export
+
+	导出(export):
+
+		1.导出声明，export 直接
+				a) 导出类
+				b) 导出接口
+				c) 导出变量
+
+
+				export const NUM = 12; 
+
+				export interface Test{
+					num:number;
+				};
+
+				export class Person{
+					run(meters:number){ ... }
+				};
+
+
+				import {NUM, Test, Person} from './default1';
+
+				console.log(num); // 12
+
+				let json = new Person();
+				json.run(23);
+
+		2.导出语句，如果需要对模块重命名可以用导出语句
+
+			export { Num }
+			export { Num as RenameNum }
+
+			class Person{
+				constructor(public name:string){};
+				say(word:string){
+					...
+				};
+			};
+
+			export { Person as RenamePerson };
+
+			import RenamePerson from 'default2'; 
+
+				因为重命名了，所以这里只能使用重命名后的名字
+
+		3.重新导出（或者是重新导出）
+
+		4.默认导出 (default关键字)
+
+			一个模块有且只有一个默认导出，可以是一个变量，匿名函数和类
+
+			export default 123;
+			import num from './num';
+
+			export default function(s:string){ return s; };
+			import name from './fn';
+			默认匿名导出使用：
+
+				let arr = ['apple','purple'];
+				arr.forEach( s => {
+					console.log( name(s) );
+				});
+
+			export default class Person{
+				run(meters:string){ return meters; };
+			};
+			import Person from './person';
+
+	导入(import):
+
+		1. 导入一个模块
+
+			import { Person } from './test';
+
+		2. 别名导入
+
+			import { Person as RenameRPerson } from './test';
+
+
+
+	使用模块包装进行扩展
+
+		我们可能经常需要去扩展一个模块的功能，推荐的方案是不要去改变原来的对象，而是
+
+		导出一个新的对象来提供新的功能，
+
+		// ModuleA.ts  		 				????????? 模块名称是否要大写
+		export class ModuleA{
+
+			constructor(){...};
+
+			say(){...};
+
+		};
+
+		// ModuleB.ts
+		import { ModuleA } from './ModuleA';
+
+		class ModuleB extends ModuleA {
+			constructor(){
+				super(..);
+			};
+
+			run(){...};
+		};
+
+		export { ModuleB as ModuleA };
+
+		// Test.ts
+		import { ModuleA } from './ModuleB';
+
+		let c = new ModuleA();
+
+15. 定义只读数组
+
+	let arr:ReadonlyArray<number> = [1,3,54];
+	arr[1] = 5; // 报错，因为只读，不能做修改
+
+16. iterator（遍历器）的概念
+	
+	JS原有的标识 "集合" 的数据结构。主要是数组（Array）和对象（Object）, ES6又添加了我Map和Set.
+	这样就有了四种数据集合，用户还可以组合使用他们，定义自己的数据结构，比如数组的成员是Map，Map的成员是对象。这样就需要一种统一的接口机制，来处理所有不同的数据结构。
+
+	遍历器（iterator）就是这样一种机制。它是一种接口，为各种不同的数据结构提供统一的访问机制。任何数据结构只要部署iterator接口，就可以完成便利操作。（即依次处理该数据结构的所有成员）。
+
+	它的作用有三个：
+
+		1. 是为各种数据接口提供一个统一的，简便的访问接口。
+		2. 是使得数据结构的成员能够按某种次序排列。
+		3. 是ES6创造以一种新的遍历命令for...of循环，该接口主要供for...of消费。
+
+17. 函数参数类型是对象时，写法如下
+
+	function add(num:{x:number; y:number;}){
+		return num.x+num.y;
+	};
+
+	形参num是对象类型，但是这个对象中却可以写分号！！！
+
+	interface Num{
+		x:number;
+		y:number;
+	};
+
+	function add(num:Num){
+		return num.x+num.y;
+	};
+
+	add({x:10,y:20});
+
+18. TS类型定义文件（*.d.ts）
+
+	类型定义文件用来帮助开发者在TS中使用已有的js工具包
+
+	Typings工具用来安装类型定义文件
+
+	https://github.com/typings/typings

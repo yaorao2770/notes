@@ -1,0 +1,371 @@
+bower 安装和使用（Twitter出品）
+
+一. 安装 Bower
+
+	Bower需要用到nodejs和git，须先安装nodejs和git。
+
+	1. node -v
+
+		v4.4.3
+
+	2. npm -v
+
+		2.15.2
+
+	3.git --version
+
+		git version 2.14.1.windows.1
+
+	4. npm install bower -g  （全局安装Bower）
+
+	5. bower -v
+		
+		1.8.2
+
+二. 初始化Bower环境（在项目根目录下进行）
+
+	bower init
+
+		(初始化的时候可能失败，出现如下提示：)
+
+		bower ENOINT        Register requires an interactive shell
+
+		Additional error details:
+		Note that you can manually force an interactive shell with --config.interactive
+
+		原因： windows下bower初始化不应该在git bash中进行,而应该在cmd打开的dos窗口下进行。
+
+
+	注意：bower.json中的 "main" 字段
+
+		其中一个作用是：用gulp的插件 wiredep 将bower库注入到index.html页面上时，就是根据遍历这个字段用于显示在index.html上
+
+三. 包的安装
+
+	bower install jquery --save   安装最新版本
+
+	bower install jquery 
+
+		Q: bower install可否只下载jquery文件,不要把整个源码目录下载过来呢?
+
+		A: 用gulp操作,将特定文件复制到文件夹，因为bower下载的是这些包的源代码 Git 库，里面还包含了demo那些文件   https://segmentfault.com/q/1010000000494228
+
+		Q：npm warn package.json @1.0.0 no repository field
+
+		A：package.json里缺少repository字段，也就是说缺少项目的仓库字段
+
+			{
+				"repository":{
+					"type":'git',
+					"url":"http://baidu.com"
+				}
+			}
+
+			但是作为测试项目或者练习用，只需要在 package.json 里面增加一个字段即可,意思是把项目声明为私有，如下：
+
+			{
+				"name":"demo",
+				...
+				"private":true,
+				...
+			}
+
+
+
+		curl／wget  工具大概是下载所需文件利器和模拟http请求之类的。可以具体了解下。
+
+		直接创建.bowerrc 文件，提示必须键入名称，我们可以通过命令：touch .bowerrc 来创建文件
+
+		.bowerrc是一个json格式的文件，
+
+			{  
+			  "directory" : "js/jslib",   // 自定义下载下来的包的安装目录，默认是安装在 bower_components 目录下，运行bower install jquery时，就会把jquery安装到js/jslib目录下。
+			  "json"      : "",  
+			  "endpoint"  : "",  
+			  "searchpath"  : "",  
+			  "shorthand_resolver" : ""  
+			}
+
+
+		bower作为一个js依赖管理工具，提供一种理想包管理方式，借助了npm的一些思想，为我们提供了一个舒服的开发环境。虽然现在看起来只是一个前端包管理工具，实际上其目标是commonJS规范的一部分，即最终给js提供一个类似于ruby，Python，java那样的标准类库，一切依赖都可以远程加载，使得项目不存在系统级的依赖，不同的应用程序也不会共享依赖，使得整个依赖树扁平易修改。
+
+
+		包管理工具，一般有以下的功能：
+
+			注册机制：每个包需要确定一个唯一的ID使得搜索和下载的时候能够正确匹配，所以包管理工具需要维护注册信息，可以依赖其他平台。
+
+			文件存储：确定文件存放的位置，下载的时候可以找到，当然这个地址在网络上是可访问的。
+
+			上传下载：这是工具的主要功能，能提高包使用的便利性。比如想用jquery，只需要install一下就可以了
+					  不用到处找下载。上传并不是必备的，根据文件存储的位置而定，但需要有一定的机制保障。
+
+			依赖分析：这也是包管理工具主要解决的问题之一，既然包之间是有联系的，那么下载的时候就需要处理他们之间的依赖。下载一个包的时候也需要下载一来的包。
+
+
+
+		bower info angular    			查看git上一共有多少版本
+
+		bower install angular			安装最新版本的包
+
+		bower install angular --save    同上，而且会把angular依赖记录到bower.json中
+
+		bower install angular#1.6.0   	指定安装某个版本（#指定）
+
+		bower uninstall angular#1.6.0  --save 	删除包，--save将指定的依赖从bower.json中移除。
+
+		bower update jquery 			升级已下载的库
+
+		bower lookup jquery 			查看jq的github库地址
+
+		bower home jquery 				直接打开jq的github库地址
+
+
+
+		{
+		  "name": "refactor",
+		  "private": true,
+		  "dependencies": {
+		    "jquery": "~1.11.1",
+		    "raphael": "1.3.x",
+		    "font-awesome": "~4.3.0",
+		    "foundation": "x"
+		  },
+		  "resolutions": {     		----- This will force bower to use that specific version of jQuery.
+		    "jquery": "~1.11.1"
+		  }
+		}
+		
+
+
+三. host文件
+
+	 C:\Windows\System32\drivers\etc文件夹下的hosts文件
+
+	 hosts文件的作用就是将一些常用的网址域名与其对应的IP地址建立一个关联'数据库',当前用户在浏览器总输入一个需要登录的网址时，系统会立即打开对应网页，如果没有找到，则系统再会将网址提交DNS域名解析服务器进行IP地址的解析。
+
+	 当出现一下问题时，可以将本机的hosts文件清空：
+
+	 1.  fatal:unable to access '...github.com/.../.git':Failed to connect to github.com port 443: Timed out
+
+	 	 ping github.com 可以ping通，但是还是出现443问题，
+
+	 2. 为了翻墙，曾经修改了 C:\Windows\System32\drivers\etc文件夹下的hosts文件。
+
+		将hosts文件保持原状，即清空保存后，问题解决了，能从github上git clone项目了
+
+
+四. bower.json
+
+	其中，dependencies 节点是最重要的节点，它包含的时对当前项目的依赖信息。该节点是一个对象，key是依赖包的名称（如：jquery）,value 是依赖包的版本或者Git URL
+
+
+五. 注册自己的 package 到bower官网,达到项目resource 依赖的复用
+	
+	Cite: http://blog.fens.me/nodejs-bower-intro/
+
+	可以将项目中可复用 source 文件定义成自己的包上传到官网上面，这样之后的项目可以直接search xx,install xx ，就将install到本项目了
+
+	1. 在 github 创建一个资源库：webapp-bower （仓库名可以随意命名）
+
+	2. 本地工程绑定该仓库
+
+		本地新建目录：webapp-bower
+
+		bower init ( windows下只能通过cmd初始化，在git bash下初始化会报错)
+
+			bower.json至少如下：
+
+			{
+			  "name": "nodejs-bower",   	--- bower search nodejs-bower 的名字
+			  "description": "bower for webApplication",
+			  "main": "" / [],			--- 可以是数组也可以是str,可选，入口文件，bower本身不适用，供第三方构建工具会使用
+			  "authors": [
+			    "cy"
+			  ],
+			  "license": "MIT",
+			  "homepage": "https://github.com/yaorao2770/nodejs-bower-1",  --- 绑定的git仓库
+			  "ignore": [
+			    "**/.*",
+			    "node_modules",
+			    "bower_components",
+			    "test",
+			    "tests"
+			  ],
+			  "dependencies": {
+			    "bootstrap": "https://github.com/twbs/bootstrap.git#3.3.7"	--- nodejs-bower 这个包中用到的包
+			  }
+			}
+
+		git init
+
+		git add .
+
+		git commit -m 'first commit'
+
+		git remote add origin https://github.com/yaorao2770/nodejs-bower-1
+
+		git push -u origin master
+
+			Branch master set up to track remote branch master from origin. 表示成功！
+
+		bowser register webapp-bower https://github.com/yaorao2770/nodejs-bower-1   
+
+			注意： 仓库名字后面不带 .git 后缀，否则成功不了
+
+			以下信息表示成功：
+
+				Package webapp-bower registered successfully!
+				All valid semver tags on https://github.com/yaorao2770/nodejs-bowe                                                        r-1 will be available as versions.
+				To publish a new version, just release a valid semver tag.
+
+				Run bower info nodejs-bower-520Sec to list the available versions.
+
+			搜索注册成功的package:
+
+				bower search webapp-bower
+
+					Search results:
+
+						nodejs-bower-520Sec https://github.com/yaorao2770/nodejs-bower-1.git
+
+
+			新项目使用该package:
+
+				bower init
+
+				bower search webapp-bower
+
+				bower install webapp-bower --save
+
+
+六. Unregister 删除提交到bower上的包
+
+	注意：这一步也需要在 cdm 上执行，git bash 中报错。
+
+	you can unregister packages with 'bower unregister'. You first need to authenticate with GitHub
+
+	with 'bower login' to confirm you are a contributor to the package repo.
+
+
+	bower login
+
+	? Username: yaorao2770
+	? Password:	qaz123*
+
+	bower unregister <package>
+
+
+七. 为什么 bower 下的包里会有一大堆看起来用不着的东西？
+
+	bower是基于git的包管理工具，它提供的包，其源头都是一个git库（多数在github上，但并非必须），这是为了利用git对这些包进行版本控制。然而，并不是任何一个git库都会被bower索引，能够通过bower下载的包，在其git库下都会有一个bower.json 文件，bower通过检索 bower.json 的内容来注册一个包极其依赖。
+
+	因此，我们在 Bower 上搜索到的可下载包，它们大部分都是这些包的源代码 Git 库，并且我们都知道 这些源代码通常都是没有编译／构建过的，所以你会看到一大堆“半成品”似的文件，这对于最终使用者来说的确显得多余。
+
+	然而上述信息也给了我们一个提示，（如果你有精力的话）你可以自行管理一个只包括发行版文件的对应 Git 库，你只需要把必要的文件摘出来，提供一个 bower.json 描述文件，然后托管在一个可访问到的 Git Server 上（比如 Github）即可。具体的注册方法可以参见 Bower 的文档。另外一个包管理工具（实际上是一种规范）Component 几乎就是这么做的
+
+
+八. npm 和 bower 的选择
+
+	https://github.com/angular/bower-angular-cookies
+
+	如，angular.cookies.js 这个文件，就有至少两种下载方式：
+
+		npm下载：
+
+			npm install angular-cookies
+
+			Use:
+
+				angular.module('myApp',[require('angular-cookies')]);
+
+		bower下载；
+
+			bower install angular-cookies
+
+			Use:
+
+				<script src="/bower_components/angular-cookies/angular-cookies.js"></script>
+				
+				angular.module('myApp',['ngCookies']);
+
+
+九. 项目clone到本地后,cd 到webapp目录下，运行 bower install进行三方文件初始化，如果报错 bower:commond not found. 说明本地环境没有安装bower。
+
+	a) 先全局安装bower
+
+		npm install bower -g  （全局安装Bower）
+
+		bower -v （出现版本号，安装成功）
+			
+			1.8.2
+
+ 	b) 初始化本地项目的bower引用
+
+ 		bower install 
+
+
+十. bower.json的作用
+
+	Cite: https://segmentfault.com/a/1190000008697197
+
+	有了该文件以后，就可以用bower install命令，一下子安装所有库。
+
+	该文件存放在库根目录下，它的作用是：
+
+	1）保存项目的库信息，供项目安装时使用。
+
+	2）向Bower.com提交你的库，该网站会读取bower.json，列入在线索引。
+
+		bower register <my-package-name> <git-endpoint>
+
+十一. 库的安装：
+
+	指定的网址可以是 GitHub网址，http网址，本地文件
+
+		bower install https://github.com/craftpip/jquery-confirm
+
+		bower install git://github.com/documentcloud/backbone.git
+
+		bower install ./some/path/relative/to/this/directory/backbone.js
+
+	注意，有时候直接bower search http://xxx 可能 no results.可以再试一下 bower info http://xxx
+
+
+十二. bower uninstall
+
+	该命令用于卸载指定的库,如：
+
+	bower uninstall jquery-ui
+
+	该库依赖jquery，下载时会连依赖的库一同下载，卸载时，也会一同卸载，除非有别的库依赖了jquery这个库。
+
+
+十三. overrides 字段
+
+    "overrides": {
+        "BOWER-PACKAGE": {
+            "main": {
+                "development": "file.js",
+                "production": "file.min.js"
+            }
+        }
+    }
+
+	或者：
+
+	"overrides": {
+	    "bootstrap-sass": {
+	      "main": [
+	        "assets/stylesheets/_bootstrap.scss",
+	        "assets/fonts/bootstrap/*",
+	        "assets/javascripts/bootstrap.js"
+	      ]
+	    },
+	    "jquery" :{
+	      "main":[
+	        "src/*.js"
+	      ]
+	    }
+	  }
+
+

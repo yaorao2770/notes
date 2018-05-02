@@ -1,0 +1,2175 @@
+
+	npm install -g @angular/cli
+
+	ng new first-app --routing		
+
+		--routing参数会生成 app-routing.module.ts 文件,并且会在 app.component.html 文件中自动生成 <router-outlet></router-outlet>
+
+	cd first-app
+
+	ng server --open
+
+	ng g component directive --spec=false	创建组件
+
+		ng g component sellerList 最后会生成 seller-list.component.xxx
+
+		会用中划线分开命名
+
+	ng g pipe filter --spec=false		filter.pipe.ts
+
+	ng g s logging --spec=false			logging.service.ts
+
+		注意,创建服务不会自动加入到app.module.ts中，要及时手动加入
+
+
+	ng init 在当前目录下初始化一个新的ng项目
+
+	ng g directive phoneValidator
+
+		指令和component差不多,区别是指令没有模板文件
+
+		@Directive({
+			selector:'[appPhoneValidator]'  // 表示指令作为一个属性来使用
+		})
+
+		@Component({
+			selector:'app-child',		// 作为标签来使用
+			templateUrl: './child.component.html',
+			styleUrls: ['./child.component.css']
+		})		
+
+
+	ng g module custom   用于生成特性模块
+
+=========== angular2 ===========
+
+app.module.ts
+
+declarations 数组只能注入 管道，组件和指令
+
+1. 注解（annotation）
+	
+	app.component.ts
+
+		import {Component} from '@angular/core';
+
+		@Component({
+			selector:'app-root',
+			templateUrl:'./app.component.html',
+			styleUrls:['./component.css']
+		});
+
+		export class AppComponent{
+			title = 'app works';
+		};
+
+	app.component.html
+
+		<h1>{{title}}</h1>
+
+	说明：在 app.component.ts 文件中声明类 AppComponent，在这个类上有一个注解 @Component，这个注解本身是有ng2框架提供的，在这个注解中有一些属性，这个注解的这些属性会告诉ng2框架怎么去处理AppComponent这个ts类。即在ng2框架中去实例化一个AppComponent这样一个类的时候，ng2框架去加载./app.component.html这个页面，和./component.css这个css文件
+
+	这就是注解，它用来告诉一个框架怎么处理程序中的元素(类，元素等)。
+
+
+2.  .spec.ts
+
+	Spec 文件，包含组件相关的测试用例
+
+3. ng generate component directive --spec=false
+	
+	创建不带测试文件的组件
+
+4. [(ngModel)]  双向数据绑定
+	
+	Error: Can't bind to 'ngModel' since it isn't a known property of 'input'.
+
+	在最开始使用这个特性的时候，需要在 app.module.ts 中引入
+
+	import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
+	@NgModule({
+	    imports: [
+	         FormsModule   
+	    ]
+	});
+
+
+5. @Input 配合自定义属性，父组件向子组件传递数据
+
+	app.component.ts（父组件）
+
+		export class AppComponent{
+			parentData = {
+				sex:'man',
+				address:'河南省鹤壁市'
+			};
+		};
+
+	app.component.html（父组件）
+
+		中引入子组件的选择器
+		自定义属性与@Input结合使用，其中 parentData是父组件中定义的数据，childData是子组件中要引入的数据变量
+
+
+		<app-home [childData]="parentData"></app-home>
+
+
+	home.component.ts（子组件）
+
+		import {Input} from '@angular/core';
+
+		export class HomeComponent{
+			@Input() childData;  // html模板中必须使用跟childData这个变量名称一样的变量
+		}
+
+	home.component.html（子组件）
+
+		地址：{{childData.address}}
+		性别：{{childData.sex}}
+
+
+6. @Output 配合自定义事件，子组件向父组件传递自定义事件
+	
+	first-app 项目下的app.component 与 counter.component 之间是一个完整的@Input和@Output 例子
+
+	Output 一般都是一个EventEmitter实例，使用实例的emit方法将参数emit到父组件中，触发父组件的yell事件，然后父组件监听到该事件的发生，执行对应的处理函数yell（）
+
+	EventEmitter用来触发自定义事件，它的应用场景是：子指令创建一个EventEmitter实例（@Output() onYell = new EventEmitter();并将其作为输出属性导出。子指令调用已创建的EventEmitter实例中的 emit(payload) 方法来触发一个事件（fireYellEvent(){ this.onYell.emit(index); }）父指令通过事件绑定 (eventName) (onYell)的方式监听该事件，并通过 $event 对象来获取 payload 对象。
+
+	app.component.html
+
+		<app-child (onYell)='yell($event)'></app-child> // 父指令通过事件绑定 (eventName) (onYell)的方式监听该事件，
+															并通过 $event 对象来获取 payload 对象。
+
+	app.component.ts
+
+		yell(index){
+			console.log('父组件事件',index);
+		}
+
+	child.component.html
+
+		<button *ngFor="let item of lists; let i=index;" (click)='fireYellEvent(i)'>
+			{{item.name}}
+		</button>
+
+	child.component.ts
+
+		import {Output, EventEmitter} from '@angualr/core';
+
+		export class ChildComponent{
+
+			@Output()  onYell = new EventEmitter();	// 子指令创建一个EventEmitter实例
+
+			fireYellEvent(index){
+				this.onYell.emit(index);	// 子指令调用已创建的EventEmitter实例中的
+												emit(payload) 方法来触发一个事件
+			}
+		};
+
+
+	总结：@Input和@Output用来处理组件数据的流入流出
+
+
+7. ng-content
+
+	该指令用于内容映射，即在组件中嵌入模板代码，方便定制可复用的组件。
+
+8. ngOnChanges()
+	
+	参考 first-app 中 example3 组件
+
+	ng1.x 中，用$scope.$watch监听数据变化
+
+	ng2.x 中，用ngOnChanges钩子，需要注意的是，当且仅当组件输入数据变化时被调用， "输入数据"指的是通过 @Input 装饰器显示指定的那些数据。如果 @ViewChildren,@ContentChildren的结果集增加、删除了数据，ngOnChanges是不会被调用的。
+
+9. 双向绑定是有两个单向绑定组成的：
+
+	模型 -> 视图数据绑定
+
+	视图 -> 模型事件绑定
+
+	ng2中 [] 实现了模型到视图的数据绑定， ()实现了视图到模型的事件绑定
+
+	两个结合在一起， [()] 就实现了我双向绑定。也被称为 banana in the box
+
+
+10. 路由
+	
+	1. 模板跳转
+		<a [routerLink]="['/']">主页</a>
+		<a [routerLink]="['directive']">关于</a>
+
+	2. 模板占位符
+		<router-outlet></router-outlet>
+
+	3. app.routes.ts 以及 路由参数
+
+		import {DirectiveComponent} from './directive/directive.component';
+		import {HomeComponent} from './home/home.component';
+		import {Routes, RouterModule} from '@angular/router';
+		import {ModuleWithProviders} from '@angular/core';
+
+		const appRoutes:Routes = [
+			{path:'directive/:itemId', component:DirectiveComponent},	// 注意，component的value值不是string，不要带引号
+			{path:'', component:HomeComponent},	// 为空表示默认路径,没有任何路由时会访问这里
+			{path: '**', component: PageNotFoundComponent }	// 匹配不到的路径,都会跳转到这里
+
+		];
+
+		export const routing:ModuleWithProviders = RouterModule.forRoot(appRoutes);
+
+
+		路由参数获取：
+
+		directive.component.ts
+
+			import { ActivatedRoute } from '@angular/router';
+			
+			export class DirectiveComponent{
+				stateParams:any;
+				constructor(private route:ActivatedRoute){
+					this.stateParams = route.snapshot.params['itemId'];
+				}
+			};
+
+	4. app.module.ts
+
+		import {routing} from './app.routers';
+
+		@NgModule({
+		  imports: [
+		    routing
+		  ]
+		})
+
+	5. class中使用方法进行路由跳转，类似于 $state.go('stock',{id:2})
+
+		<input type="button" value="股票详情" (click)='toStockDetail()'>
+
+		import { ActivatedRoute, Params, Router } from '@angular/router';
+
+		export class AppComponent {
+
+			constructor(
+		  		private rout:ActivatedRoute,
+		  		private router: Router) { }
+
+			toStockDetail(){
+				this.router.navigate(['stock', 2]);
+
+				this.router.navigateByUrl(url);
+
+				this.router.navigate([{ outlets: { aux: 'consult' }}]); // 辅助路由
+			}
+
+		}
+
+	6. 路由传递参数的三种方式
+
+		1) 在查询参数中传递数据
+
+			{path:'stock'}
+
+			<a [routerLink]="['/stock']" [queryParams]="{id:1}">股票</a>
+
+			constructor(private rout:ActivatedRoute){
+				this.stateParams = rout.snapshot.queryParams['id'];
+			}
+
+			注意：最后url呈现为： http://localhost:4202/stock?id=1
+
+		2) 在路由路径中传递数据
+
+			{path:'stock/:id'}
+
+			<a [routerLink]="['/stock/12']">股票</a>
+			或者
+			<a [routerLink]="['/stock',12]">股票</a> 
+
+
+			constructor(private rout:ActivatedRoute){
+				this.stateParams = this.rout.snapshot.params['id'];
+			}
+
+			注意：最后url呈现为： http://localhost:4202/stock/12
+
+		3) 在路由配置中传递参数
+
+			{
+				path:'product',
+				compoennt:ProcutComponent,
+				data:[{isProd:true}]
+			}
+
+			===> 
+
+			constructor(private rout:ActivatedRoute){
+				this.stateParams = rout.snapshot.data[0]['id'];
+			}
+
+			注意：最后url呈现为： http://localhost:4202/stock  不会在url上显示参数
+
+	7. 参数订阅 和 参数快照
+
+		主页      股票详情（a）     股票详情（button）
+
+		上面三个标签，其中股票详情（a）  和 股票详情（button）都是使用的同一component
+
+		button上传递一个路由参数 2， a上传递一个路由参数 12，
+
+		页面上的展示该路由参数，从button直接点击到a时，路由参数并不会实时改变，
+
+		这时候需要用到参数订阅的方式
+
+		ngOnInit() {	
+
+			// 参数快照，只会初始化一次，
+			1. this.stateParams = this.rout.snapshot.queryParams['id'];
+			
+
+			// 参数订阅,速度没有方式1快
+			2. this.rout.params.subscribe(
+				(params: Params) => {
+					this.stateParams = params['id'];
+				}
+			);
+	  	}
+
+	8. 子路由
+
+		注意，子路由在html模板中写是  ./xxx 的格式
+
+		app-routing.module.ts
+
+			{
+				path:'stock/:id',
+				component:StockComponent,
+				children:[
+					{path:'', component:BuyerListComponent},
+					{path:'seller/:id', component:SellerListComponent}
+				]
+			}
+
+		stock.conponent.html
+
+			<h1>这里是股票详情页</h1>
+			<h1>路由参数：{{stateParams}}</h1>
+
+			<hr>
+			<h2>这里是股票的子路由区域：</h2>
+			<a [routerLink]="['./']">买家列表</a>	
+			<a [routerLink]="['./seller', 100]">卖家列表</a>
+
+			<router-outlet></router-outlet> // 子路由模板
+
+	9. 辅助路由
+
+		辅助路由参数是一个对象，对象中有outlets属性，该属性值也是一个对象,
+
+		该对象的key是辅助路由插座上的name，value是需要现实的组件路径
+
+		primary 属性表示当开始点击辅助路由的时候，不管你当前位于哪个路由上面，都必须跳转到home路由上
+
+		<a [routerLink]="[{outlets: {primary: 'home', aux: 'consult'}}]">开始咨询</a>
+		<a [routerLink]="[{outlets: {aux: null}}]">结束咨询</a>
+
+		<router-outlet name='aux'></router-outlet>
+
+		{path:'consult', component:ConsultComponent, outlet:'aux'},	// aux是插座的 name值
+
+	10. 路由守卫
+
+		注意：1. 要注入到 app.module.ts providers提供器中去
+
+				 providers: [PermissionGuard,StockResolve,FocusGuard]
+
+			  2. 这三种都是使用在路由中的
+
+			  	{
+					path:'stock/:id', 
+					component:StockComponent,
+					children:[
+						{path:'', component:BuyerListComponent},
+						{path:'seller/:id', component:SellerListComponent}
+					],
+					canActivate: [PermissionGuard], // 只有PermissionGuard为true才可以进入路由
+					resolve:{ stateParams: StockResolve	}	// 预加载stateParams的数据
+				},
+
+		CanActivate 处理导航到某路由的情况
+
+		CanDeactivate 处理从当前路由离开的情况
+
+			因为处理的是离开的情况，所以要指定离开哪个组件,即 CanDeactivate<StockComponent>
+
+			export class FocusGuard implements CanDeactivate<StockComponent> {
+
+				canDeactivate(component: StockComponent){
+					if(component.isFocus()){
+						return true;
+					}else{
+						return window.confirm('不关注就离开么?这个股票赚钱哦~');
+					}
+				}
+
+			};
+
+		Resolve 在路由激活之前获取路由数据,在进入到该component之前就已经获取到数据了
+
+			export class StockComponent implements OnInit {
+
+			  	stateParams:Stock; // 这个数据使用Resolve预加载
+
+			  	private focus:boolean = false;
+
+				constructor(private rout:ActivatedRoute){}
+
+			  	ngOnInit() {	
+					// resolve守卫  this.rout.data.subscribe是固定的
+					this.rout.data.subscribe(	
+						(data: {stateParams: Stock}) => {
+							this.stateParams = data.stateParams;
+						}
+					);
+			  	}
+
+			}
+
+			export class Stock{
+				constructor(public id:number, public name:string){}
+			};
+
+	11. router事件获取当前的路由url  (NavigationEnd)
+
+		import { Component, OnInit } from '@angular/core';
+		import { Router, NavigationCancel, NavigationEnd } from '@angular/router';
+		import 'rxjs/add/operator/filter';
+
+		export class ContentComponent implements OnInit {
+
+			pageTitle	= '';
+			pageDesc	= '';
+
+		  	constructor(public router:Router) {
+		  		router.events
+		  			.filter(event => event instanceof NavigationEnd)
+		  			.subscribe(
+		  				(event:NavigationEnd) => {
+		  					if(event.url == '/dashboard'){
+		  						this.pageTitle = '首页';
+								this.pageDesc = '';
+		  					}else if(event.url == '/stock'){
+		  						this.pageTitle = '股票管理';
+								this.pageDesc = '进行股票基本信息增删改查';
+		  					}
+		  				}
+		  			)
+		  	}
+		}
+
+11. pipe 管道
+
+	内置管道: uppercase  lowercase  slice
+
+	可以链式管道
+
+12. includes(params, index)
+
+	ES6新增数组方法，表示某个数组是否包含给定的值
+
+	params,必选，表示待检查的给定值
+
+	index,可选，表示搜索的起始位置，默认为0，负数表示倒数的位置
+
+	return boolean；返回值是布尔值
+
+	与 indexOf的区别，indexOf进行了运算符的强比对，会导致对NaN的误判
+
+
+	var arr = [1,23,4,5,NaN];
+	console.log(arr.includes(1));	// true
+	console.log(arr.includes(NaN));	// true
+	console.log(arr.indexOf(NaN));	// -1
+	console.log(arr.indexOf(1));	// 0
+
+13. 服务
+	
+	注意：ng g s logging --spec=false
+
+		  使用该方式创建的服务，必须手动在 app.module.ts 中import该服务
+
+		  import { LoggingService } from './logging.service';
+
+		  @NgModule({	
+		  		providers:[LoggingService]		// 注意，服务注入到providers数组中
+		  });	
+
+		  component应注入到 declarations 数组中
+
+		  框架内置的应该注入到 imports 数组中
+
+	在component中使用服务：
+
+	1. import 	import { HeroService } from './hero.service';
+
+	2. 注入组件		constructor(private heroService: HeroService) { }
+
+	这样当创建一个组件的时候，providers数组就告知angular要创建一个服务实例，这样就可以使用服务中的成员了
+
+	4. 使用服务		var result = this.heroService.log();  console.log(result);
+
+14. http模块
+	
+	http请求是在调用 subscribe 方法时才发送出去的，并不是在调用get/post方法时发送的
+
+	app.module.ts
+
+		import { HttpModule } from '@angular/http';
+
+		@NgModule({
+			imports: [
+				HttpModule
+	  		]
+		})
+
+	datas.service.ts
+
+		import { Http } from '@angular/http';
+		import { Observable } from 'rxjs';
+		import 'rxjs/Rx';
+
+		export class DatasService({
+			constructor(private http:Http){
+
+			}
+
+			// 1. 不要忘了 return ,否则该服务的实例不能使用 subscribe() 方法
+			// 2. 引用本地的json文件,要放在 assets 目录下,否则401
+			fetchData(){
+				return this.http.get('../assets/person.json')
+							.map( res => res.json())
+			}
+		});
+
+	xxx.component.ts
+
+		import { DatasService } form './datas.service';
+
+		export class xxxComponent{
+
+			person = [];
+
+			constructor(private datasService:DatasService)	{}
+
+			ngOnInit(){
+				this.datasService.fetchData..subscribe(
+		        	response => this.person = response
+		      	);
+			}
+		}
+
+	a) http转发，即代理http请求
+
+		在根目录下新建 proxy.conf.json
+
+			{
+				"/api":{								// 所有的请求path都要加上/api前缀
+					"target":"http://localhost:8080",
+					"secure": false,
+					"changeOrigin": true
+				}
+			}
+
+		修改package.json
+
+			"scripts": {
+		    	"start": "ng serve --proxy-config proxy.conf.json",
+		  	}
+
+		运行 npm run start （ ng serve --port 4201 --proxy-config proxy.conf.json ）
+
+
+		ngOnInit() {
+	  		this.http.get('/api/stock')
+	  				.map( res => res.json())
+	  				.subscribe(
+	  					data => this.stocks = data
+	  				)
+	  	}
+
+	  	以上例子中，浏览器中发出的http请求url是： http:localhost:4200/api/stock
+
+	  	做了http代理后，实际的请求url是： http:localhost:8080/api/stock
+
+	  	但是在浏览器中看到的还是4200端口的请求url，8080的服务器上存放的是数据
+
+
+15. form表单
+
+	app.module.ts
+
+		import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
+		@NgModule({
+			imports:[
+				FormsModule
+			]
+		});
+
+16. 导入 CDN css文件
+
+	src/app/styles.css
+
+		@import "~https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css";
+
+17. 接口或者泛型做类型约束
+	
+	1. 类做类型：
+
+		class StockManageComponent implements OnInit{
+
+			private stocks:Array<Stock>;	// 类型是Stock类
+
+			constructor(){}
+
+			ngOnInit(){
+
+				// 数组元素是Stock实例
+				this.stocks = [
+					new Stock(1, '第一只股票', 1.99, 3.5, '这是第一只股票，是在demo中创建的', ['IT','CSS']),
+			  		new Stock(2, '第一只股票', 1.99, 3.5, '这是第一只股票，是在demo中创建的', ['IT','CSS']),
+			  		new Stock(3, '第一只股票', 1.99, 3.5, '这是第一只股票，是在demo中创建的', ['IT','CSS']),
+			  		new Stock(4, '第一只股票', 1.99, 3.5, '这是第一只股票，是在demo中创建的', ['IT','CSS']),
+			  		new Stock(5, '第一只股票', 1.99, 3.5, '这是第一只股票，是在demo中创建的', ['IT','CSS'])
+				];
+				
+			}
+
+		};
+
+		class Stock{
+			constructor(
+				public id:number,
+				public name:string,
+				public price:number,
+				public rating:number,
+				public desc:string,
+				public categories:string[]
+			)
+		}
+
+	2. 接口做类型:
+
+		接口做类型有两种：数组或对象
+
+		person = <Question>{};	// 类型是Question并且是对象类型
+		person = <Stock>[];	// 类型是Stock并且是数组类型
+
+		stock.ts （接口文件）
+
+			export interface Stock{
+				id:number;
+				name:string;
+				price:number;
+				rating:number;
+				desc:string;
+				categories:string[];
+			}
+
+
+		stock-manage.component.ts
+
+			import { Stock } from '../../interface/stock';
+
+			class StockManageComponent implements OnInit{
+
+				private stocks:Array<Stock>;	// 类型是Stock接口
+				// private stocks:Stock[];	
+
+				constructor(){}
+
+				ngOnInit(){
+
+					this.stocks = [
+			  			{id:1, name:'第一只股票', price:1.23, rating:4, desc:'优秀的股票', categories:['IT','金融']},
+			  			{id:2, name:'第一只股票', price:1.23, rating:4, desc:'优秀的股票', categories:['IT','金融']},
+			  			{id:3, name:'第一只股票', price:1.23, rating:4, desc:'优秀的股票', categories:['IT','金融']},
+			  			{id:4, name:'第一只股票', price:1.23, rating:4, desc:'优秀的股票', categories:['IT','金融']},
+			  			{id:5, name:'第一只股票', price:1.23, rating:4, desc:'优秀的股票', categories:['IT','金融']}
+			  		];
+					
+				}
+
+			};
+
+
+18. 样式绑定
+	
+	<p [ngClass]="{'red':isShow===true, 'blue':isShow===false}" (click)='testStyleBind()' >显示红色还是蓝色</p>
+
+19. 组件抽离
+
+	<tr *ngFor="let item of stocks; let i=index;">
+      <td>{{i+1}}</td>
+      <td>{{item.name}}</td>
+      <td>{{item.price}}</td>
+
+      // 可以看到这里有一个 app=stars 组件，并且传递给了子组件数据
+      <td><app-stars [rating]='item.rating'></app-stars></td>  	
+
+      <td>
+        <a class='btn btn-xs btn-warning'> <i class="glyphicon glyphicon-pencil"></i>修改</a>
+        <a class='btn btn-xs btn-danger'> <i class="glyphicon glyphicon-remove"></i>删除</a>
+      </td>
+    </tr>
+
+    类中可以这样写：
+
+    @Input()
+    rating:number = 0;			// Input装饰器紧跟在下面的属性上
+
+20. 属性绑定和插值表达式
+
+	<img [src]='imgUrl'>  ====  <img src='{{imgUrl}}'>
+
+	css类绑定
+
+		<div [ngClass]="{aaa:isA, bbb:isB}"> ngClass的值是一个对象,可以管理多个对象
+
+		<div [class.red]="isRed">
+
+	样式绑定
+
+		<div [style.color]="isRed ? 'red' : 'green' ">
+
+		<div [style.font-size.px]="isRed ? 'red' : 'green' ">  (带单位的css)
+
+		<div [ngStyle]="{'font-style':this.canSave ? 'italic' : 'normal'}">
+
+	html属性绑定
+
+		<table>
+			<tr>
+				<td [attr.colspan]='size'></td>	正确
+				<td colspan='{{2}}'></td>	X,报错
+			</tr>
+		</table>
+
+		size:number = 2;
+
+
+		<div class="red fff" [class.size]='isBig'>慕课网</div>
+
+		isBig:boolean = false;
+
+		constructor(){
+		  	setTimeout(() => {
+			  	this.isBig = true;
+			  },3000);
+		}
+
+21. 响应式编程
+
+	就是异步数据流编程
+
+	响应式编程就是观察者模式的一个实现
+
+	rxjs 是js的响应式编程的包
+
+	var subscription = Observable.from([1,2,3,4])
+								.filter( (e) => e%2 == 0)
+								.map( (e) => e*e )
+								.subscribe(					
+									e => console.log(e),
+									error => console.log(error),	// 处理流中的异常
+									() => console.log('结束啦')		// 流结束时被调用
+								);
+
+								
+	可观察对象Obsevable（流），表示一组值或者事件的集合。
+		例子中[1,2,3,4]就是一个可观察对象
+
+		事件组成的可观察对象：
+			var button = document.querySelector('button')							;
+			Objservable.fromEvent(button,'click');
+
+	观察者Observer，一个回调函数集合，他知道怎样去监听被Observable发送的值
+		上面例子中subscribe方法中的三个回调函数的集合组成了观察者
+
+		.subscribe(					
+			e => console.log(e),
+			error => console.log(error),
+			() => console.log('结束啦')
+		);			
+
+	当一个可观察对象被订阅后，就会返回一个Subscription对象，主要用于取消注册
+
+		subscription。unsubscribe();
+
+	操作符Operators,纯粹的函数，使开发者可以以函数编程的方式处理集合
+
+		filter、map都是操作符，处理流[1,2,3,4]中的数据，
+
+
+
+22. RxJS
+	
+	是基于观察者模式和第五代其模式以函数式编程思维来实现的。
+
+	其中有两个基本概念： Observables 与 Observer
+
+		Observables作为被观察者，是一个值或事件的流集合
+
+		Observer作为观察者，根据Observables进行处理
+
+
+		Observables 与 Observer 之间的订阅发布关系（观察者模式）如下：
+
+			订阅：Observer通过Observables提供的subscribe()方法订阅Observable
+
+			发布：Observable通过回调next方法向Observer发布事件
+
+23. 模板本地变量
+
+	帮助你方便的获取一个html元素的引用		
+
+	用#声明
+
+	<input #myField type='text' (keyup)='onKey(myField.value)'>
+
+	onKey(value:string){
+		console.log(value);
+	}
+
+	不用模板本地变量，则需要下面写法
+
+	<input type='text' (keyup)='onKey($event)'>
+
+	onKey(event){
+		console.log(event.target.value);
+	}
+
+24. 响应式表单
+
+	<input type="text" [formControl]='searchInput'>
+
+	import { Observable } from 'rxjs';
+	import { FormControl } from '@angular/forms';
+	import 'rxjs/Rx';
+
+	class中：
+
+		searchInput:FormControl = new FormControl();
+
+		constructor(){
+			this.searchInput.valueChanges
+				.debounceTime(500)
+				.subscribe(
+					searchText => this.getDetail(searchText)
+				)
+		}
+
+		getDetail(value:string){
+			console.log(getDetail);
+		}
+
+25. build_in pipe
+
+	{{pi | number:'2.2-3'}}  03.14
+
+	2.2-2 其中2-2表示，最少保留的小数个数以及最多保留的个数
+
+26. 组件间通讯
+
+	有父子关系的组件，用输入输出属性通信
+
+	没有父子关系的组件，用中间人模式传递数据
+
+27. {{stockInfo?.name}}
+
+	<p>购买的股票是：{{stockInfo?.name}}</p>
+
+	@Input()
+	stockInfo:Stock;
+
+	页面渲染的时候，stockInfo 可能还没有传递过来，这时候页面报错， set name for undefined
+
+	这时候用这个语法就可以避免报错
+
+28. ngDoCheck 钩子
+
+	可以实现对对象的深层次监听
+
+	但是要小心，即使在input框间来回切换都会触发该钩子，所以要尽可能精确的设置条件来使用
+
+		oldStockName:string;
+
+		@Input()
+		stock:{name:string};
+
+		ngDoCheck() {	
+			if(this.stock.name !== this.oldStockName){
+				console.log(`${this.stock.name}`);
+				this.oldStockName = this.stock.name;
+			}
+	 	}
+
+29. 父组件调用子组件的方法
+
+	1. @ViewChild, 是属性装饰器，配合模板本地变量使用	 
+
+		父组件中：
+
+			<app-child #child1></app-child>
+			<app-child #child2></app-child>
+
+			@ViewChild('child1')
+			test:ChildComponent;
+
+			ngOnInit(): void{
+				this.test.greeting('tom');
+			}
+
+
+		child.component.ts
+
+			greeting(name:string){
+				console.log(`hello ${name}`);
+			}
+
+
+	2. 直接在模板中调用
+
+		<app-child #child1></app-child>
+		<app-child #child2></app-child>
+		<button (click)='child2.greeting("merry")'></button>
+
+30. ng-content 指令
+
+	用于把父组件的内容投影到子组件上
+
+	应用场景：轮播图，上拉刷新，下拉加载等，图片等可以根据需要更换，但是轮播图的实现逻辑是不变的
+
+	app.component.html
+
+		<app-child>		
+			<div class='aa'>我是红框内的内容</div>
+			<div class='bb'>我是蓝框内的内容</div>
+		</app-child>
+
+	child.component.html
+
+		<div style="border:2px solid red">
+			<ng-content select='.aa'></ng-content>
+		</div>
+
+		<div style="border:2px solid blue">
+			<ng-content select='.bb'></ng-content>
+		</div>
+
+31. ngOnDestroy
+
+	路由切换时会触发这个钩子		
+
+32. ?.prop 安全导航操作符，告诉ng prop的值可能不存在
+
+33. 表单
+
+	1. 模板表单 （Template-Driven Forms）
+	2. 响应式表单 （Model-Driven Forms）
+
+		使用该表单有两步: ① 创建一个底层数据模型 ② 使用特定的指令将模板的html代码与数据模型绑定
+
+		 @angular/forms 提供三个类进行创建底层数据模型: FormControl FormGroup FormArray
+
+	a) novalidate 添加到form元素上,表示不适用浏览器默认的表单校验机制
+
+	b) FormControl 它是一个为单个表单控件提供支持的类，可用于跟踪控件的值和验证状态
+
+		name:FormControl = new FormControl('', [Validators.required, Validators.minLength(2)]) 
+		FormControl接受三个参数:
+			第一个是该字段的默认值
+			第二个是同步校验器，使用数组声明多种验证规则，若只包含一种验证规则，直接声明就好
+			第三个是异步校验器
+
+		ngOnInit(){
+			this.myControl = new FormControl('username');
+		}
+
+	c) FormGroup 包含一组 FormControl 实例，可用于跟踪FormControl组的值和验证状态
+
+		myForm:FormGroup = new FormGroup({});
+
+		· 单层FormGroup
+
+			ngOnInit(){
+				this.myGroup = new FormsGroup({
+					name: new FormControl('join'),	  	// join是name字段的初始值
+					phone: new FormControl('15039217672')
+				});
+			}
+
+		· 嵌套的FormGroup集合
+
+			import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
+
+			interface User {
+				name: string;
+				account: {				// account属性是一个对象
+					email: string;
+					confirm: stirng;
+				}
+			}
+
+			userGroup: FormGroup;
+
+			constructor(private fb:FormBuilder){}
+
+			ngOnInit(){
+
+				// 1. 普通的创建FormGroup方式
+
+				this.userGroup = new FormGroup({
+					name: new FormControl('', [Validators.required, Validators.minLength(6)]),
+					account: new FormGroup({
+						email: new FormControl('', Validators.required),
+						confirm: new FormControl('', Validators.required)
+					})
+				});
+
+				// 2. 使用FormBuilder创建FormGroup
+
+				this.userGroup = this.fb.group({
+					name: ['', [Validators.required, Validators.minLength(6)],
+					account: this.fb.group({
+						email: ['', Validators.required],
+						confirm: ['', Validators.required]
+					})
+				});
+			}
+
+			<form novalidate [formGroup]='userGroup'>
+				Name: <input type='text' formControlName='name'>
+
+				表单验证1：{{ userGroup.controls.name?.errors | json }}
+				表单验证2（FormGroup提供的API）：{{ userGroup.get('name').errors | json }}
+
+				<div formGroupName='account'>
+					email: <input type='email' formControlName='email'>
+					confirm: <input type='email' formControlName='confirm'>
+				</div>
+				<button [disabled]="userGroup.invalid">提交</button>
+			</form>
+
+	d) FormArray 与FormGroup类似，也是一些控件的集合,区别是该类表示的是可增长的字段集合,FormGroup是固定字段的集合
+	 应用场景：添加多个email字段，多个电话字段等，该字段一般与 *ngFor配合使用
+
+	 	private emails:FormArray = new FormArray([
+	 		new FormControl(),
+	 		new FormControl(),
+	 		new FormControl()
+	 	]);
+
+	 	<form novalidate [formGroup]='formModel'>
+		 	<ul formArrayName='emails'>
+		 		<li *ngFor='let item of this.formModel.get("emails").controls; let i=index;'>
+		 			<input type='email' [formControlName]='i'>
+		 		</li>
+		 	</ul>
+		 	<button (click)='addEmial()'>增加邮箱</button>
+	 	</form>
+
+	e) b步骤和c步骤介绍了如何创建FormControl和FormGroup的实例，下面介绍如何在模板中使用
+
+		<form novalidate [formGroup]='myGroup'>
+			Name: <input type='text' formControlName='name'>
+			Phone: <input type='number' formControlName='phone'>
+		</form>
+
+	f) 模板表单
+
+		<form></form> 等同于 <form ngForm></form>
+
+		` ngForm 代表了整个form表单，默认ng会自动添加到form标签上
+
+		  创建了ngForm后，ng会隐式创建一个FormGroup类的实例，然后ngForm会寻找其子元素中标有ngModel的标签的值《
+
+		  并添加在FormGroup中。然后页面上即可通过ngForm这个对象访问到表单数据，ngForm可以使用模板本地变量引用,
+
+		  所以可以使用 (ngSubmit) = "xxx(#ngForm)"事件进行传递到控制器
+
+		` ngNoForm 如果不想被ng接受表单，可以添加该指令
+
+		` ngModel 该指令表示了表单内的一个控件，添加该指令后，ng会隐式创建一个FormControl类用于存储其值
+
+		  必须添加name属性,因为ngModel标志的控件的值会被添加到FormGroup中，而FormGroup的参数是一个对象,
+
+		  	userGroup: FormGroup;
+
+		  	onInit(){
+		  		this.userGroup = new FormGroup({
+		  			username: new FormControl('')
+		  		});
+		  	}
+
+		  	上面的username就相当于模板表单中的 name='username'
+
+			<input type='text' ngModel name='username'>
+
+		` ngModelGroup 表示多个ngModel的集合
+
+			<div ngModelGroup>
+				username: <input type='text' ngModel name='username'>
+				email: <input type='email' ngModel name='email'>
+			<div>
+
+	h) FormBulder
+
+		private fb: FormBulder = new FormBulder();
+
+		等于
+
+		constructor( private fn: FormBulder){
+
+			this.myForm = this.fb.group({
+		  		username:[''],
+		  		emails: this.fb.array([
+		  			['']
+		  		]),
+		  		account: this.fb.group({
+		  			phone: [''],
+		  			address: ['']
+		  		})
+		  	});
+
+		}
+
+	I) 表单校验
+
+		` 自定义校验器格式
+
+			AbstractControl是 FromGroup, FormControl, FormArray的抽象父类，表示可以校验这三个类中的任意一个
+
+			xxx(params: AbstractControl): {[key:string]: ay} {
+				return null;
+			}
+
+			a) 为FormControl添加校验器
+
+				phoneValidator(phone: FormControl):any {
+					let value = (phone.value || '') + '';
+					let reg = /^1\d{10}$/;
+					let valid = reg.test(value);
+					return valid ? null : {phone:true};
+				}
+
+			a) 为FormGroup添加校验器
+
+				phoneValidator(info: FormGroup):any {
+					let pwd:FormControl = info.get('password') as FormControl;
+					let pwdConfirm:FormControl = info.get('passwordConfirm') as FormControl;
+			  		let valid:boolean = pwd.value === pwdConfirm.value;
+					return valid ? null : {password:true};
+				}
+
+		` 预定义校验器（框架内置）
+
+			import { Validators } from '@angular/forms';
+
+
+		` 表单状态字段
+
+			1. {{myForm.get('username').valid}} 该字段是合法的
+			2. {{myForm.get('username').errors | json}} 获取比较详细的错误信息
+
+				{
+					minlength:{
+						requireLength:6,
+						actualLength:3
+					}
+				}
+
+			3. myForm.getError('password','account')?.errorMsg 获取校验器的详细信息
+
+			4. myForm.hasError('password','account') 
+				password是检测到的结果, 如果是自定义过滤器,这里则是返回的错误的key
+
+					myForm.hasError('categoriesErrorText','categories')
+
+					categoriesSelectValidator(item: FormArray){
+				      var valid = false;
+				      item.controls.forEach(el => {
+				        if(el.value){
+				          valid =true;
+				        }
+				      });
+
+				      if(valid){
+				        return null;
+				      }else{
+				        return {categoriesErrorText:true};
+				      }
+				    }
+
+
+				account是检测哪个字段
+
+				<p [hidden]="!myForm.hasError('password','account')" class="red">
+					{{myForm.account.getError('password','account')?.errorMsg}}
+				</p>
+
+				<form [formGroup]='myForm'>
+					<div>用户名：<input type="text" formControlName='username' ></div>
+					<div>用户名是否合法（valid）：{{myForm.get('username').valid}}</div>
+					<div>用户名是否合法（errors）：{{myForm.get('username').errors | json}}</div>
+				</form>
+
+				// FormGroup里面的校验
+
+				<div formGroupName='account' class="red-border">
+					<div>密码：<input type="password" formControlName='password' ></div>
+					<p [hidden]="!myForm.hasError('required','account.password')" class="red">
+						密码是必填项
+					</p>
+
+					<div>确认密码：<input type="password" formControlName='passwordConfirm' ></div>
+				</div>
+				<p [hidden]="!myForm.hasError('password','account')" class="red">
+					{{myForm.account.getError('password','account')?.errorMsg}}
+				</p>
+
+			5. touched 、 untouched 字段是否获取过焦点
+
+				<div [hidden]="myForm.get('phone').valid || myForm.get('phone').untouched">
+					<p [hidden]="!myForm.hasError('phone','phone')" class="red">
+						手机格式不正确
+					</p>
+				</div>
+
+			6. pristine 、 dirty 一个字段的值从来没有被改变过,pristine:true
+
+			7. pending 去服务器验证用户输入时,可以显示一段文字说正在校验....之类的
+
+				<div [hidden]="!myForm.get('phone').pending">
+					正在校验手机号合法性......
+				</div>
+
+			8. input框变红
+
+				<input [class.input-has-error]="myForm.get('username').invalid"></input>
+
+		` 将自定义的校验器单独放在一个文件中
+
+			注意，phoneValidator，passwordValidator这时候是一个全局的函数，使用的时候，在component文件中引入，然后 phone: ['', phoneValidator] 直接使用就好了
+
+			validators.ts
+
+				import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
+
+				// 为FormControl添加校验器
+				export function phoneValidator(phone: FormControl):any{
+					let value = (phone.value || '') + '';	// 强制转换成string
+					console.log('phoneValidator-->value',value);
+					var reg = /^1\d{10}$/;
+					let valid = reg.test(value);	// Reg.test(string) 所以value要强制转换成string
+					console.log('phoneValidator-->校验结果',valid);
+					return valid ? null : {phone:true};
+				}
+
+				// 为FormGroup添加校验器
+				export function passwordValidator(info: FormGroup): any {
+					let pwd:FormControl = info.get('password') as FormControl;
+					let pwdConfirm:FormControl = info.get('passwordConfirm') as FormControl;
+					let valid:boolean = pwd.value === pwdConfirm.value;
+					console.log('passwordValidator````````````', valid);
+					return valid ? null : {password:{errorMsg:'两次密码不匹配！'}};
+				}
+
+		` 禁用提交按钮 [disabled]='!myForm.valid'
+
+			<button type="submit" (click)='save()' [disabled]='!myForm.valid'>注册</button>
+
+34. FormArray 是一个对象时
+
+	var address = {
+		street:'',
+		city:'',
+		state:'',
+		zip:''
+	};
+
+	1. 定义一个接口/类
+
+		export class Address{
+			street = '';
+			city   = '';
+			state  = '';
+			zip    = '';
+		};
+
+	2. 定义FromGroup
+
+		this.myForm = this.fb.group({
+			name: ['', Validators.required],
+			address: this.fb.group({
+				street:'',
+				city:'',
+				state:'',
+				zip:''
+			})
+		})
+
+		等于
+
+		this.myForm = this.fb.group({
+			name: ['', Validators.required],
+			address: this.fb.group(new Address())
+		})
+
+35. 异步校验器
+
+	在同步校验器之后执行，可以把需要和服务器交互的校验放在这里面
+
+	检测用户输入的手机号是否在黑名单中（去数据库中查看）
+
+	检测注册的用户名是否重复
+
+	返回值是Observable 或 Promise
+
+	export function phoneAsyncValidator(phone: FormControl):any{
+		let value = (phone.value || '') + '';	// 强制转换成string
+		console.log('phoneValidator-->value',value);
+		var reg = /^1\d{10}$/;
+		let valid = reg.test(value);	// Reg.test(string) 所以value要强制转换成string
+		console.log('phoneValidator-->校验结果',valid);
+		return Observable.of(valid ? null : {phone:true}).delay(5000);
+	}
+
+	观察 {{myForm.status | lowercase}} 有三个值 invalid pending valid
+
+36. directive
+
+	import { Directive } from '@angular/core';
+	import { NG_VALIDATORS } from '@angular/forms';
+	import { phoneValidator } from '../validators/validators';
+
+	@Directive({
+	  selector: '[mobile]',
+	  providers: [{
+	  	provide: NG_VALIDATORS,
+	  	useValue: phoneValidator,
+	  	multi: true
+	  }]
+	})
+
+	export class PhoneValidatorDirective {
+	  constructor() { }
+	}
+
+37. AsyncPipe 异步管道
+	
+	可以让我们直接在模板中使用Promise 和 Observavble 对象，而不是通过定义一个类的成员属性来存储返回结果。
+
+38. ng命名风格
+
+	feature.type.ts 的命名模式，即先描述特性，在描述类型。如：
+
+	user-list.component.ts
+
+	logger.service.ts
+
+39. const 在整个应用的生命周期内都不会改变的变量。全字母大写并用下划线分割的方式命名。
+
+	const RESOURCE_URL = 'http://api/';
+
+40. 开发习惯
+
+	a) 共有的成员定义放在私有的成员定义前面
+
+	b) 元数据装饰器  @Compoennt @Input....
+
+	c) 类注解 @Injectable()
+
+41. httpClient  GET
+
+	import { HttpClient, HttpParams } from '@angular/common/http';
+
+	constructor(private http: HttpClient) { }
+
+	getCode(){
+
+  		let codeParams = new HttpParams();
+  		codeParams = codeParams.append('client_id', 'subscription');
+	    codeParams = codeParams.append('response_type', 'code');
+	    codeParams = codeParams.append('redirect_uri', 'https://www.baidu.com/');
+	    codeParams = codeParams.append('state', 'active');
+
+  		return this.http.get(OAUTH_URL + 'oauth/authorize', {params: codeParams})
+            .subscribe(
+              data => {
+                console.log('授权码---code',data);
+              },
+              err => {
+                console.log('授权码---code---error', err);
+              }
+            )
+  	}
+
+
+41. httpClient  JSONP
+
+	import { HttpClient, HttpParams } from '@angular/common/http';
+
+	constructor(private http: HttpClient) { }
+
+	getCode(){
+
+  		let codeParams = new HttpParams();
+  		codeParams = codeParams.append('client_id', 'subscription');
+	    codeParams = codeParams.append('response_type', 'code');
+	    codeParams = codeParams.append('redirect_uri', 'https://www.baidu.com/');
+	    codeParams = codeParams.append('state', 'active');
+
+  		return this.http.jsonp(OAUTH_URL + 'oauth/authorize?'+codeParams.toString(), 'callback')
+            .subscribe(
+              data => {
+                console.log('授权码---code',data);
+              },
+              err => {
+                console.log('授权码---code---error', err);
+              }
+            )
+  	}
+
+42. 302
+
+	对于js来说，301 302 这种跳转时透明的，无法处理
+
+	重定向是浏览器自动透明完成的，所以服务器将302响应发给浏览器时，浏览器并不是直接处理ajax的回调，而是先执行302重定向，这也就是为什么获取不到xhr.status=302的值
+
+	请求流程是：
+
+	ajax --> browser --> server --> 302 --> browser(redirect) --> server --> browser --> ajax callback
+
+	注意，上面ajax获取不到xhr的status是有一个前提：即，服务器为response设置了*Location* header。
+
+	因为，浏览器在发现Location的header时就会自动跳转到Location所指定的URL地址，类似于用js来进行重定向；不过这个重定向只有浏览器知道。
+
+	https://www.cnblogs.com/wonyun/p/5696838.html
+
+	随着公司业务的发展新的情况出现了，公司要将登录认证统一到某台公共的服务器上，这时，失效的用户在ajax获取数据时状态失效而被重定向到登录页面；由于当前系统与登录页面不同域，而XHR不允许跨域访问数据，所以ajax的302也存在跨域问题。（不像页面之间重定向不存在这个问题，你可以访问当前系统的某个页面，服务可以重定向到www.baidu.com而不会有跨域问题）。
+
+	这时，由于存在跨域，浏览器不会进行重定向；但是能否通过上面的代码来用JavaScript进行重定向呢？
+
+	抱歉，同样不可以；这时通过ajaxComplete方法获取到的xhr的status值，发现其值为0，Location的header为null；所以这种办法行不通。更可取的方法可以是这样：
+
+	首先不要在服务器端进行重定向；然后通过接口的形式或者在response添加一个自定义header来区分重定向信息；最后由JavaScript来进行重定向
+
+
+43. Typed Response
+
+	返回的json result如下： {code:200, total:200, data:[...]}
+
+	但是如果直接用 dot natition （圆点标记法）去获取对象的属性，报错，
+
+	console.log(data.code); // Property ‘login’ does not exist on type ‘Object’
+
+	解决办法是： we’re able to cast the response Object to a type which is containing the corresponding properties. Let’s define an interface type which is containing some if the properties which are part of the response:
+
+	interface UserResponse{
+		code: number;
+		data: Array<any>;
+		total: number;
+		error: string;
+	};
+
+	this.http.get<UserResponse>(url).subscribe(
+		data => {
+			if(data.code == 200 && data.data){
+				....
+			}
+		},
+		err => { 	// 获取简单的错误信息
+			console.log("Error occured.")
+		},
+
+	);
+
+	要想获取更详细的error信息，需要引入HttpErrorResponse模块
+
+		import { HttpErrorResponse } from '@angular/common/http';
+
+		this.http.get<UserResponse>('https://api.github.com/users/seeschweiler').subscribe(
+	      data => {
+	        console.log("User Login: " + data.login);
+	        console.log("Bio: " + data.bio);
+	        console.log("Company: " + data.company);
+	      },
+	      (err: HttpErrorResponse) => {
+	        if (err.error instanceof Error) {
+	          console.log("Client-side error occured.");
+	        } else {
+	          console.log("Server-side error occured.");
+	        }
+	      }
+	    );
+
+	
+
+
+44. login相关
+	
+	服务层写法：
+
+		import { Injectable } from '@angular/core';  
+		import { HttpClient, HttpHeaders } from '@angular/common/http';  
+		import { ApiModule } from '../api/api';  
+		import { Subject } from 'rxjs/Subject';  
+		import 'rxjs/add/operator/retry';  
+		 
+		@Injectable()  
+		  
+		    // 登录的方法  
+		    public LoginSubject = new Subject<any>();  
+		  
+		    public getUserInfo(name, pwd):void {  
+		  
+		        var data = {"username":name,"password":pwd};  
+		        var val = this.HOST.host;  
+		        this.$http  
+		            .post(`${val}/login`, data)  
+		            .retry(3)  
+		            .subscribe( res => {  
+		                this.LoginSubject.next(res)  
+		            });  
+		    }  
+
+
+	组件内订阅
+
+		export class LoginComponent implements OnInit {  
+		    subscript: Subscription  
+		  
+		    constructor (private router:Router,  
+		                 private service: MyService,  
+		                 private _message: NzMessageService,) {  
+		        this.subscript = new Subscription()  
+		    }  
+		          
+		    }  
+		  
+		    ngOnInit ():void {  
+		        this.service.getUserInfo(name, password)  
+		        this.subscript = this.service.LoginSubject.subscribe( data => {  
+		            // here is your code  
+		        }  
+		          
+		        this.subscript.unsubscribe()  
+		    }  
+		  
+		}  
+
+		这就是从创建被观察者oberserver => 发布 => 订阅 => 取消订阅的整个流程。
+
+	subject是通过new的形式去创建的，那么当你服务端的数据返回之后，你可以使用next
+	将相应流传递到你所定义的subject当中。
+
+45. 拦截器
+	
+	httpModule 不支持，必须换成httpClientModule
+
+	@Injectable()
+	export class JWTInterceptor implements HttpInterceptor {
+
+	    intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpSentEvent | HttpHeaderResponse | HttpProgressEvent | HttpResponse<any> | HttpUserEvent<any>> {
+	        const cloneReq = req.clone({
+	        	headers: req.headers.set('Authorization', 'Bearer ' + this.token);
+	        });
+
+	        return next.handle(cloneReq);  // 最后把新请求参数传递给下一个'中间件'
+	    }
+
+	}
+
+	intercept方法有两个参数，它几乎与当下流行的中间件概念一般，
+	req表示当前请求数据（url、参数、header等），该参数有一个clone方法，允许对当前的请求参数进行克隆并且这一过程会自行根据一些参数推导，不管如何用它来产生一个新的请求数据，并在这个新数据中加入我们期望的数据
+
+	next表示调用下一个‘中间件’
+
+		next.handle返回的是一个Observable类型，可以用操作符来改变响应的值
+
+
+	mergeMap 操作符：
+
+		请求过程中会有一些过程状态，比如请求前，上传进度条，请求结束等，ng在每一次这类动作中都会触发next，因此，我们只需要在返回Observable对象加上mergeMap来观察这些值的变更。
+
+		return next.handle(cloneReq).mergeMap((event:any) => {
+			if(event instanceof HttpResponse && event.body.code !== 0){
+				return Observable.create(observer => observer.error(event));
+			}
+			return Observable.create(observer => observer.next(event))
+		});
+
+		只有在请求成功才会返回一个HttpResponse类型，因此，我们可以大胆判断是否来源于HttpResponse来表示HTTP请求已经成功，
+
+		这里统一对业务层级的错误 code !== 0 产生一个错误信号的Observable,反之，产生一个成功的信息。
+
+
+	catch 操作符：
+
+		用来捕获非200以外的其他状态码的错误，比如:401,同时，前面的mergeMap所产生的错误信号，也会在这里被捕获到。
+
+		.catch((res: HttpResponse<any>) => {
+			switch(res.status){
+				case 401:
+					// 权限处理
+					location.href = ''; // 重新登录
+					break;
+				case 200:
+					// 业务层级错误处理
+					console.log('业务错误：' + res.body.code);
+					break;
+				case 404:
+					console.log('api不存在');
+					break;
+			}
+			return Observable.throw(res);
+		});
+
+
+	async 管道：
+
+		一个observable必须被订阅以后才会真正的开始动作，前面在html模板中我们利用了async管道简化了这种订阅过程
+
+		{{ user | async | json }}
+
+		它相当于
+
+		let user: User;
+
+		get(){
+			this.http.get<User>('/assets/data/user.json').subscrbe(res => {
+				this.user = res;
+			});
+		};
+
+		{{ user | json }}
+
+		然而，async这种简化，并不代表失去某些自由度，比如说当在获取数据过程中显示 加载中...
+
+		<div *ngIf='user | async as user; else loading'>
+			{{ user | json }}
+		</div>
+		<ng-template #loading>加载中...</ng-template>
+
+46. ng build --prod --aot
+
+	--prod ，cli会把用不到的包都删掉，
+
+	--aot，让cli启动预编译特性。
+
+47.	当我们调用 router.navigateByUrl('/inbox/33/message/44') 方法后，此时的 URL 地址将变成 /inbox/33/message/44 。但如果我们是调用 router.navigate('/inbox/33/message/44') 方法，当前的 URL 地址将变成 /inbox/33/message/44(popup:compose)
+
+48. 在表单中，如果忘记给按钮添加属性，会默认为submit
+
+	<button (click)="toDetail()">detail</button>
+
+	toDetail() {
+		this._router.navigate(['/detail']);
+	}
+
+	解决办法：  <button type="button" (click)="toDetail()">detail</button>
+
+				<button (click)="toDetail();false">detail</button>
+
+
+49. TypeScript编译器：tsc
+
+50. tree shaking
+
+	摇树优化，是指通过跟踪import/export语句来对应用进行静态分析，遍历依赖图谱，并且摇掉用不到的代码，通过移除源码和库代码中用不到的部分，可以大幅缩减应用的下载体积。
+
+	摇树优化能够在我们最终的bundle中移除掉我们应用中没有使用到的代码，这是减少应用程序占用空间的最有效的技术之一。
+
+	目前WebPack2已经支持tree shaking。Rollup在angular中的应用。
+
+51. localstorage
+	
+	npm install --save ngx-webstorage-service
+
+	import { StorageServiceModule } from 'ngx-webstorage-service';
+
+	imports: [
+ 		StorageServiceModule
+  	]
+
+  	组件内使用：
+
+	  	import { Inject, Injectable } from '@angular/core';
+		import { LOCAL_STORAGE, StorageService } from 'ngx-webstorage-service';
+
+		@Injectable()
+		export class LocalstorageService {
+
+		  	constructor(@Inject(LOCAL_STORAGE) private storage: StorageService) {
+
+		    }
+
+		  	set(key, val): void {
+		        console.log(key + ':' + val);
+		        this.storage.set(key, val);
+		    }
+
+		    get(key): any {
+		        console.log('recieved= key:' + key);
+		        return this.storage.get(key);
+		    }
+
+		    setObject(key, val): void {
+		        console.log(key + ':' + val);
+		        this.storage.set(key, JSON.stringify(val));
+		    }
+
+		    getObject(key): any {
+		        console.log('recieved= key:' + key);
+		        try{
+		            return JSON.parse(this.storage.get(key));
+		        }catch(e){
+		            return null;
+		        }
+		    }
+
+		}
+
+52. [key: string]: any
+
+	表示key是string类型，value是any类型
+
+	var obj: { [key: string]: any } = {
+		'name':'join',
+		'age': 12,
+		'address': 'ssss'
+	};
+
+
+53. RouteReuseStrategy 路由复用策略
+
+	https://segmentfault.com/a/1190000011430157
+
+	路由在执行过程中对组件无状态操作，即路由推退离时状态也一并被删除，当然在大多数场景下这是合理的。
+
+	但有一种场景是，在移动端中用户通过关键词搜索商品，如果搜索结果有好几页，这时用户点击第二页，并点击了一个商品进入详情页，如果这个时候一个户退出商品详情，则还应该是在搜索结果的第二页。
+
+	该策略提供几个方法：
+
+		shouldDetach	是否允许复用路由
+
+		store 			当路由离开时触发，存储路由
+
+		shouldAttach 	是否允许还原路由
+
+		retrieve 		获取存储路由
+
+		shouldReuseRoute 进入路由触发，是否同一路由时复用路由
+
+
+	把路由 /list 设置为允许复用（shouldDetach）然后将路由快照存在store当中，当shouldReuseRoute成立时即再次遇到 /list 路由后表示需要复用路由，先判断shouldAttach是否允许还原，最后从retrieve拿到路由快照并构建组件。
+
+
+	app.module.ts
+
+		providers: [
+			{ provide: RouteReuseStrategy, useClass: SimpleReuseStrategy }
+		]
+
+	simple-reuse-strategy.ts
+
+		import {
+			RouteReuseStrategy,
+			DefaultUrlSerializer,
+			ActivatedRouteSnapshot, 
+			DetachedRouteHandle } from '@angular/router';
+
+		export class SimpleReuseStrategy implements RouteReuseStrategy {
+
+		    _cacheRouters: { [key: string]: any } = {};
+
+		    shouldDetach(route: ActivatedRouteSnapshot): boolean {
+		        // 对所有路由允许复用
+		        return true;
+		    }
+		    store(route: ActivatedRouteSnapshot, handle: DetachedRouteHandle): void {
+		        // 按path作为key存储路由快照&组件当前实例对象
+		        // path等同RouterModule.forRoot中的配置
+		        this._cacheRouters[route.routeConfig.path] = {
+		            snapshot: route,
+		            handle: handle
+		        };
+		    }
+		    shouldAttach(route: ActivatedRouteSnapshot): boolean {
+		        // 在缓存中有的都认为允许还原路由
+		        return !!route.routeConfig && !!this._cacheRouters[route.routeConfig.path];
+		    }
+		    retrieve(route: ActivatedRouteSnapshot): DetachedRouteHandle {
+		        // 从缓存中获取快照，若无则返回null
+		        if (!route.routeConfig || !this._cacheRouters[route.routeConfig.path]) return null;
+		        return this._cacheRouters[route.routeConfig.path].handle;
+		    }
+		    shouldReuseRoute(future: ActivatedRouteSnapshot, curr: ActivatedRouteSnapshot): boolean {
+		        // 同一路由时复用路由
+		        return future.routeConfig === curr.routeConfig;
+		    }
+		}
+
+54. ng-alain
+
+	https://github.com/cipchk/ng-alain
+
+55. ng2 应用的启动动画以及启动前加载数据
+
+	https://segmentfault.com/a/1190000011064837
+
+	一个单页应用第一次启动，从文档下载（包括各种资源），再到初始化至成功渲染这一过程基本上都是以秒为单位的。
+
+	ng应用的index.html会在文档中写入根组件，如： <app-root>loading...</app-root>
+
+	知道ng初始化完成后，loading...字样才会从页面小时，并进入实际的应用。
+
+	对于ng而言，真正开始渲染组件会在 plateformBrowserDynamic().bootstrapModule 之后，可以在此之前把loading...换成一个动画或更友好的效果。
+
+	1. 尽可能早显示启动动画，并尽可能在组建渲染之前关掉动画。
+
+	组件树的渲染会在bootstrapModule之后，而其接口有事返回一个Promise<NgModuleRef<AppModule>>,Promise意味着允许我们可以通过then在ng启动后做点什么擦屁股的事情，例如去掉动画代码：
+
+	HTML:
+
+		<!doctype html>
+		<html>
+
+		<head>
+		    <meta charset="utf-8">
+		    <title>ngAlain</title>
+		    <base href="/">
+
+		    <meta name="viewport" content="width=device-width, initial-scale=1">
+		    <link rel="icon" type="image/x-icon" href="favicon.ico">
+		    <style type="text/css">
+		        .preloader {
+		            position: fixed;
+		            top: 0;
+		            left: 0;
+		            width: 100%;
+		            height: 100%;
+		            overflow: hidden;
+		            background: #49a9ee;
+		            z-index: 9999;
+		            transition: opacity .65s;
+		        }
+
+		        .preloader-hidden-add {
+		            opacity: 1;
+		            display: block;
+		        }
+
+		        .preloader-hidden-add-active {
+		            opacity: 0;
+		        }
+
+		        .preloader-hidden {
+		            display: none;
+		        }
+
+		        .cs-loader {
+		            position: absolute;
+		            top: 0;
+		            left: 0;
+		            height: 100%;
+		            width: 100%;
+		        }
+
+		        .cs-loader-inner {
+		            -webkit-transform: translateY(-50%);
+		            transform: translateY(-50%);
+		            top: 50%;
+		            position: absolute;
+		            width: calc(100% - 200px);
+		            color: #FFF;
+		            padding: 0 100px;
+		            text-align: center;
+		        }
+
+		        .cs-loader-inner label {
+		            font-size: 20px;
+		            opacity: 0;
+		            display: inline-block;
+		        }
+
+		        @-webkit-keyframes lol {
+		            0% {
+		                opacity: 0;
+		                -webkit-transform: translateX(-300px);
+		                transform: translateX(-300px);
+		            }
+		            33% {
+		                opacity: 1;
+		                -webkit-transform: translateX(0px);
+		                transform: translateX(0px);
+		            }
+		            66% {
+		                opacity: 1;
+		                -webkit-transform: translateX(0px);
+		                transform: translateX(0px);
+		            }
+		            100% {
+		                opacity: 0;
+		                -webkit-transform: translateX(300px);
+		                transform: translateX(300px);
+		            }
+		        }
+
+		        @keyframes lol {
+		            0% {
+		                opacity: 0;
+		                -webkit-transform: translateX(-300px);
+		                transform: translateX(-300px);
+		            }
+		            33% {
+		                opacity: 1;
+		                -webkit-transform: translateX(0px);
+		                transform: translateX(0px);
+		            }
+		            66% {
+		                opacity: 1;
+		                -webkit-transform: translateX(0px);
+		                transform: translateX(0px);
+		            }
+		            100% {
+		                opacity: 0;
+		                -webkit-transform: translateX(300px);
+		                transform: translateX(300px);
+		            }
+		        }
+
+		        .cs-loader-inner label:nth-child(6) {
+		            -webkit-animation: lol 3s infinite ease-in-out;
+		            animation: lol 3s infinite ease-in-out;
+		        }
+
+		        .cs-loader-inner label:nth-child(5) {
+		            -webkit-animation: lol 3s 100ms infinite ease-in-out;
+		            animation: lol 3s 100ms infinite ease-in-out;
+		        }
+
+		        .cs-loader-inner label:nth-child(4) {
+		            -webkit-animation: lol 3s 200ms infinite ease-in-out;
+		            animation: lol 3s 200ms infinite ease-in-out;
+		        }
+
+		        .cs-loader-inner label:nth-child(3) {
+		            -webkit-animation: lol 3s 300ms infinite ease-in-out;
+		            animation: lol 3s 300ms infinite ease-in-out;
+		        }
+
+		        .cs-loader-inner label:nth-child(2) {
+		            -webkit-animation: lol 3s 400ms infinite ease-in-out;
+		            animation: lol 3s 400ms infinite ease-in-out;
+		        }
+
+		        .cs-loader-inner label:nth-child(1) {
+		            -webkit-animation: lol 3s 500ms infinite ease-in-out;
+		            animation: lol 3s 500ms infinite ease-in-out;
+		        }
+
+		    </style>
+		</head>
+
+		<body>
+		    <app-root></app-root>
+		    <div class="preloader">
+		        <div class="cs-loader">
+		            <div class="cs-loader-inner">
+		                <label>    ●</label>
+		                <label>    ●</label>
+		                <label>    ●</label>
+		                <label>    ●</label>
+		                <label>    ●</label>
+		                <label>    ●</label>
+		            </div>
+		        </div>
+		    </div>
+		</body>
+
+		</html>
+
+	main.ts
+
+		const bootstrap = () => {
+		  return platformBrowserDynamic().bootstrapModule(AppModule);
+		};
+
+		bootstrap().then(() => {
+		    document.querySelector('.preloader').className += ' preloader-hidden-add preloader-hidden-add-active';
+		});
+
+56. angular/cli 的配置文件是 .angular-cli.json
+
+	而会影响文件体量的只有styles.scripts两个节点
+
+	scripts节点最后会生成一个独立的 scripts.bundle.js 文件,我们一般会把外部类库放置在这里，
+
+	styles节点最后会生成一个独立的 styles.bundle.css文件，除此之外，组件内(styles/styleUrls)的样式会全部打包进 .js 文件中
+
+57. ng应用很多时候可能是放在现有WEB服务器的某个目录下，如 v2，
+	因此访问地址会变成：https://www.demo.com/v2，但会发现，
+	无法加载应用，这时因为由于index.html中的base导致的
+
+	<base href='/'>
+
+	导致所有脚本资源的加载URL指向根目录。ng/cli 提供一个参数改变该值
+
+	ng build --prod --base-href /v2/
+	ng build --prod --bh /v2/
+
+58. currentRoute: ActivatedRouteSnapshot,
+    currentState: RouterStateSnapshot
+
+   路由守卫
+
+   return的结果是一个Observable
+
+   @Injectable()
+	export class CanAdminProvide implements CanActivate {
+
+	    constructor(private userSrv: UserService, private msg: NzMessageService) {}
+
+	    canActivate(
+	        route: ActivatedRouteSnapshot,
+	        state: RouterStateSnapshot): boolean | Observable<boolean> | Promise<boolean> {
+	        return new Observable((observer) => {
+	            // 拥有 `admin` 角色
+	            if (this.userSrv.hasRole('admin')) {
+	                observer.next(true);
+	                observer.complete();
+	                return;
+	            }
+
+	            this.msg.error('授权不足');
+	            observer.next(false);
+	            observer.complete();
+	        });
+	    }
+
+	}
+
+59. ant-design 	UI设计语言
+
+	ng-zorro-antd  angular版本的ant design
+
+60. http 返回值直接获取不到问题
+	
+	export interface User{
+		name: string;
+		age: number;
+	};
+
+	user: Observable<User>; // 注意这里是Observable泛型的User
+
+	getUser(){
+		this.user = this.http.get<User>(url);
+	}
+
+	{{ user | asyn | json }}
+
+61. 加载技术
+
+	有效的加载策略是开发一个单页应用程序成功的关键。
+
+	1) 惰性加载的特性模块
+
+		对于需求不太高的模块使用惰性加载。
+
+		如果你在network中看到某个 chunk 文件出现，就表示你已经惰性加载并接入了这个特性模块，chunk只应该出现一次
+
+		RouterModule.forRoot(routes)	表示一个跟路由模块，它会配置你传入的所有路由，让你能访问路由器指令并注册RouterService
+		RouterModule.forChild(routes)可以添加到各个特性模块。这种方式下，ng就会知道这个路由列表只负责提供额外的路由并且其设计意图是作为特性模块使用，你可以再多个模块中使用forFChild()	
+
+	2) 贪婪加载
+
+		对基础应用程序功能和主要模块使用贪婪加载，这些是必须在应用程序启动时就能用到的资源。
+
+	2) 预加载
+
+		对大多数用户将要访问的模块使用该技术，即使他们不是第一个查找的或查找得最频繁的应用程序资源
+
+62. 关于打包部署问题
+
+	` 直接从git上拉的代码，服务器指向的是前端目录 src/index.html 文件，但是git上没有node_modules这个目录，导致依赖包没有办法加载到。
+
+	` 直接让服务器指向 dist/index.html 文件，但是在开发阶段不利于调试，且每次上传代码都要ng build
+
+63. 特性模块
+
+	ng g module custom
+
+		custom.module.ts
+
+			import { NgModule } from '@angular/core';
+			import { CommonModule } from '@angular/common'; 
+
+			@NgModule({
+				imports: [
+					CommonModule
+				],
+				declarations>: []
+			})
+			export class CustomModule{ }
+
+
+	解读： CommonModule 这个模块包含常用的指令信息，如ngIf,ngFor等。
+
+		   特性模块导入 CommonModule 而不是 BrowserModule，是因为后者只应该在跟模块中导入一次，
+
+		   因为CommonModule只包含常用指令信息，他们可以在大多数模板中都要用到，而BrowserModule为浏览器所做的应用配置只会使用一次。
+
+64. js source map
+
+	http://www.ruanyifeng.com/blog/2013/01/javascript_source_map.html
+		
+	要解决的问题：
+	
+		生产环境下，部署的是压缩代码，但是出错后，debug困难重重。js解释器会告诉你，第几行第几列代码出错，
+
+		但是对于转换后的代码毫无用处，举例来说，jq压缩后只有3行，每行3万个字符	，所有内部变量都改了名字。看着报错信息，毫无头绪，根本不知道它所对应的原始位置。
+
+	就是一个信息文件，里面存储这位置信息，也就是说，转换后的代码的每一个位置，所对应的转换前的位置。
+
+	有了它，出错的时候，除错工作将直接显示原始代码，而不是转换后的代码，这无疑给开发者带来了很大方便。
+
+65. *ngFor
+
+	app.compomemt.ts
+
+		trackByHeroes(index: number, hero: Hero): number {return hero.id};
+
+	app.component.html
+
+		<div *ngFor="let hero of heroes; trackBy: trackByHeroes">
+		  ({{hero.id}}) {{hero.name}}
+		</div>
+
+66. ngSwitch
+
+	ngSwitch是一个属性型指令
+
+	*ngSwitchCase、*ngSwitchDefault都是结构型指令，因为它们会从DOM中添加或移除元素
+
+	NgSwitchCase 会在它绑定的值等于候选值时，把它所在的元素加入到ODM中
+
+	<div [ngSwitch]="currentHero.emotion">
+	  <app-happy-hero    *ngSwitchCase="'happy'"    [hero]="currentHero"></app-happy-hero>
+	  <app-sad-hero      *ngSwitchCase="'sad'"      [hero]="currentHero"></app-sad-hero>
+	  <app-confused-hero *ngSwitchCase="'confused'" [hero]="currentHero"></app-confused-hero>
+	  <app-unknown-hero  *ngSwitchDefault           [hero]="currentHero"></app-unknown-hero>
+	</div>
