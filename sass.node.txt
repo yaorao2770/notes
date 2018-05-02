@@ -1,0 +1,150 @@
+Sass 笔记：
+
+1. 后代选择器
+	
+	$main-color:blue;
+
+	#content{
+		.article{
+			h1{color:red;}
+			p{margin-left:30px;}
+		}
+		aside{
+			border:1px solid $main-color;
+			a{
+				font-size:30px;
+				&:hover{color:pink;}
+			}
+		}
+	}
+
+2. 父选择器标识符：&
+
+	如上的 #content aisde a:hover表达式
+
+	解析成css变成：
+
+		 aside a{
+		 	font-size:30px;
+		 }
+
+		 aside a:hover{
+		 	color:pink;
+		 }
+
+	相当于一个占位符，把 & 所在的位置替换成 { 左括号前面的表达式，如：
+
+		#content aside{
+			color:red;
+			body.ie & {color:yellow;}
+		}
+
+		===>
+
+		#content aside{color:red;}
+		body.ie #content aside{color:yellow;}
+
+
+3. 群组选择器
+
+	.container{
+		h1,h2,h3{
+			margin-bottom:100px;
+		}
+	}
+
+	===>
+
+	.container h1,.container h2,.container h3{
+		margin-bottom:100px;
+	}
+
+
+	.nav-1,.aside-1{
+		a{
+			color:blue;
+		}
+	}
+
+	===>
+
+	.nav-1 a,.aside-1 a{
+		color:blue;
+	}
+
+
+4. 子组合选择器和同层组合选择器： >  +  ~
+
+	article{
+		~ .title{border:1px solid blue;}
+		> section{background:#eee;}
+		dl > {
+			dl{color:#eee;}
+			dd{color:#eee;}
+		}
+		nav + & {margin-top:0;}
+	}
+
+5. 复合属性，例如：
+
+	border:1px solid #eee 可以写成 
+
+	border-style:solid;
+	border-width:1px;
+	border-color:#eee;
+
+	在Sass中可以写成:（注意，border: 后面的这个分号，表示此属性是复合属性，在解析成css时，会自动替换成哼-）
+
+	div {
+		border: {
+			style:solid;
+			width:1px;
+			color:#eee;
+		}
+	}
+
+	===> 
+
+	div{
+		border-style:solid;
+		border-width:1px;
+		border-color:#eee;
+	}
+
+	对于简写形式，可以这样写:
+
+		.container{
+			border:1px solid red {
+				left:0;
+				right:0
+			}
+		}
+
+		===>
+
+		.container{
+			border:1px solid red;
+			border-left:0;
+			border-right:0;
+		}
+
+
+6. 默认属性  !default
+
+	$link-color:red;
+	$link-color:blue;
+	.test-color{
+		color:$link-color;
+	}
+
+	最后颜色是blue，因为会覆盖。
+
+	假如你写了一个可被他人通过 @import 导入的sass库文件，你可能希望导入者可以定制修改sass库文件的某些值。使用!default标签可以实现这个目的，他很想css属性中！important标签的对立面。该标签含义是: 如果这个变量呗声明赋值了。那就用他声明的值，否则就用这个默认值。
+
+7. 局部使用的sass文件
+
+	声明方式： _theme.scss
+
+	使用方式： 在需要的地方使用 @import "theme";
+
+	sass局部文件的文件名以下划线开头，这样在编译时就不会单独输出这个css文件，而只是把这个文件用作导入。 @import一个局部文件时，可以不写局部文件的_前缀和后缀名

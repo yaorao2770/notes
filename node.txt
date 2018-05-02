@@ -1,18 +1,18 @@
-çŸ¥è¯†æ±‡æ€»ï¼š
+ÖªÊ¶»ã×Ü£º
 
 1. ajax
 	
-	ä¸Šä¼ è¿›åº¦å’Œä¸‹è½½è¿›åº¦è°ƒç”¨çš„æ˜¯ä¸¤ä¸ªäº‹ä»¶,progressäº‹ä»¶
+	ÉÏ´«½ø¶ÈºÍÏÂÔØ½ø¶Èµ÷ÓÃµÄÊÇÁ½¸öÊÂ¼þ,progressÊÂ¼þ
 
-	onprogressäº‹ä»¶å¤„ç†ç¨‹åºä¼šæŽ¥æ”¶åˆ°ä¸€ä¸ªeventå¯¹è±¡ï¼Œå…¶targetå±žæ€§æ˜¯XHRå¯¹è±¡ï¼Œä½†åŒ…å«ç€ä¸‰ä¸ªé¢å¤–çš„å±žæ€§ï¼š
+	onprogressÊÂ¼þ´¦Àí³ÌÐò»á½ÓÊÕµ½Ò»¸öevent¶ÔÏó£¬ÆätargetÊôÐÔÊÇXHR¶ÔÏó£¬µ«°üº¬×ÅÈý¸ö¶îÍâµÄÊôÐÔ£º
 
-		lengthComputableæ˜¯ä¸€ä¸ªè¡¨ç¤ºè¿›åº¦ä¿¡æ¯æ˜¯å¦å¯ç”¨çš„å¸ƒå°”å€¼ï¼Œ
+		lengthComputableÊÇÒ»¸ö±íÊ¾½ø¶ÈÐÅÏ¢ÊÇ·ñ¿ÉÓÃµÄ²¼¶ûÖµ£¬
 
-		positionè¡¨ç¤ºå·²ç»æŽ¥æ”¶çš„å­—èŠ‚æ•°ï¼Œ
+		position±íÊ¾ÒÑ¾­½ÓÊÕµÄ×Ö½ÚÊý£¬
 
-		totalSizeè¡¨ç¤ºæ ¹æ®Content-Lengthç›¸åº”å¤´éƒ¨ç¡®å®šçš„é¢„æœŸå­—èŠ‚æ•°ã€‚
+		totalSize±íÊ¾¸ù¾ÝContent-LengthÏàÓ¦Í·²¿È·¶¨µÄÔ¤ÆÚ×Ö½ÚÊý¡£
 
-	æœ‰äº†è¿™äº›ä¿¡æ¯ï¼Œæˆ‘ä»¬å°±å¯ä»¥ä¸ºç”¨æˆ·åˆ›å»ºä¸€ä¸ªè¿›åº¦æŒ‡ç¤ºå™¨äº†
+	ÓÐÁËÕâÐ©ÐÅÏ¢£¬ÎÒÃÇ¾Í¿ÉÒÔÎªÓÃ»§´´½¨Ò»¸ö½ø¶ÈÖ¸Ê¾Æ÷ÁË
 
 	function progress(e) {
         if (e.lengthComputable) {
@@ -24,17 +24,17 @@
         }
     };
 
-2. å…³äºŽæ–‡æœ¬æ–‡ä»¶çš„BOM
+2. ¹ØÓÚÎÄ±¾ÎÄ¼þµÄBOM
 
-	UTF-8å’Œ UTF-8ï¼ˆä¸å¸¦BOMï¼‰æ˜¯ä¸¤ç§æ ¼å¼æ–‡æœ¬ï¼Œå¸¦BOMçš„utf-8å¤šå‡ºäº†ä¸‰ä¸ªå­—èŠ‚å‰ç¼€ï¼Œ0xEF0xBB0xBF
+	UTF-8ºÍ UTF-8£¨²»´øBOM£©ÊÇÁ½ÖÖ¸ñÊ½ÎÄ±¾£¬´øBOMµÄutf-8¶à³öÁËÈý¸ö×Ö½ÚÇ°×º£¬0xEF0xBB0xBF
 
-	æœ‰äº†è¿™ä¸‰ä¸ªå­—èŠ‚å‰ç¼€çš„æ–‡æœ¬æˆ–å­—ç¬¦ä¸²ï¼Œç¨‹åºå¯ä»¥è‡ªåŠ¨åˆ¤æ–­ä»–ä¸ºutf_8æ ¼å¼ï¼Œå¹¶æŒ‰ç…§utf_8æ ¼å¼æ¥è§£æžæ–‡æœ¬æˆ–å­—ç¬¦ä¸²,
+	ÓÐÁËÕâÈý¸ö×Ö½ÚÇ°×ºµÄÎÄ±¾»ò×Ö·û´®£¬³ÌÐò¿ÉÒÔ×Ô¶¯ÅÐ¶ÏËûÎªutf_8¸ñÊ½£¬²¢°´ÕÕutf_8¸ñÊ½À´½âÎöÎÄ±¾»ò×Ö·û´®,
 
-	å¦åˆ™ä¸€ä¸ªæ–‡æœ¬æˆ–å­—ç¬¦ä¸²åœ¨ä½ç½®ç¼–ç çš„æƒ…å†µä¸‹ï¼Œéœ€è¦æŒ‰ç…§å­—ç¬¦ç¼–ç è§„èŒƒåŽ»ä¸€ä¸ªä¸ªéªŒè¯ã€‚
+	·ñÔòÒ»¸öÎÄ±¾»ò×Ö·û´®ÔÚÎ»ÖÃ±àÂëµÄÇé¿öÏÂ£¬ÐèÒª°´ÕÕ×Ö·û±àÂë¹æ·¶È¥Ò»¸ö¸öÑéÖ¤¡£
 
-3. angularjs è¾“å…¥æ¡†å†…æŒ‰ä¸‹å›žè½¦ä¼šè§¦å‘å…¶ä»–buttonçš„ç‚¹å‡»äº‹ä»¶ï¼Œ
+3. angularjs ÊäÈë¿òÄÚ°´ÏÂ»Ø³µ»á´¥·¢ÆäËûbuttonµÄµã»÷ÊÂ¼þ£¬
 
-	è§£å†³åŠžæ³•ï¼š button æ ‡ç­¾æ·»åŠ  type='button'
+	½â¾ö°ì·¨£º button ±êÇ©Ìí¼Ó type='button'
 
 	Default type for the button element is 'submit' : 
 
@@ -43,7 +43,7 @@
 	when you hit enter,the first button is submitted.
 
 
-4. selfæŒ‡å‘å½“å‰æ•°ç»„
+4. selfÖ¸Ïòµ±Ç°Êý×é
 
 	angular.forEach(entity.modSecIds, function(element, index, self) {
 		
@@ -55,22 +55,22 @@
 
 5. $location.search('code',null)
 
-	URLï¼š http://192.168.111.171/ftz/#/MONGODB?code=KvZ4GQ
+	URL£º http://192.168.111.171/ftz/#/MONGODB?code=KvZ4GQ
 
-	$location.search('code',null) å¯ä»¥å°†code ä»Žå½“å‰urlä¸­åˆ é™¤
+	$location.search('code',null) ¿ÉÒÔ½«code ´Óµ±Ç°urlÖÐÉ¾³ý
 	
 		  http://192.168.111.171/ftz/#/MONGODB
 
 
 6. concat()
 
-	ç”¨äºŽè¿žæŽ¥ä¸¤ä¸ªæˆ–å¤šä¸ªæ•°ç»„å…ƒç´ ï¼Œè¿”å›žå€¼ä¸€ä¸ªæ–°æ•°ç»„
+	ÓÃÓÚÁ¬½ÓÁ½¸ö»ò¶à¸öÊý×éÔªËØ£¬·µ»ØÖµÒ»¸öÐÂÊý×é
 
-	arrayObj.concat(array1,array2,...); å‚æ•°å¯ä»¥æ˜¯æ•°ç»„
+	arrayObj.concat(array1,array2,...); ²ÎÊý¿ÉÒÔÊÇÊý×é
 
-	æˆ–
+	»ò
 
-	arrayObj.concat(1,2,3,...);	ä¹Ÿå¯ä»¥æ˜¯å…·ä½“çš„å€¼
+	arrayObj.concat(1,2,3,...);	Ò²¿ÉÒÔÊÇ¾ßÌåµÄÖµ
 
 
 	eg:    var a = [1,2,3];
@@ -86,21 +86,21 @@
 
 7. sort(fn)
 
-	æ•°ç»„æŽ’åº,å‚æ•°å¿…é¡»æ˜¯å‡½æ•°,è¿”å›žå€¼ï¼ŒæŽ’åºåŽçš„æ•°ç»„
+	Êý×éÅÅÐò,²ÎÊý±ØÐëÊÇº¯Êý,·µ»ØÖµ£¬ÅÅÐòºóµÄÊý×é
 
-	a - b  --->  å‡åºï¼ˆå°åˆ°å¤§ï¼‰
+	a - b  --->  ÉýÐò£¨Ð¡µ½´ó£©
 
-	b - a  --->  é™åº 
+	b - a  --->  ½µÐò 
 
 	arrayObj.sort(sortByFn)
 
-	a)  arr.sort()  æ˜¯æŒ‰ç…§å­—æ¯é¡ºåºæŽ’åºçš„
+	a)  arr.sort()  ÊÇ°´ÕÕ×ÖÄ¸Ë³ÐòÅÅÐòµÄ
 
 		var arr = [1,1000,10,25,40,5];
 
-		console.log(arr.sort()); // [1, 10, 1000, 25, 40, 5]  å¯ä»¥çœ‹åˆ°å¹¶ä¸æ˜¯æŒ‰ç…§æ•°å€¼å¤§å°æŽ’åºï¼Œè€Œæ˜¯å­—æ¯é¡ºåº
+		console.log(arr.sort()); // [1, 10, 1000, 25, 40, 5]  ¿ÉÒÔ¿´µ½²¢²»ÊÇ°´ÕÕÊýÖµ´óÐ¡ÅÅÐò£¬¶øÊÇ×ÖÄ¸Ë³Ðò
 
-	b) arr.sort(fn)   æŒ‰ç…§æ•°å€¼å¤§å°æŽ’åº
+	b) arr.sort(fn)   °´ÕÕÊýÖµ´óÐ¡ÅÅÐò
 
 		function sortNum(a,b){
 			return a-b;
@@ -113,16 +113,16 @@
 
 8. map(fn)
 
-	æ•°ç»„æ–¹æ³•, å°†åŽŸæ•°ç»„æ˜ å°„æˆæ–°æ•°ç»„ï¼Œè¿”å›žå€¼æ˜¯ä¸€ä¸ªæ•°ç»„
+	Êý×é·½·¨, ½«Ô­Êý×éÓ³Éä³ÉÐÂÊý×é£¬·µ»ØÖµÊÇÒ»¸öÊý×é
 
 	arrayObj.map(function(el){
 		return el*2;
 	});
 
 	eg:		s var users = [
-			  {name: "å¼ å«éŸµ", "email": "zhang@email.com"},
-			  {name: "æ±Ÿä¸€ç‡•",  "email": "jiang@email.com"},
-			  {name: "æŽå°ç’",  "email": "li@email.com"}
+			  {name: "ÕÅº¬ÔÏ", "email": "zhang@email.com"},
+			  {name: "½­Ò»Ñà",  "email": "jiang@email.com"},
+			  {name: "ÀîÐ¡è´",  "email": "li@email.com"}
 			];
 
 			var email = users.map(function(user){
@@ -131,24 +131,24 @@
 			
 			console.log(email); // ["zhang@email.com", "jiang@email.com", "li@email.com"]
 
-			console.log(users)  //  è¿˜æ˜¯åŽŸæ¥çš„users
+			console.log(users)  //  »¹ÊÇÔ­À´µÄusers
 
 
 9. Object.defineProperty() 
 
-	æ–¹æ³•ä¼šç›´æŽ¥åœ¨ä¸€ä¸ªå¯¹è±¡ä¸Šå®šä¹‰ä¸€ä¸ªæ–°å±žæ€§æˆ–è€…ä¿®æ”¹å·²æœ‰çš„å±žæ€§ï¼Œå¹¶è¿”å›žè¿™ä¸ªå¯¹è±¡ã€‚
+	·½·¨»áÖ±½ÓÔÚÒ»¸ö¶ÔÏóÉÏ¶¨ÒåÒ»¸öÐÂÊôÐÔ»òÕßÐÞ¸ÄÒÑÓÐµÄÊôÐÔ£¬²¢·µ»ØÕâ¸ö¶ÔÏó¡£
 
 	set / get
 
 	writeable --- true / false
 
-	enumable  --- ç”¨äºŽæ˜¯å¦å¯ä»¥ for...in æˆ– Object.keys()
+	enumable  --- ÓÃÓÚÊÇ·ñ¿ÉÒÔ for...in »ò Object.keys()
 
 		1.	var arr5 = [1,2,3,4,5];
 
 			arr5.length = 0;
 
-			console.log(arr5); // []ï¼Œæ‰€æœ‰çš„å…ƒç´ éƒ½è¢«åˆ é™¤äº†
+			console.log(arr5); // []£¬ËùÓÐµÄÔªËØ¶¼±»É¾³ýÁË
 
 
 		2.	var arr5 = [1,2,3,4,5];
@@ -159,9 +159,9 @@
 
 			arr5.length = 0;
 		
-			console.log(arr5); // [1,2,3,4,5]ï¼Œä¸èƒ½ä¿®æ”¹lengthå±žæ€§
+			console.log(arr5); // [1,2,3,4,5]£¬²»ÄÜÐÞ¸ÄlengthÊôÐÔ
 
-		3. åˆ©ç”¨è¯¥APIå®žçŽ°åŒå‘æ•°æ®ç»‘å®š
+		3. ÀûÓÃ¸ÃAPIÊµÏÖË«ÏòÊý¾Ý°ó¶¨
 
 			var a = {};
 
@@ -185,7 +185,7 @@
 
 		4. HTML:
 
-				<div id='test'>æµ‹è¯•<>
+				<div id='test'>²âÊÔ<>
 
 			JS:
 
@@ -208,30 +208,30 @@
 
 				setInterval(function(){
 					i++;
-					data['view'] = 'æ›´æ–°ç•Œé¢'+i;
+					data['view'] = '¸üÐÂ½çÃæ'+i;
 				},1000);
 
 
-10. isNaN() ç”¨äºŽæ£€æŸ¥æ˜¯å¦æ˜¯æ•°å€¼,æ˜¯æ•°å€¼è¿”å›žfalse, ä¸æ˜¯æ•°å€¼è¿”å›žtrue
+10. isNaN() ÓÃÓÚ¼ì²éÊÇ·ñÊÇÊýÖµ,ÊÇÊýÖµ·µ»Øfalse, ²»ÊÇÊýÖµ·µ»Øtrue
 	
-	// è¿”å›žfalseï¼Œä¼šè¿›è¡Œéšå½¢è½¬æ¢
+	// ·µ»Øfalse£¬»á½øÐÐÒþÐÎ×ª»»
 	console.log( isNaN(0) );
 	console.log( isNaN(2) );
-	console.log( isNaN('3') );		// è½¬æ¢æˆ3
-	console.log( isNaN(true) );		// è½¬æ¢æˆ1
-	console.log( isNaN(false) );	// è½¬æ¢æˆ0
-	console.log( isNaN('') ); 		// è½¬æ¢æˆ0
+	console.log( isNaN('3') );		// ×ª»»³É3
+	console.log( isNaN(true) );		// ×ª»»³É1
+	console.log( isNaN(false) );	// ×ª»»³É0
+	console.log( isNaN('') ); 		// ×ª»»³É0
 
-	// è¿”å›žtrue
+	// ·µ»Øtrue
 	console.log( isNaN(NaN) );
 	console.log( isNaN('apple') );
 
 
-11. ç¼–ç¨‹æŠ€å·§
+11. ±à³Ì¼¼ÇÉ
 
-	I. å½“ä¸€ä¸ªå‡½æ•°åŒ…å«è¶…è¿‡ä¸‰ä¸ªå½¢å‚æ—¶ï¼Œè¦è®°ä½è°ƒç”¨å‡½æ•°ä¸­å®žå‚çš„æ­£ç¡®é¡ºåºå¹¶ä¸å®¹æ˜“ã€‚
+	I. µ±Ò»¸öº¯Êý°üº¬³¬¹ýÈý¸öÐÎ²ÎÊ±£¬Òª¼Ç×¡µ÷ÓÃº¯ÊýÖÐÊµ²ÎµÄÕýÈ·Ë³Ðò²¢²»ÈÝÒ×¡£
 
-		è§£å†³åŠžæ³•ï¼šå°†å½¢å‚å®šä¹‰ä¸ºä¸€ä¸ªå¯¹è±¡ï¼Œéœ€è¦çš„å­—æ®µéƒ½ä½œä¸ºè¯¥å¯¹è±¡çš„å±žæ€§ï¼Œè¿™æ ·å°±ä¸ç”¨è®°é¡ºåºäº†
+		½â¾ö°ì·¨£º½«ÐÎ²Î¶¨ÒåÎªÒ»¸ö¶ÔÏó£¬ÐèÒªµÄ×Ö¶Î¶¼×÷Îª¸Ã¶ÔÏóµÄÊôÐÔ£¬ÕâÑù¾Í²»ÓÃ¼ÇË³ÐòÁË
 
 		eg:      function test($scope, entity, action, isBig){
 					 ....
@@ -252,32 +252,32 @@
 				 test(paramsValue);
 
 
-	II. è¦å›žæŠ›é”™
+	II. Òª»ØÅ×´í
 
-		throw new Error('è¿™æ˜¯ä¸€ä¸ªè‡ªå®šä¹‰é”™è¯¯ï¼');
+		throw new Error('ÕâÊÇÒ»¸ö×Ô¶¨Òå´íÎó£¡');
 
 	III. 	(function(){
 				...
 			}());
 
-			å½“ä¸Žåˆ«äººååŒå¼€å‘æ—¶ï¼Œä¸ºäº†é¿å…å˜é‡å†²çªå’Œæ±¡æŸ“ï¼Œæœ€å¥½å°†ä»£ç å¸è½½ä»¥ä¸Šæ ¼å¼çš„å‡½æ•°ä¸­ï¼Œ
-			æˆ‘ä»¬å¯ä»¥ç§°ä¹‹ä¸º æ¨¡å—ï¼Œå¯ä»¥é¿å…å…¨å±€å˜é‡æ±¡æŸ“ã€‚
+			µ±Óë±ðÈËÐ­Í¬¿ª·¢Ê±£¬ÎªÁË±ÜÃâ±äÁ¿³åÍ»ºÍÎÛÈ¾£¬×îºÃ½«´úÂëÐ¶ÔØÒÔÉÏ¸ñÊ½µÄº¯ÊýÖÐ£¬
+			ÎÒÃÇ¿ÉÒÔ³ÆÖ®Îª Ä£¿é£¬¿ÉÒÔ±ÜÃâÈ«¾Ö±äÁ¿ÎÛÈ¾¡£
 
-			æ³¨æ„ï¼Œ functionå·¦è¾¹çš„æ‹¬å·ï¼Œä¸å¯ä»¥çœç•¥ï¼Œå› ä¸ºå¦‚æžœä¸å†™è¿™ä¸ªå·¦åœ†æ‹¬å·ï¼Œjsè§£é‡Šå™¨ä¼šè§†å›¾å°†å…³é”®å­—functionè§£æžä¸ºå‡½æ•°å£°æ˜Žè¯­å¥ï¼Œè€ŒåŒ…è£¹åœ¨æ‹¬å·ä¸­ï¼Œè§£é‡Šå™¨æ‰ä¼šæ­£ç¡®çš„å°†å…¶è§£æžä¸ºå‡½æ•°è¡¨è¾¾å¼ã€‚ä½¿ç”¨åœ†æ‹¬å·æ˜¯ä¹ æƒ¯ç”¨æ³•ï¼Œå°½ç®¡æœ‰æ—¶å€™æ²¡æœ‰å¿…è¦ï¼Œä½†ä¹Ÿä¸åº”å½“çœç•¥ã€‚
+			×¢Òâ£¬ function×ó±ßµÄÀ¨ºÅ£¬²»¿ÉÒÔÊ¡ÂÔ£¬ÒòÎªÈç¹û²»Ð´Õâ¸ö×óÔ²À¨ºÅ£¬js½âÊÍÆ÷»áÊÓÍ¼½«¹Ø¼ü×Öfunction½âÎöÎªº¯ÊýÉùÃ÷Óï¾ä£¬¶ø°ü¹üÔÚÀ¨ºÅÖÐ£¬½âÊÍÆ÷²Å»áÕýÈ·µÄ½«Æä½âÎöÎªº¯Êý±í´ïÊ½¡£Ê¹ÓÃÔ²À¨ºÅÊÇÏ°¹ßÓÃ·¨£¬¾¡¹ÜÓÐÊ±ºòÃ»ÓÐ±ØÒª£¬µ«Ò²²»Ó¦µ±Ê¡ÂÔ¡£
 
 
 12. WebSocket
 
-	HTTPåè®®æ˜¯ä¸€ç§æ— çŠ¶æ€åè®®ï¼ŒæœåŠ¡å™¨æœ¬èº«ä¸å…·æœ‰è¯†åˆ«å®¢æˆ·ç«¯çš„èƒ½åŠ›ï¼Œå¿…é¡»å€ŸåŠ©å¤–éƒ¨æœºåˆ¶ï¼Œæ¯”å¦‚sessionå’Œcookieï¼Œæ‰èƒ½ä¸Žç‰¹å®šå®¢æˆ·ç«¯ä¿æŒå¯¹è¯ï¼Œè¿™å¤šå°‘å¸¦æ¥ä¸€äº›ä¸ä¾¿ï¼Œå°¤å…¶åœ¨æœåŠ¡å™¨ç«¯ä¸Žå®¢æˆ·ç«¯éœ€è¦æŒç»­äº¤æ¢æ•°æ®çš„åœºåˆï¼ˆæ¯”å¦‚ç½‘ç»œèŠå¤©ï¼‰ï¼Œä¸ºäº†è§£å†³è¿™ä¸ªé—®é¢˜ï¼ŒHTML5æå‡ºäº†æµè§ˆå™¨çš„WebSocket APIã€‚
+	HTTPÐ­ÒéÊÇÒ»ÖÖÎÞ×´Ì¬Ð­Òé£¬·þÎñÆ÷±¾Éí²»¾ßÓÐÊ¶±ð¿Í»§¶ËµÄÄÜÁ¦£¬±ØÐë½èÖúÍâ²¿»úÖÆ£¬±ÈÈçsessionºÍcookie£¬²ÅÄÜÓëÌØ¶¨¿Í»§¶Ë±£³Ö¶Ô»°£¬Õâ¶àÉÙ´øÀ´Ò»Ð©²»±ã£¬ÓÈÆäÔÚ·þÎñÆ÷¶ËÓë¿Í»§¶ËÐèÒª³ÖÐø½»»»Êý¾ÝµÄ³¡ºÏ£¨±ÈÈçÍøÂçÁÄÌì£©£¬ÎªÁË½â¾öÕâ¸öÎÊÌâ£¬HTML5Ìá³öÁËä¯ÀÀÆ÷µÄWebSocket API¡£
 
-	WebSocketçš„ä¸»è¦ä½œç”¨æ˜¯ï¼šå…è®¸æœåŠ¡å™¨ç«¯ä¸Žå®¢æˆ·ç«¯è¿›è¡Œå…¨åŒå·¥(full-duplex)çš„é€šä¿¡ï¼Œä¸¾ä¾‹æ¥è¯´ï¼ŒHTTPåè®®æœ‰ç‚¹åƒå‘ç”µå­é‚®ä»¶ï¼Œå‘å‡ºåŽå¿…é¡»ç­‰å¾…å¯¹è±¡å›žä¿¡ï¼Œè€ŒWebSocketåˆ™åƒæ˜¯æ‰“ç”µè¯ï¼ŒæœåŠ¡å™¨å’Œå®¢æˆ·ç«¯å¯ä»¥åŒæ—¶å‘å¯¹æ–¹å‘é€æ•°æ®ï¼Œä»–ä»¬ä¹‹é—´å­˜åœ¨ç€ä¸€æ¡æŒç»­æ‰“å¼€çš„æ•°æ®é€šé“ã€‚
+	WebSocketµÄÖ÷Òª×÷ÓÃÊÇ£ºÔÊÐí·þÎñÆ÷¶ËÓë¿Í»§¶Ë½øÐÐÈ«Ë«¹¤(full-duplex)µÄÍ¨ÐÅ£¬¾ÙÀýÀ´Ëµ£¬HTTPÐ­ÒéÓÐµãÏñ·¢µç×ÓÓÊ¼þ£¬·¢³öºó±ØÐëµÈ´ý¶ÔÏó»ØÐÅ£¬¶øWebSocketÔòÏñÊÇ´òµç»°£¬·þÎñÆ÷ºÍ¿Í»§¶Ë¿ÉÒÔÍ¬Ê±Ïò¶Ô·½·¢ËÍÊý¾Ý£¬ËûÃÇÖ®¼ä´æÔÚ×ÅÒ»Ìõ³ÖÐø´ò¿ªµÄÊý¾ÝÍ¨µÀ¡£
 
 
-	WebSocketåè®®å®Œå…¨å¯ä»¥å–ä»£Ajaxæ–¹æ³•ï¼Œç”¨æ¥å‘æœåŠ¡å™¨ç«¯å‘é€æ–‡æœ¬å’ŒäºŒè¿›åˆ¶æ•°æ®ï¼Œè€Œä¸”è¿˜æ²¡æœ‰â€œåŒåŸŸé™åˆ¶â€ã€‚
+	WebSocketÐ­ÒéÍêÈ«¿ÉÒÔÈ¡´úAjax·½·¨£¬ÓÃÀ´Ïò·þÎñÆ÷¶Ë·¢ËÍÎÄ±¾ºÍ¶þ½øÖÆÊý¾Ý£¬¶øÇÒ»¹Ã»ÓÐ¡°Í¬ÓòÏÞÖÆ¡±¡£
 
-	WebSocketä¸æ˜¯ç”¨HTTPåè®®ï¼Œè€Œæ˜¯ä½¿ç”¨è‡ªå·±çš„åè®®ï¼Œ
+	WebSocket²»ÊÇÓÃHTTPÐ­Òé£¬¶øÊÇÊ¹ÓÃ×Ô¼ºµÄÐ­Òé£¬
 
-		Aï¼‰ æµè§ˆå™¨å‘å‡ºçš„WSè¯·æ±‚å¤´ä¿¡æ¯ç±»ä¼¼äºŽä¸‹é¢çš„æ ·å­ï¼š
+		A£© ä¯ÀÀÆ÷·¢³öµÄWSÇëÇóÍ·ÐÅÏ¢ÀàËÆÓÚÏÂÃæµÄÑù×Ó£º
 
 			GET / HTTP/1.1
 			Connection:Upgrade
@@ -288,16 +288,16 @@
 			Sec-WebSocket-Version:13
 
 
-		è§£è¯»ï¼š  æœ‰ä¸€ä¸ªHTTPå¤´æ˜¯Upgrade. HTTP1.1åè®®è§„å®šï¼ŒUpgradeå¤´ä¿¡æ¯è¡¨ç¤ºå°†é€šä¿¡åè®®ä»ŽHTTP/1.1 è½¬å‘è¯¥é¡¹æ‰€æŒ‡å®šçš„åè®®ã€‚
+		½â¶Á£º  ÓÐÒ»¸öHTTPÍ·ÊÇUpgrade. HTTP1.1Ð­Òé¹æ¶¨£¬UpgradeÍ·ÐÅÏ¢±íÊ¾½«Í¨ÐÅÐ­Òé´ÓHTTP/1.1 ×ªÏò¸ÃÏîËùÖ¸¶¨µÄÐ­Òé¡£
 
-				Connection:Upgradeï¼Œå°±è¡¨ç¤ºæµè§ˆå™¨é€šçŸ¥æœåŠ¡å™¨ï¼Œå¦‚æžœå¯ä»¥ï¼Œå°±å‡çº§åˆ°wsåè®®
+				Connection:Upgrade£¬¾Í±íÊ¾ä¯ÀÀÆ÷Í¨Öª·þÎñÆ÷£¬Èç¹û¿ÉÒÔ£¬¾ÍÉý¼¶µ½wsÐ­Òé
 
-				Originç”¨äºŽéªŒè¯æµè§ˆåŒºåŸŸåæ˜¯å¦åœ¨æœåŠ¡å™¨è®¸å¯çš„èŒƒå›´å†…ã€‚
+				OriginÓÃÓÚÑéÖ¤ä¯ÀÀÇøÓòÃûÊÇ·ñÔÚ·þÎñÆ÷Ðí¿ÉµÄ·¶Î§ÄÚ¡£
 
-				Sec-WebSocket-Keyï¼Œåˆ™æ˜¯ç”¨äºŽæ¡æ‰‹åè®®çš„å¯†é’¥ï¼Œæ˜¯base64ç¼–ç çš„16å­—èŠ‚éšæœºå­—ç¬¦ä¸²
+				Sec-WebSocket-Key£¬ÔòÊÇÓÃÓÚÎÕÊÖÐ­ÒéµÄÃÜÔ¿£¬ÊÇbase64±àÂëµÄ16×Ö½ÚËæ»ú×Ö·û´®
 
 
-		Bï¼‰ æœåŠ¡å™¨ç«¯çš„wså“åº”å¤´ï¼š
+		B£© ·þÎñÆ÷¶ËµÄwsÏìÓ¦Í·£º
 
 			HTTP/1.1 101 Switching Protocols
 			Connectino:Upgrade
@@ -306,61 +306,61 @@
 			Sec-WebSocket-Origin: null
 			Sec-WebSocket-Location: ws://example.com/
 
-		è§£è¯»ï¼š	æœåŠ¡å™¨ç«¯åŒæ ·ç”¨ Connectino:Upgrade é€šçŸ¥æµè§ˆå™¨éœ€è¦æ”¹å˜åè®®ã€‚
+		½â¶Á£º	·þÎñÆ÷¶ËÍ¬ÑùÓÃ Connectino:Upgrade Í¨Öªä¯ÀÀÆ÷ÐèÒª¸Ä±äÐ­Òé¡£
 
-				Sec-Websocket-Acceptï¼Œæ˜¯æœåŠ¡å™¨åœ¨æµè§ˆå™¨æä¾›çš„ Sec-WebSocket-Key å­—ç¬¦ä¸²åŽé¢ï¼Œæ·»åŠ  'fFBooB7FAkLlXgRSz0BT3v4hq5s=' å­—ç¬¦ä¸²ï¼Œç„¶åŽå†å– sha-1 çš„hashå€¼ã€‚ æµè§ˆå™¨å°†å¯¹è¿™ä¸ªå€¼è¿›è¡ŒéªŒè¯ï¼Œä»¥è¯æ˜Žç¡®å®žæ˜¯ç›®æ ‡æœåŠ¡å™¨å›žåº”äº†wsè¯·æ±‚ã€‚
+				Sec-Websocket-Accept£¬ÊÇ·þÎñÆ÷ÔÚä¯ÀÀÆ÷Ìá¹©µÄ Sec-WebSocket-Key ×Ö·û´®ºóÃæ£¬Ìí¼Ó 'fFBooB7FAkLlXgRSz0BT3v4hq5s=' ×Ö·û´®£¬È»ºóÔÙÈ¡ sha-1 µÄhashÖµ¡£ ä¯ÀÀÆ÷½«¶ÔÕâ¸öÖµ½øÐÐÑéÖ¤£¬ÒÔÖ¤Ã÷È·ÊµÊÇÄ¿±ê·þÎñÆ÷»ØÓ¦ÁËwsÇëÇó¡£
 
-				Sec-WebSocket-Locationè¡¨ç¤ºè¿›è¡Œé€šä¿¡çš„WSç½‘å€
-
-
+				Sec-WebSocket-Location±íÊ¾½øÐÐÍ¨ÐÅµÄWSÍøÖ·
 
 
-	Â· å®Œæˆæ¡æ‰‹åŽï¼Œwsåè®®å°±åœ¨TCPåè®®ä¹‹ä¸Šï¼Œå¼€å§‹ä¼ é€æ•°æ®
-
-	Â· WSåè®®éœ€è¦æœåŠ¡å™¨æ”¯æŒï¼Œç›®å‰æ¯”è¾ƒæµè¡Œçš„å®žçŽ°æ˜¯ç»™äºˆnode.js çš„socket.ioã€‚
-		è‡³äºŽæµè§ˆå™¨ç«¯ï¼Œç›®å‰ä¸»æµæµè§ˆå™¨éƒ½æ”¯æŒwsåè®®ï¼ˆIE10+ï¼‰,
 
 
-	` ä»£ç å®žçŽ°
+	¡¤ Íê³ÉÎÕÊÖºó£¬wsÐ­Òé¾ÍÔÚTCPÐ­ÒéÖ®ÉÏ£¬¿ªÊ¼´«ËÍÊý¾Ý
 
-		// 1.å®¢æˆ·ç«¯æ£€æŸ¥æµè§ˆå™¨æ˜¯å¦æ”¯æŒWS
+	¡¤ WSÐ­ÒéÐèÒª·þÎñÆ÷Ö§³Ö£¬Ä¿Ç°±È½ÏÁ÷ÐÐµÄÊµÏÖÊÇ¸øÓènode.js µÄsocket.io¡£
+		ÖÁÓÚä¯ÀÀÆ÷¶Ë£¬Ä¿Ç°Ö÷Á÷ä¯ÀÀÆ÷¶¼Ö§³ÖwsÐ­Òé£¨IE10+£©,
+
+
+	` ´úÂëÊµÏÖ
+
+		// 1.¿Í»§¶Ë¼ì²éä¯ÀÀÆ÷ÊÇ·ñÖ§³ÖWS
 		if( window.WebSocket !== undefined ){
 
-			// WSä»£ç   2. ä¸ŽæœåŠ¡å™¨å»ºç«‹è¿žæŽ¥
+			// WS´úÂë  2. Óë·þÎñÆ÷½¨Á¢Á¬½Ó
 			var ws = new WebSocket('ws://localhostL8081');
 
-			// 3. ws æ˜¯ WebSocketçš„å®žä¾‹å¯¹è±¡ï¼Œè¯¥å¯¹è±¡æœ‰ä¸€ä¸ª readySateå±žæ€§ï¼Œè¡¨ç¤ºç›®å‰çš„çŠ¶æ€ï¼Œæœ‰å››ä¸ªå€¼ 
+			// 3. ws ÊÇ WebSocketµÄÊµÀý¶ÔÏó£¬¸Ã¶ÔÏóÓÐÒ»¸ö readySateÊôÐÔ£¬±íÊ¾Ä¿Ç°µÄ×´Ì¬£¬ÓÐËÄ¸öÖµ 
 
-				0ï¼šæ­£åœ¨è¿žæŽ¥
-				1: è¿žæŽ¥æˆåŠŸ
-				2ï¼šæ­£åœ¨å…³é—­
-				3ï¼šè¿žæŽ¥å…³é—­
+				0£ºÕýÔÚÁ¬½Ó
+				1: Á¬½Ó³É¹¦
+				2£ºÕýÔÚ¹Ø±Õ
+				3£ºÁ¬½Ó¹Ø±Õ
 
 
-			// wsä¸€å…±æ”¯æŒå››ä¸ªæ¶ˆæ¯ï¼šonopen onmessag onclose onerror
-	        // å½“browserå’Œwsè¿žæŽ¥æˆåŠŸåŽï¼Œä¼šè§¦å‘onopenæ¶ˆæ¯
+			// wsÒ»¹²Ö§³ÖËÄ¸öÏûÏ¢£ºonopen onmessag onclose onerror
+	        // µ±browserºÍwsÁ¬½Ó³É¹¦ºó£¬»á´¥·¢onopenÏûÏ¢
 	        ws.onopen = function(evt) { 
 	            websocket.send(evt); 
 	        }; 
 
-	        // å½“browseræŽ¥æ”¶åˆ°wså‘é€æ¥çš„æ•°æ®æ—¶ï¼Œå°±ä¼šè§¦å‘onmessageæ¶ˆæ¯ï¼Œeventä¸­åŒ…å«serverä¼ è¾“è¿‡æ¥çš„æ•°æ®
+	        // µ±browser½ÓÊÕµ½ws·¢ËÍÀ´µÄÊý¾ÝÊ±£¬¾Í»á´¥·¢onmessageÏûÏ¢£¬eventÖÐ°üº¬server´«Êä¹ýÀ´µÄÊý¾Ý
 	        ws.onmessage = function(evt) { 
 	            onMessage(evt) 
 	        }; 
 
-	        // å½“browseræŽ¥æ”¶åˆ°wså‘é€çš„å…³é—­è¿žæŽ¥è¯·æ±‚æ—¶ï¼Œå°±ä¼šè§¦å‘oncloseæ¶ˆæ¯
+	        // µ±browser½ÓÊÕµ½ws·¢ËÍµÄ¹Ø±ÕÁ¬½ÓÇëÇóÊ±£¬¾Í»á´¥·¢oncloseÏûÏ¢
 	        ws.onclose = function(evt) { 
 	            onClose(evt) 
 	        }; 
 
-	        // å¦‚æžœè¿žæŽ¥å¤±è´¥ï¼Œå‘é€ï¼ŒæŽ¥å—æ•°æ®å¤±è´¥æˆ–è€…å’Œå¤„ç†æ•°æ®å‡ºçŽ°é”™è¯¯ï¼Œbrowserä¼šè§¦å‘onerroræ¶ˆæ¯
+	        // Èç¹ûÁ¬½ÓÊ§°Ü£¬·¢ËÍ£¬½ÓÊÜÊý¾ÝÊ§°Ü»òÕßºÍ´¦ÀíÊý¾Ý³öÏÖ´íÎó£¬browser»á´¥·¢onerrorÏûÏ¢
 	        ws.onerror = function(evt) { 
 	            onError(evt) 
 	        }; 
 
 		 
 		    function onClose(evt) { 
-		        writeToScreen("æ–­å¼€"); 
+		        writeToScreen("¶Ï¿ª"); 
 		    }  
 		 
 		    function onMessage(evt) { 
@@ -383,16 +383,16 @@
 		}
 
 
-	Socket.ioæ˜¯ç›®å‰æœ€æµè¡Œçš„WebSocketå®žçŽ°ï¼ŒåŒ…æ‹¬æœåŠ¡å™¨å’Œå®¢æˆ·ç«¯ä¸¤ä¸ªéƒ¨åˆ†ã€‚å®ƒä¸ä»…ç®€åŒ–äº†æŽ¥å£ï¼Œä½¿å¾—æ“ä½œæ›´å®¹æ˜“ï¼Œè€Œä¸”å¯¹äºŽé‚£äº›ä¸æ”¯æŒWebSocketçš„æµè§ˆå™¨ï¼Œä¼šè‡ªåŠ¨é™ä¸ºAjaxè¿žæŽ¥ï¼Œæœ€å¤§é™åº¦åœ°ä¿è¯äº†å…¼å®¹æ€§ã€‚å®ƒçš„ç›®æ ‡æ˜¯ç»Ÿä¸€é€šä¿¡æœºåˆ¶ï¼Œä½¿å¾—æ‰€æœ‰æµè§ˆå™¨å’Œç§»åŠ¨è®¾å¤‡éƒ½å¯ä»¥è¿›è¡Œå®žæ—¶é€šä¿¡ã€‚
+	Socket.ioÊÇÄ¿Ç°×îÁ÷ÐÐµÄWebSocketÊµÏÖ£¬°üÀ¨·þÎñÆ÷ºÍ¿Í»§¶ËÁ½¸ö²¿·Ö¡£Ëü²»½ö¼ò»¯ÁË½Ó¿Ú£¬Ê¹µÃ²Ù×÷¸üÈÝÒ×£¬¶øÇÒ¶ÔÓÚÄÇÐ©²»Ö§³ÖWebSocketµÄä¯ÀÀÆ÷£¬»á×Ô¶¯½µÎªAjaxÁ¬½Ó£¬×î´óÏÞ¶ÈµØ±£Ö¤ÁË¼æÈÝÐÔ¡£ËüµÄÄ¿±êÊÇÍ³Ò»Í¨ÐÅ»úÖÆ£¬Ê¹µÃËùÓÐä¯ÀÀÆ÷ºÍÒÆ¶¯Éè±¸¶¼¿ÉÒÔ½øÐÐÊµÊ±Í¨ÐÅ¡£
 
-	å…¶æœ¬è´¨æ˜¯å…ˆé€šè¿‡HTTP/HTTPSåè®®è¿›è¡Œæ¡æ‰‹åŽåˆ›å»ºä¸€ä¸ªç”¨äºŽäº¤æ¢æ•°æ®çš„TCPè¿žæŽ¥ï¼ŒæœåŠ¡ç«¯ä¸Žå®¢æˆ·ç«¯é€šè¿‡æ­¤TCPè¿žæŽ¥è¿›è¡Œå®žæ—¶é€šä¿¡ã€‚
+	Æä±¾ÖÊÊÇÏÈÍ¨¹ýHTTP/HTTPSÐ­Òé½øÐÐÎÕÊÖºó´´½¨Ò»¸öÓÃÓÚ½»»»Êý¾ÝµÄTCPÁ¬½Ó£¬·þÎñ¶ËÓë¿Í»§¶ËÍ¨¹ý´ËTCPÁ¬½Ó½øÐÐÊµÊ±Í¨ÐÅ¡£
 
 
-	c) æµè§ˆå™¨æŸ¥çœ‹ ws çš„ä¼ è¾“è¿‡ç¨‹
+	c) ä¯ÀÀÆ÷²é¿´ ws µÄ´«Êä¹ý³Ì
 
-		netWort -> filter(æ˜¯ä¸ªicon) -> WS -> åªæ˜¾ç¤ºwsåè®®çš„è¯·æ±‚ -> ç‚¹å‡»å•ä¸ªè¯·æ±‚çš„ Frames å¯ä»¥çœ‹åˆ°å‘é€ç»™æœåŠ¡å™¨ä»¥åŠæœåŠ¡å™¨è¿”å›žçš„æ•°æ®(å‘é€ç»™æœåŠ¡å™¨çš„æ•°æ®çš„èƒŒæ™¯è‰²æ˜¯ç»¿è‰²)
+		netWort -> filter(ÊÇ¸öicon) -> WS -> Ö»ÏÔÊ¾wsÐ­ÒéµÄÇëÇó -> µã»÷µ¥¸öÇëÇóµÄ Frames ¿ÉÒÔ¿´µ½·¢ËÍ¸ø·þÎñÆ÷ÒÔ¼°·þÎñÆ÷·µ»ØµÄÊý¾Ý(·¢ËÍ¸ø·þÎñÆ÷µÄÊý¾ÝµÄ±³¾°É«ÊÇÂÌÉ«)
 
-	d) è¯·æ±‚å¤´  å’Œ å“åº”å¤´
+	d) ÇëÇóÍ·  ºÍ ÏìÓ¦Í·
 
 		HTTP/1.1 101 Web Socket Protocol Handshake
 		Access-Control-Allow-Credentials: true
@@ -404,8 +404,8 @@
 		Access-Control-Allow-Origin: null
 		Date: Tue, 19 Sep 2017 09:30:12 GMT
 		Sec-WebSocket-Accept: O3ZaRYPPdjoMFNU/FVXmWi2lEO0=
-		Server: Kaazing Gateway			--- æ˜¯ä¸€ç§æä¾›è·¨å¹³å°è·¨æµè§ˆå™¨WebSocketæ”¯æŒçš„ç½‘å…³ï¼Œç”±Javaç¼–å†™
-		Connection: Upgrade 			--- ä¸‹é¢ä¸¤æ¡è¡¨ç¤ºï¼Œä½¿ç”¨çš„æ˜¯ wsåè®®ï¼Œè€Œéžhttpåè®®
+		Server: Kaazing Gateway			--- ÊÇÒ»ÖÖÌá¹©¿çÆ½Ì¨¿çä¯ÀÀÆ÷WebSocketÖ§³ÖµÄÍø¹Ø£¬ÓÉJava±àÐ´
+		Connection: Upgrade 			--- ÏÂÃæÁ½Ìõ±íÊ¾£¬Ê¹ÓÃµÄÊÇ wsÐ­Òé£¬¶ø·ÇhttpÐ­Òé
 		Upgrade: websocket
 
 
@@ -417,25 +417,25 @@
 		Upgrade: websocket
 		Origin: file://
 		Sec-WebSocket-Version: 13 
-		Sec-WebSocket-Key: mSPm9O/nmD4KfW4b5fbpfA==     --- å¯¹åº”è¯·æ±‚å¤´ä¸­çš„ Sec-WebSocket-Accpet 	
-															è¿”å›žå®¢æˆ·ç«¯ï¼Œå°±è¡¨ç¤ºwsè¿žæŽ¥æˆåŠŸ
+		Sec-WebSocket-Key: mSPm9O/nmD4KfW4b5fbpfA==     --- ¶ÔÓ¦ÇëÇóÍ·ÖÐµÄ Sec-WebSocket-Accpet 	
+															·µ»Ø¿Í»§¶Ë£¬¾Í±íÊ¾wsÁ¬½Ó³É¹¦
 		Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits
 
 
 
-	e) WebSocket åè®®é‡‡ç”¨çš„æ˜¯ 101çŠ¶æ€ç ï¼Œserverå¯èƒ½è¿”å›ž ä¸¤ç§101 reason-phrase (åŽŸå› çŸ­å¥)
+	e) WebSocket Ð­Òé²ÉÓÃµÄÊÇ 101×´Ì¬Âë£¬server¿ÉÄÜ·µ»Ø Á½ÖÖ101 reason-phrase (Ô­Òò¶Ì¾ä)
 
-		1ï¼‰HTTP/1.1 101 Switching Protocol
+		1£©HTTP/1.1 101 Switching Protocol
 
-		2ï¼‰HTTP/1.1 101 Web Socket Protocol Handshake
+		2£©HTTP/1.1 101 Web Socket Protocol Handshake
 
-	f) ä¸ŽHTTPåè®®çš„è¯·æ±‚/å“åº”æ¨¡å¼ä¸åŒï¼Œwsåœ¨å»ºç«‹è¿žæŽ¥ä¹‹å‰æœ‰ä¸€ä¸ª handshake (opening handshake) è¿‡ç¨‹ï¼Œåœ¨å…³é—­è¿žæŽ¥ä¹‹å‰ä¹Ÿæœ‰ä¸€ä¸ªhandshakeè¿‡ç¨‹ï¼ˆclose handshakeï¼‰è¿‡ç¨‹ï¼Œå»ºç«‹è¿žæŽ¥ä¹‹åŽï¼ŒåŒæ–¹å³å¯åŒå‘é€šä¿¡ã€‚
+	f) ÓëHTTPÐ­ÒéµÄÇëÇó/ÏìÓ¦Ä£Ê½²»Í¬£¬wsÔÚ½¨Á¢Á¬½ÓÖ®Ç°ÓÐÒ»¸ö handshake (opening handshake) ¹ý³Ì£¬ÔÚ¹Ø±ÕÁ¬½ÓÖ®Ç°Ò²ÓÐÒ»¸öhandshake¹ý³Ì£¨close handshake£©¹ý³Ì£¬½¨Á¢Á¬½ÓÖ®ºó£¬Ë«·½¼´¿ÉË«ÏòÍ¨ÐÅ¡£
 
-	åœ¨wsåè®®å‘å±•è¿‡ç¨‹ä¸­å‰å‰åŽåŽå°±å‡ºçŽ°äº†å¤šä¸ªç‰ˆæœ¬çš„æ¡æ‰‹åè®®ï¼š
+	ÔÚwsÐ­Òé·¢Õ¹¹ý³ÌÖÐÇ°Ç°ºóºó¾Í³öÏÖÁË¶à¸ö°æ±¾µÄÎÕÊÖÐ­Òé£º
 
-		1ï¼‰åŸºäºŽ flash çš„æ¡æ‰‹åè®®
+		1£©»ùÓÚ flash µÄÎÕÊÖÐ­Òé
 
-			ä½¿ç”¨åœºæ™¯æ˜¯IEçš„å¤šæ•°ç‰ˆæœ¬ï¼Œå› ä¸ºIEçš„å¤šæ•°ç‰ˆæœ¬ä¸éƒ½ä¸æ”¯æŒwsåè®®ï¼Œä»¥åŠff,chromeç­‰æµè§ˆå™¨çš„ä½Žç‰ˆæœ¬ï¼Œè¿˜æ²¡æœ‰åŽŸå£°çš„æ”¯æŒwsï¼Œæ­¤å¤„ï¼Œserverå”¯ä¸€è¦åšçš„æ˜¯ï¼Œå°±æ˜¯å‡†å¤‡ä¸€ä¸ª WebSocket-LocationåŸŸç»™clientï¼Œæ²¡æœ‰åŠ å¯†ï¼Œå¯é æ€§å¾ˆå·®ã€‚
+			Ê¹ÓÃ³¡¾°ÊÇIEµÄ¶àÊý°æ±¾£¬ÒòÎªIEµÄ¶àÊý°æ±¾²»¶¼²»Ö§³ÖwsÐ­Òé£¬ÒÔ¼°ff,chromeµÈä¯ÀÀÆ÷µÄµÍ°æ±¾£¬»¹Ã»ÓÐÔ­ÉùµÄÖ§³Öws£¬´Ë´¦£¬serverÎ¨Ò»Òª×öµÄÊÇ£¬¾ÍÊÇ×¼±¸Ò»¸ö WebSocket-LocationÓò¸øclient£¬Ã»ÓÐ¼ÓÃÜ£¬¿É¿¿ÐÔºÜ²î¡£
 
 			request header:
 
@@ -455,7 +455,7 @@
 
 
 
-		2ï¼‰åŸºäºŽ md5 çš„æ¡æ‰‹åè®®
+		2£©»ùÓÚ md5 µÄÎÕÊÖÐ­Òé
 
 			request header:
 
@@ -477,9 +477,9 @@
 				WebSocket-Location: ws://example.com/demo
 				[16-byte hash response]
 
-		3ï¼‰åŸºäºŽ sha çš„æ¡æ‰‹åè®®
+		3£©»ùÓÚ sha µÄÎÕÊÖÐ­Òé
 		
-			ä¹Ÿæ˜¯ç›®å‰è§çš„æœ€å¤šçš„ä¸€ç§æ–¹å¼ï¼Œè¿™é‡Œçš„ç‰ˆæœ¬å·ç›®å‰æ˜¯éœ€è¦13ä»¥ä¸Šçš„ç‰ˆæœ¬
+			Ò²ÊÇÄ¿Ç°¼ûµÄ×î¶àµÄÒ»ÖÖ·½Ê½£¬ÕâÀïµÄ°æ±¾ºÅÄ¿Ç°ÊÇÐèÒª13ÒÔÉÏµÄ°æ±¾
 
 			request header:
 
@@ -493,7 +493,7 @@
 
 			response header:
 
-				HTTP/1.1 101 Switching Protocols    ---æ‰€æœ‰éž101çš„çŠ¶æ€ç éƒ½è¡¨ç¤ºhandshakeå¹¶æœªå®Œæˆã€‚
+				HTTP/1.1 101 Switching Protocols    ---ËùÓÐ·Ç101µÄ×´Ì¬Âë¶¼±íÊ¾handshake²¢Î´Íê³É¡£
 				Upgrade: websocket
 				Connection: Upgrade
 				Sec-WebSocket-Accept: mLDKNeBNWz6T9SxU+o0Fy/HgeSw=
@@ -501,87 +501,87 @@
 
 
 
-13. DOMäº‹ä»¶
+13. DOMÊÂ¼þ
 	
 	oninput   onpropertychange   onchange
 
-	a) onchangeè§¦å‘éœ€æ»¡è¶³ä¸¤ä¸ªæ¡ä»¶
+	a) onchange´¥·¢ÐèÂú×ãÁ½¸öÌõ¼þ
 
-		å½“å‰å¯¹è±¡å±žæ€§æ”¹å˜ï¼Œå¹¶ä¸”ç”±é”®ç›˜æˆ–é¼ æ ‡äº‹ä»¶è§¦å‘çš„ï¼ˆè„šæœ¬è§¦å‘æ— æ•ˆï¼‰
+		µ±Ç°¶ÔÏóÊôÐÔ¸Ä±ä£¬²¢ÇÒÓÉ¼üÅÌ»òÊó±êÊÂ¼þ´¥·¢µÄ£¨½Å±¾´¥·¢ÎÞÐ§£©
 
-		å½“å‰å¯¹è±¡å¤±åŽ»ç„¦ç‚¹(onblur)è§¦å‘
+		µ±Ç°¶ÔÏóÊ§È¥½¹µã(onblur)´¥·¢
 
-	b) onpropertychange åªè¦å½“å‰å¯¹è±¡å±žæ€§å‘ç”Ÿæ”¹å˜ï¼Œéƒ½ä¼šè§¦å‘äº‹ä»¶ï¼ŒIEä¸“å±ž
+	b) onpropertychange Ö»Òªµ±Ç°¶ÔÏóÊôÐÔ·¢Éú¸Ä±ä£¬¶¼»á´¥·¢ÊÂ¼þ£¬IE×¨Êô
 
-	c) oninput æ˜¯ onpropertychange çš„éžIEæµè§ˆå™¨ç‰ˆæœ¬ï¼Œæ”¯æŒff, operaç­‰æµè§ˆå™¨ï¼Œä½†æœ‰ä¸€ç‚¹ä¸åŒï¼Œä»–ç»‘å®šå¯¹è±¡æ—¶ï¼Œå¹¶éžè¯¥å¯¹è±¡å±žæ€§æ”¹å˜éƒ½èƒ½å‡ºè§¦å‘äº‹ä»¶ï¼Œvalueå€¼å‘ç”Ÿæ”¹å˜æ˜¯æœ‰æ•ˆ
-
-
-14. ng-repeat å¯¹è±¡æ—¶ï¼Œå¹¶ä¸æ˜¯æŒ‰ç…§é¡ºåºæ¥çš„ï¼Œå…¶å®žå°±æ˜¯å› ä¸ºObjectç±»åž‹for inæ—¶æ²¡æœ‰å›ºå®šé¡ºåºçš„ï¼Œæ˜¯æ— åºçš„
-
-	Objectç±»åž‹for inæ—¶æ²¡æœ‰å›ºå®šé¡ºåºçš„
-
-	ä¼˜å…ˆä½¿ç”¨æ•°ç»„è€Œä¸æ˜¯Objectç±»åž‹æ¥è¡¨ç¤ºæœ‰é¡ºåºçš„é›†åˆï¼Œ(ç¡®å®žï¼Œå¯¹è±¡çš„æ•°æ®ç»“æž„å®šä¹‰å°±æ˜¯æ— åºé›†åˆ)
-
-	ä¸ºä»€ä¹ˆï¼š
-
-			ECMA æ ‡å‡†å¹¶æ²¡æœ‰è§„å®šå¯¹jsçš„Objectç±»åž‹ä¸­çš„å±žæ€§çš„å­˜å‚¨é¡ºåºï¼Œä½†æ˜¯åœ¨ä½¿ç”¨for..inå¾ªçŽ¯ä¸­å¯¹Objectä¸­çš„å±žæ€§è¿›è¡ŒéåŽ†çš„æ—¶å€™ï¼Œç¡®å®žæ˜¯éœ€è¦ä¾èµ–äºŽæŸç§é¡ºåºçš„ã€‚æ­£å¼å› ä¸ºECMAæ²¡æœ‰å¯¹è¿™ä¸ªé¡ºåºè¿›è¡Œæ˜Žç¡®çš„è§„èŒƒï¼Œæ‰€ä»¥æ¯ä¸ªjsæ‰§è¡Œå¼•æ“Žéƒ½èƒ½å¤Ÿæ ¹æ®è‡ªèº«çš„ç‰¹ç‚¹è¿›è¡Œå®žçŽ°ã€‚é‚£ä¹ˆåœ¨ä¸åŒçš„æ‰§è¡ŒçŽ¯å¢ƒä¸­å°±ä¸éž¥ä¿è¯for..inå¾ªçŽ¯çš„è¡Œä¸ºä¸€è‡´æ€§äº†ã€‚
+	c) oninput ÊÇ onpropertychange µÄ·ÇIEä¯ÀÀÆ÷°æ±¾£¬Ö§³Öff, operaµÈä¯ÀÀÆ÷£¬µ«ÓÐÒ»µã²»Í¬£¬Ëû°ó¶¨¶ÔÏóÊ±£¬²¢·Ç¸Ã¶ÔÏóÊôÐÔ¸Ä±ä¶¼ÄÜ³ö´¥·¢ÊÂ¼þ£¬valueÖµ·¢Éú¸Ä±äÊÇÓÐÐ§
 
 
+14. ng-repeat ¶ÔÏóÊ±£¬²¢²»ÊÇ°´ÕÕË³ÐòÀ´µÄ£¬ÆäÊµ¾ÍÊÇÒòÎªObjectÀàÐÍfor inÊ±Ã»ÓÐ¹Ì¶¨Ë³ÐòµÄ£¬ÊÇÎÞÐòµÄ
 
-	å¦‚æžœä½ ç¡®å®žéœ€è¦ä¿è¯è¿è¡Œçš„ç»“æžœæ˜¯å»ºç«‹åœ¨æ•°æ®çš„é¡ºåºä¸Šï¼Œä¼˜å…ˆä½¿ç”¨æ•°ç»„ç±»åž‹æ¥è¡¨ç¤ºæ•°æ®ï¼Œè€Œä¸æ˜¯ç›´æŽ¥ä½¿ç”¨Objectç±»åž‹ã€‚åŒæ—¶ï¼Œä¹Ÿå°½é‡é¿å…ä½¿ç”¨for..inå¾ªçŽ¯ï¼Œè€Œä½¿ç”¨æ˜¾å¼çš„forå¾ªçŽ¯ï¼š
+	ObjectÀàÐÍfor inÊ±Ã»ÓÐ¹Ì¶¨Ë³ÐòµÄ
+
+	ÓÅÏÈÊ¹ÓÃÊý×é¶ø²»ÊÇObjectÀàÐÍÀ´±íÊ¾ÓÐË³ÐòµÄ¼¯ºÏ£¬(È·Êµ£¬¶ÔÏóµÄÊý¾Ý½á¹¹¶¨Òå¾ÍÊÇÎÞÐò¼¯ºÏ)
+
+	ÎªÊ²Ã´£º
+
+			ECMA ±ê×¼²¢Ã»ÓÐ¹æ¶¨¶ÔjsµÄObjectÀàÐÍÖÐµÄÊôÐÔµÄ´æ´¢Ë³Ðò£¬µ«ÊÇÔÚÊ¹ÓÃfor..inÑ­»·ÖÐ¶ÔObjectÖÐµÄÊôÐÔ½øÐÐ±éÀúµÄÊ±ºò£¬È·ÊµÊÇÐèÒªÒÀÀµÓÚÄ³ÖÖË³ÐòµÄ¡£ÕýÊ½ÒòÎªECMAÃ»ÓÐ¶ÔÕâ¸öË³Ðò½øÐÐÃ÷È·µÄ¹æ·¶£¬ËùÒÔÃ¿¸öjsÖ´ÐÐÒýÇæ¶¼ÄÜ¹»¸ù¾Ý×ÔÉíµÄÌØµã½øÐÐÊµÏÖ¡£ÄÇÃ´ÔÚ²»Í¬µÄÖ´ÐÐ»·¾³ÖÐ¾Í²»íE±£Ö¤for..inÑ­»·µÄÐÐÎªÒ»ÖÂÐÔÁË¡£
+
+
+
+	Èç¹ûÄãÈ·ÊµÐèÒª±£Ö¤ÔËÐÐµÄ½á¹ûÊÇ½¨Á¢ÔÚÊý¾ÝµÄË³ÐòÉÏ£¬ÓÅÏÈÊ¹ÓÃÊý×éÀàÐÍÀ´±íÊ¾Êý¾Ý£¬¶ø²»ÊÇÖ±½ÓÊ¹ÓÃObjectÀàÐÍ¡£Í¬Ê±£¬Ò²¾¡Á¿±ÜÃâÊ¹ÓÃfor..inÑ­»·£¬¶øÊ¹ÓÃÏÔÊ½µÄforÑ­»·£º
 
 	 
-	æ€»ç»“ï¼š
-		åœ¨ä½¿ç”¨for..inå¾ªçŽ¯æ—¶ï¼Œä¸è¦ä¾èµ–äºŽéåŽ†çš„é¡ºåºã€‚
-		å½“ä½¿ç”¨Objectç±»åž‹æ¥ä¿å­˜æ•°æ®æ—¶ï¼Œéœ€è¦ä¿è¯å…¶ä¸­çš„æ•°æ®æ˜¯æ— åºçš„ã€‚
-		å½“éœ€è¦è¡¨ç¤ºå¸¦æœ‰é¡ºåºçš„é›†åˆæ—¶ï¼Œä½¿ç”¨æ•°ç»„ç±»åž‹è€Œä¸æ˜¯Objectç±»åž‹ã€‚
+	×Ü½á£º
+		ÔÚÊ¹ÓÃfor..inÑ­»·Ê±£¬²»ÒªÒÀÀµÓÚ±éÀúµÄË³Ðò¡£
+		µ±Ê¹ÓÃObjectÀàÐÍÀ´±£´æÊý¾ÝÊ±£¬ÐèÒª±£Ö¤ÆäÖÐµÄÊý¾ÝÊÇÎÞÐòµÄ¡£
+		µ±ÐèÒª±íÊ¾´øÓÐË³ÐòµÄ¼¯ºÏÊ±£¬Ê¹ÓÃÊý×éÀàÐÍ¶ø²»ÊÇObjectÀàÐÍ¡£
 
 
-15. 101çŠ¶æ€ç 
+15. 101×´Ì¬Âë
 
-		æœåŠ¡å™¨å·²ç»ç†è§£äº†å®¢æˆ·ç«¯çš„è¯·æ±‚ï¼Œå¹¶å°†é€šè¿‡Upgrade æ¶ˆæ¯å¤´é€šçŸ¥å®¢æˆ·ç«¯é‡‡ç”¨ä¸åŒçš„åè®®æ¥å®Œæˆè¿™ä¸ªè¯·æ±‚ã€‚åœ¨å‘é€å®Œè¿™ä¸ªå“åº”æœ€åŽçš„ç©ºè¡ŒåŽï¼ŒæœåŠ¡å™¨å°†ä¼šåˆ‡æ¢åˆ°åœ¨Upgrade æ¶ˆæ¯å¤´ä¸­å®šä¹‰çš„é‚£äº›åè®®ã€‚ ã€€ã€€åªæœ‰åœ¨åˆ‡æ¢æ–°çš„åè®®æ›´æœ‰å¥½å¤„çš„æ—¶å€™æ‰åº”è¯¥é‡‡å–ç±»ä¼¼æŽªæ–½ã€‚ä¾‹å¦‚ï¼Œåˆ‡æ¢åˆ°æ–°çš„HTTP ç‰ˆæœ¬æ¯”æ—§ç‰ˆæœ¬æ›´æœ‰ä¼˜åŠ¿ï¼Œæˆ–è€…åˆ‡æ¢åˆ°ä¸€ä¸ªå®žæ—¶ä¸”åŒæ­¥çš„åè®®ä»¥ä¼ é€åˆ©ç”¨æ­¤ç±»ç‰¹æ€§çš„èµ„æºã€‚
+		·þÎñÆ÷ÒÑ¾­Àí½âÁË¿Í»§¶ËµÄÇëÇó£¬²¢½«Í¨¹ýUpgrade ÏûÏ¢Í·Í¨Öª¿Í»§¶Ë²ÉÓÃ²»Í¬µÄÐ­ÒéÀ´Íê³ÉÕâ¸öÇëÇó¡£ÔÚ·¢ËÍÍêÕâ¸öÏìÓ¦×îºóµÄ¿ÕÐÐºó£¬·þÎñÆ÷½«»áÇÐ»»µ½ÔÚUpgrade ÏûÏ¢Í·ÖÐ¶¨ÒåµÄÄÇÐ©Ð­Òé¡£ ¡¡¡¡Ö»ÓÐÔÚÇÐ»»ÐÂµÄÐ­Òé¸üÓÐºÃ´¦µÄÊ±ºò²ÅÓ¦¸Ã²ÉÈ¡ÀàËÆ´ëÊ©¡£ÀýÈç£¬ÇÐ»»µ½ÐÂµÄHTTP °æ±¾±È¾É°æ±¾¸üÓÐÓÅÊÆ£¬»òÕßÇÐ»»µ½Ò»¸öÊµÊ±ÇÒÍ¬²½µÄÐ­ÒéÒÔ´«ËÍÀûÓÃ´ËÀàÌØÐÔµÄ×ÊÔ´¡£
 
-	WebSocket åè®®é‡‡ç”¨çš„æ˜¯ 101çŠ¶æ€ç 
+	WebSocket Ð­Òé²ÉÓÃµÄÊÇ 101×´Ì¬Âë
 
 16. echarts
 
-	æ¯ä¸ªæŠ˜ç‚¹éƒ½æ˜¾ç¤ºæ•°å€¼:  åœ¨ seriesä¸­æ·»åŠ  itemStyle : { normal: {label : {show: true}}},
+	Ã¿¸öÕÛµã¶¼ÏÔÊ¾ÊýÖµ:  ÔÚ seriesÖÐÌí¼Ó itemStyle : { normal: {label : {show: true}}},
 
-17. shebang ç¬¦å·ï¼ˆ#!ï¼‰
+17. shebang ·ûºÅ£¨#!£©
 	
-	è¯¥ç¬¦å·åœ¨unixç±»çš„æ“ä½œç³»ç»Ÿæ‰æœ‰æ„ä¹‰
+	¸Ã·ûºÅÔÚunixÀàµÄ²Ù×÷ÏµÍ³²ÅÓÐÒâÒå
 
-	#!/user/bin/env python å’Œ #!/user/bin/python çš„åŒºåˆ«
+	#!/user/bin/env python ºÍ #!/user/bin/python µÄÇø±ð
 
 
-	#!/user/bin/python æ˜¯å‘Šè¯‰æ“ä½œç³»ç»Ÿæ‰§è¡Œè¿™ä¸ªè„šæœ¬çš„æ—¶å€™,è°ƒç”¨/user/binä¸‹çš„Pythonè§£é‡Šå™¨
+	#!/user/bin/python ÊÇ¸æËß²Ù×÷ÏµÍ³Ö´ÐÐÕâ¸ö½Å±¾µÄÊ±ºò,µ÷ÓÃ/user/binÏÂµÄPython½âÊÍÆ÷
 
-	#!/user/bin/env python è¿™ç§ç”¨æ³•æ˜¯ä¸ºäº†é˜²æ­¢ç”¨æˆ·æ²¡æœ‰è®²Pythonè£…åœ¨é»˜è®¤çš„/user/binè·¯å¾„ä¸‹ã€‚å½“ç³»ç»Ÿçœ‹åˆ°è¿™ä¸€è¡Œçš„æ—¶å€™ï¼Œé¦–å…ˆä¼šåˆ°envè®¾ç½®é‡ŒæŸ¥æ‰¾pythonçš„å®‰è£…è·¯å¾„ï¼Œå†è°ƒç”¨å¯¹åº”è·¯å¾„ä¸‹çš„è§£é‡Šå™¨ç¨‹åºå®Œæˆæ“ä½œã€‚ï¼ˆæŽ¨èè¿™ç§å†™æ³•ï¼‰
+	#!/user/bin/env python ÕâÖÖÓÃ·¨ÊÇÎªÁË·ÀÖ¹ÓÃ»§Ã»ÓÐ½²Python×°ÔÚÄ¬ÈÏµÄ/user/binÂ·¾¶ÏÂ¡£µ±ÏµÍ³¿´µ½ÕâÒ»ÐÐµÄÊ±ºò£¬Ê×ÏÈ»áµ½envÉèÖÃÀï²éÕÒpythonµÄ°²×°Â·¾¶£¬ÔÙµ÷ÓÃ¶ÔÓ¦Â·¾¶ÏÂµÄ½âÊÍÆ÷³ÌÐòÍê³É²Ù×÷¡££¨ÍÆ¼öÕâÖÖÐ´·¨£©
 
 
 18. setDate(1~31)
 
-	å¯ä»¥èŽ·å–è¯¥æœˆæŸä¸€å¤©çš„æ—¶é—´æ ¼å¼ï¼š
+	¿ÉÒÔ»ñÈ¡¸ÃÔÂÄ³Ò»ÌìµÄÊ±¼ä¸ñÊ½£º
 
 	var curDate = new Date();
 
-	curDate.setDate(12);  // è¯¥æ–¹æ³•çš„å‚æ•°æ˜¯å¿…é¡»çš„ï¼Œ12è¯´æ˜ŽèŽ·å–è¯¥æœˆ12å·çš„dateæ ¼å¼
+	curDate.setDate(12);  // ¸Ã·½·¨µÄ²ÎÊýÊÇ±ØÐëµÄ£¬12ËµÃ÷»ñÈ¡¸ÃÔÂ12ºÅµÄdate¸ñÊ½
 
-	console.log(curDate); // Sun Nov 12 2017 16:24:14 GMT+0800 (ä¸­å›½æ ‡å‡†æ—¶é—´)
+	console.log(curDate); // Sun Nov 12 2017 16:24:14 GMT+0800 (ÖÐ¹ú±ê×¼Ê±¼ä)
 
 
 19. getDate()
 
-	è¿”å›žæŸæœˆçš„æŸä¸€å¤©ï¼Œ1~31
+	·µ»ØÄ³ÔÂµÄÄ³Ò»Ìì£¬1~31
 
 
-20. èŽ·å–æ˜Žå¤©çš„å½“å‰æ—¶é—´
+20. »ñÈ¡Ã÷ÌìµÄµ±Ç°Ê±¼ä
 
 	var today = new Date();
 
-  	nextWeek.setDate(nextWeek.getDate() + 7);  // èŽ·å–ä¸€å‘¨ä¹‹åŽçš„æ—¶é—´
+  	nextWeek.setDate(nextWeek.getDate() + 7);  // »ñÈ¡Ò»ÖÜÖ®ºóµÄÊ±¼ä
 
-21. js ç”ŸæˆdomèŠ‚ç‚¹
+21. js Éú³Édom½Úµã
 
 	var html = '';
 
@@ -593,27 +593,27 @@
 
 	html += '</ul>';
 
-	$('.box').html(html);  // html() æ–¹æ³•å¯ä»¥æ¸²æŸ“æ ‡ç­¾,å¦‚æžœè¿™é‡Œä½¿ç”¨append(),åˆ™æ˜¯åŽŸæ ·æ˜¾ç¤ºåˆ°ç•Œé¢ä¸Šï¼Œä¸€å †å­—ç¬¦ä¸²,å¹¶ä¸ä¼šæ¸²æŸ“
+	$('.box').html(html);  // html() ·½·¨¿ÉÒÔäÖÈ¾±êÇ©,Èç¹ûÕâÀïÊ¹ÓÃappend(),ÔòÊÇÔ­ÑùÏÔÊ¾µ½½çÃæÉÏ£¬Ò»¶Ñ×Ö·û´®,²¢²»»áäÖÈ¾
 
 
-22. $.extend å’Œ angular.extend()
+22. $.extend ºÍ angular.extend()
 
-	åŠŸèƒ½æ˜¯ä¸€æ ·çš„,ä»¥$.extendè¯´æ˜Žç”¨æ³•
+	¹¦ÄÜÊÇÒ»ÑùµÄ,ÒÔ$.extendËµÃ÷ÓÃ·¨
 
 	var obj1 = {name:'apple', age:34};
 
 	var obj2 = {age:45};
 
-	var obj3 = $.extend({}, obj1, obj2);  //  obj2è¦†ç›–obj1çš„ç›¸åŒå±žæ€§  {name:'apple',age:45}
+	var obj3 = $.extend({}, obj1, obj2);  //  obj2¸²¸Çobj1µÄÏàÍ¬ÊôÐÔ  {name:'apple',age:45}
 
 
-23. è‡ªå·±å°è£…JQæ’ä»¶
+23. ×Ô¼º·â×°JQ²å¼þ
 
-	jqæä¾›äº†ä¸¤ç§æ–¹æ³•å¯ä»¥åœ¨jqä¸Šæ·»åŠ æ–¹æ³•
+	jqÌá¹©ÁËÁ½ÖÖ·½·¨¿ÉÒÔÔÚjqÉÏÌí¼Ó·½·¨
 
-	$.fn.extend()  -> $('#img').preload();  // éœ€è¦å…ˆé€‰æ‹©ä¸€ä¸ªå…ƒç´ 
+	$.fn.extend()  -> $('#img').preload();  // ÐèÒªÏÈÑ¡ÔñÒ»¸öÔªËØ
 
-	$.extend()	   -> $.preload();			// ä¸éœ€è¦å…ƒç´ 
+	$.extend()	   -> $.preload();			// ²»ÐèÒªÔªËØ
 
 	eg:   $.extend({
 				preload:function(imgs, opts){
@@ -628,24 +628,24 @@
 		  })
 
 
-24. ç‚¹å‡»ç©ºç™½å¤„åŽ»é”€å”®äº‹ä»¶å†’æ³¡
+24. µã»÷¿Õ°×´¦È¥ÏúÊÛÊÂ¼þÃ°ÅÝ
 
 	$('button').on('click',function(event){
 
-		event.stopPropagation();  // å–æ¶ˆäº‹ä»¶å†’æ³¡
+		event.stopPropagation();  // È¡ÏûÊÂ¼þÃ°ÅÝ
 
 		$('h1').show();
 	});
 
-	// ç‚¹å‡»ç©ºç™½å¤„å…³é—­h1ï¼Œéœ€è¦å–æ¶ˆäº‹ä»¶å†’æ³¡ï¼Œå¦åˆ™h1ä¸€ç›´æ˜¾ç¤ºä¸å‡ºæ¥
+	// µã»÷¿Õ°×´¦¹Ø±Õh1£¬ÐèÒªÈ¡ÏûÊÂ¼þÃ°ÅÝ£¬·ñÔòh1Ò»Ö±ÏÔÊ¾²»³öÀ´
 	$(document).on('click',function(){
 		$('h1').hide();
 	});
 
 
-25. äº‹ä»¶çš„ç»‘å®šå’Œæ¸…é™¤
+25. ÊÂ¼þµÄ°ó¶¨ºÍÇå³ý
 
-		// é”®ç›˜äº‹ä»¶
+		// ¼üÅÌÊÂ¼þ
 		document.onkeydown = function(e){
 			if(e.keyCode == 38){ // rotate
 				game.rotate();
@@ -660,42 +660,42 @@
 			}
 		};
 
-		// æ¸…é™¤é”®ç›˜äº‹ä»¶
-		document.onkeydown = null; (ä¸€èˆ¬æ¥è®²ï¼Œç›´æŽ¥ç½®ä¸ºNull,å¯ä»¥åˆå§‹åŒ–æ‰€æœ‰çš„something)
+		// Çå³ý¼üÅÌÊÂ¼þ
+		document.onkeydown = null; (Ò»°ãÀ´½²£¬Ö±½ÓÖÃÎªNull,¿ÉÒÔ³õÊ¼»¯ËùÓÐµÄsomething)
 
 
-		if(timer){ 		// å…³æŽ‰å®šæ—¶å™¨
+		if(timer){ 		// ¹Øµô¶¨Ê±Æ÷
 			clearInterval(timer);
-			timer = null;	ï¼ˆå¯ä»¥çœ‹åˆ°timeré‡ç½®ä¸ºnullï¼‰
+			timer = null;	£¨¿ÉÒÔ¿´µ½timerÖØÖÃÎªnull£©
 		}
 
 
-26. jsä¸­çš„å †å†…å­˜ï¼ˆheapï¼‰å’Œæ ˆå†…å­˜ï¼ˆstackï¼‰
+26. jsÖÐµÄ¶ÑÄÚ´æ£¨heap£©ºÍÕ»ÄÚ´æ£¨stack£©
 
-	JSè¿è¡Œçš„æ—¶å€™ä¼šæœ‰å †å†…å­˜ï¼ˆheapï¼‰å’Œæ ˆå†…å­˜ï¼ˆstackï¼‰ï¼Œå½“æˆ‘ä»¬newå®žä¾‹åŒ–ä¸€ä¸ªç±»çš„æ—¶å€™ï¼Œè¿™ä¸ªnewå‡ºæ¥çš„å¯¹è±¡å°±ä¿å­˜åœ¨heapé‡Œé¢ï¼Œè€Œè¿™ä¸ªå¯¹è±¡çš„å¼•ç”¨åˆ™å­˜å‚¨åœ¨stackä¸­ã€‚ç¨‹åºé€šè¿‡stacké‡Œçš„å¼•ç”¨æ‰¾åˆ°è¿™ä¸ªå¯¹è±¡ã€‚
+	JSÔËÐÐµÄÊ±ºò»áÓÐ¶ÑÄÚ´æ£¨heap£©ºÍÕ»ÄÚ´æ£¨stack£©£¬µ±ÎÒÃÇnewÊµÀý»¯Ò»¸öÀàµÄÊ±ºò£¬Õâ¸önew³öÀ´µÄ¶ÔÏó¾Í±£´æÔÚheapÀïÃæ£¬¶øÕâ¸ö¶ÔÏóµÄÒýÓÃÔò´æ´¢ÔÚstackÖÐ¡£³ÌÐòÍ¨¹ýstackÀïµÄÒýÓÃÕÒµ½Õâ¸ö¶ÔÏó¡£
 
 	var arr = [1,2,3];
 
-	å…¶ä¸­arræ˜¯[1,2,3]çš„å¼•ç”¨ï¼Œä¿å­˜åœ¨stackä¸­ï¼Œheapé‡Œå­˜å‚¨çš„å†…å®¹æ˜¯[1,2,3]
+	ÆäÖÐarrÊÇ[1,2,3]µÄÒýÓÃ£¬±£´æÔÚstackÖÐ£¬heapÀï´æ´¢µÄÄÚÈÝÊÇ[1,2,3]
 
-27. å†…å­˜æ³„æ¼ï¼ˆmemory leakï¼‰å’Œå†…å­˜æº¢å‡ºï¼ˆout of memoryï¼‰
+27. ÄÚ´æÐ¹Â©£¨memory leak£©ºÍÄÚ´æÒç³ö£¨out of memory£©
 
-	å†…å­˜æº¢å‡ºï¼Œæ˜¯æŒ‡ç¨‹åºåœ¨ç”³è¯·å†…å­˜æ—¶ï¼Œæ²¡æœ‰è¶³å¤Ÿçš„å†…å­˜ç©ºé—´ä¾›å…¶ä½¿ç”¨ï¼Œæ¯”å¦‚è¯´æ ˆï¼Œæ ˆæ»¡æ—¶åœ¨åšè¿›æ ˆå¿…å®šäº§ç”Ÿç©ºé—´æº¢å‡ºï¼Œå«ä¸Šæº¢ï¼Œæ ˆç©ºæ—¶å†åšé€€æ ˆä¹Ÿäº§ç”Ÿç©ºé—´æº¢å‡ºï¼Œç§°ä¸ºä¸‹æº¢ï¼Œå°±æ˜¯åˆ†é…çš„å†…å­˜ä¸è¶³ä»¥æ”¾ä¸‹æ•°æ®é¡¹åºåˆ—ï¼Œç§°ä¸ºå†…å­˜æº¢å‡ºã€‚
+	ÄÚ´æÒç³ö£¬ÊÇÖ¸³ÌÐòÔÚÉêÇëÄÚ´æÊ±£¬Ã»ÓÐ×ã¹»µÄÄÚ´æ¿Õ¼ä¹©ÆäÊ¹ÓÃ£¬±ÈÈçËµÕ»£¬Õ»ÂúÊ±ÔÚ×ö½øÕ»±Ø¶¨²úÉú¿Õ¼äÒç³ö£¬½ÐÉÏÒç£¬Õ»¿ÕÊ±ÔÙ×öÍËÕ»Ò²²úÉú¿Õ¼äÒç³ö£¬³ÆÎªÏÂÒç£¬¾ÍÊÇ·ÖÅäµÄÄÚ´æ²»×ãÒÔ·ÅÏÂÊý¾ÝÏîÐòÁÐ£¬³ÆÎªÄÚ´æÒç³ö¡£
 
-	å†…å­˜æ³„æ¼æ˜¯æŒ‡ï¼Œä½ æƒ³ç³»ç»Ÿç”³è¯·åˆ†é…å†…å­˜è¿›è¡Œä½¿ç”¨ï¼Œå¯æ˜¯ä½¿ç”¨å®Œä»¥åŽå´ä¸å½’è¿˜ï¼ˆdleteï¼‰,ç»“æžœä½ ç”³è¯·åˆ°çš„é‚£å—å†…å­˜ä½ è‡ªå·±ä¹Ÿä¸èƒ½åœ¨è®¿é—®ï¼ˆä¹Ÿè®¸ä½ æŠŠå®ƒçš„åœ°å€å¼„ä¸¢äº†ï¼‰ï¼Œè€Œç³»ç»Ÿä¸èƒ½å†æ¬¡å°†ä»–åˆ†é…ä»–éœ€è¦çš„ç¨‹åºã€‚
+	ÄÚ´æÐ¹Â©ÊÇÖ¸£¬ÄãÏëÏµÍ³ÉêÇë·ÖÅäÄÚ´æ½øÐÐÊ¹ÓÃ£¬¿ÉÊÇÊ¹ÓÃÍêÒÔºóÈ´²»¹é»¹£¨dlete£©,½á¹ûÄãÉêÇëµ½µÄÄÇ¿éÄÚ´æÄã×Ô¼ºÒ²²»ÄÜÔÚ·ÃÎÊ£¨Ò²ÐíÄã°ÑËüµÄµØÖ·Åª¶ªÁË£©£¬¶øÏµÍ³²»ÄÜÔÙ´Î½«Ëû·ÖÅäËûÐèÒªµÄ³ÌÐò¡£
 
-	ä¸€æ¬¡æ€§å†…å­˜æ³„æ¼å¹¶æ²¡æœ‰ä»€ä¹ˆå±å®³ï¼Œå› ä¸ºä»–ä¸ä¼šå †ç§¯ï¼ŒçœŸæ­£æœ‰å±å®³çš„æ˜¯å†…å­˜æ³„æ¼çš„å †ç§¯ï¼Œè¿™ä¼šæœ€ç»ˆè€—å°½ç³»ç»Ÿæ‰€æœ‰çš„å†…å­˜ã€‚
+	Ò»´ÎÐÔÄÚ´æÐ¹Â©²¢Ã»ÓÐÊ²Ã´Î£º¦£¬ÒòÎªËû²»»á¶Ñ»ý£¬ÕæÕýÓÐÎ£º¦µÄÊÇÄÚ´æÐ¹Â©µÄ¶Ñ»ý£¬Õâ»á×îÖÕºÄ¾¡ÏµÍ³ËùÓÐµÄÄÚ´æ¡£
 
-	å…ˆä¿éšœäº¤äº’é€»è¾‘ï¼Œåœ¨è°ƒæ•´ç»†èŠ‚ã€‚
+	ÏÈ±£ÕÏ½»»¥Âß¼­£¬ÔÚµ÷ÕûÏ¸½Ú¡£
 
 
-28. localStorage å’Œ sessionStorage åœ¨IEä¸­ä¹Ÿæ˜¯æ”¯æŒçš„ï¼Œä½†æ˜¯å¿…é¡»æ˜¯æœåŠ¡å™¨ä¸Šçš„æ–‡ä»¶ï¼Œå°±æ˜¯é€šè¿‡æœåŠ¡å™¨æ‰“å¼€ï¼Œä¸æ”¯æŒæœ¬åœ°æ–‡ä»¶
+28. localStorage ºÍ sessionStorage ÔÚIEÖÐÒ²ÊÇÖ§³ÖµÄ£¬µ«ÊÇ±ØÐëÊÇ·þÎñÆ÷ÉÏµÄÎÄ¼þ£¬¾ÍÊÇÍ¨¹ý·þÎñÆ÷´ò¿ª£¬²»Ö§³Ö±¾µØÎÄ¼þ
 
 29. ngResource
 		
 	.constant('BASEURL', "http://192.168.64.219:8081/")
 
-	ç¬¬ä¸€ç§å†™æ³•ï¼š
+	µÚÒ»ÖÖÐ´·¨£º
 
 		var User = $resource('/user/:userId', {userId:'@id'});
 		var user = User.get({userId:123}, function(){
@@ -703,7 +703,7 @@
 			user.$save();
 		});
 
-	ç¬¬äºŒç§å†™æ³•ï¼š
+	µÚ¶þÖÖÐ´·¨£º
 
 		var url = dataUrl + 'interface';
         var url1 = dataUrl + 'interface/:id';
@@ -716,20 +716,20 @@
             'getApi': { method: 'JSONP', url: url2+'?callback=JSON_CALLBACK',params:{}}
         });
 
-    æ€»ç»“ï¼š
+    ×Ü½á£º
 
-		HTTP GET â€œç±»â€åŠ¨ä½œ: Resource.action([parameters], [success], [error])
-		non-GET â€œç±»â€åŠ¨ä½œ: Resource.action([parameters], postData, [success], [error])
-		non-GET å®žä¾‹åŠ¨ä½œ: instance.$action([parameters], [success], [error])
+		HTTP GET ¡°Àà¡±¶¯×÷: Resource.action([parameters], [success], [error])
+		non-GET ¡°Àà¡±¶¯×÷: Resource.action([parameters], postData, [success], [error])
+		non-GET ÊµÀý¶¯×÷: instance.$action([parameters], [success], [error])
 
-		Successå›žè°ƒä»¥(value, responseHeaders)å‚æ•°è°ƒç”¨ã€‚Errorå›žè°ƒä»¥(httpResponse)å‚æ•°å›žè°ƒã€‚
+		Success»Øµ÷ÒÔ(value, responseHeaders)²ÎÊýµ÷ÓÃ¡£Error»Øµ÷ÒÔ(httpResponse)²ÎÊý»Øµ÷¡£
 
 
-	é—®é¢˜:
+	ÎÊÌâ:
 
-		1. $resource(url, params?, è‡ªå®šä¹‰æ–¹æ³•{})
+		1. $resource(url, params?, ×Ô¶¨Òå·½·¨{})
 
-			ç¬¬äºŒä¸ªå‚æ•°æ˜¯ä»€ä¹ˆï¼Ÿ
+			µÚ¶þ¸ö²ÎÊýÊÇÊ²Ã´£¿
 
 			.factory('UserCardResource', ['$resource', function ($resource) {
 
@@ -743,39 +743,39 @@
 			        { charge: { method: 'post', params: { charge: true }, isArray: false } });
 			}]);
 
-			å‚æ•°è§£è¯´ï¼š
-				å‚æ•°1ï¼šurl å¿…é¡»ï¼Œurlä¸­å¸¦æœ‰:é¡¹çš„æ˜¯æ ¹æ®å‚æ•°2æ¥è¿›è¡Œé…ç½®çš„,å¦‚æžœè®¾ç½®çš„æ²¡æœ‰å‡ºçŽ°åœ¨urlæ¨¡æ¿ä¸­ï¼Œå°†ä¼šä»¥search queryçš„æ–¹å¼æ·»åŠ ï¼Œ
+			²ÎÊý½âËµ£º
+				²ÎÊý1£ºurl ±ØÐë£¬urlÖÐ´øÓÐ:ÏîµÄÊÇ¸ù¾Ý²ÎÊý2À´½øÐÐÅäÖÃµÄ,Èç¹ûÉèÖÃµÄÃ»ÓÐ³öÏÖÔÚurlÄ£°åÖÐ£¬½«»áÒÔsearch queryµÄ·½Ê½Ìí¼Ó£¬
 					eg: 
-						urlï¼š/card/user/:userID/:id  ---  {userID:123, name:'john', id:'@id'}
-						æœ€ç»ˆçš„urlä¼šå˜æˆï¼š /card/user/123ï¼Ÿname='john'
+						url£º/card/user/:userID/:id  ---  {userID:123, name:'john', id:'@id'}
+						×îÖÕµÄurl»á±ä³É£º /card/user/123£¿name='john'
 
-					å¦‚æžœå‚æ•°å€¼æ˜¯ä»¥@å¼€å¤´çš„ï¼Œé‚£ä¹ˆå…¶çœŸå®žå€¼å°†ä¼šä»Žæ•°æ®å¯¹è±¡ä¸­æå–ï¼Ÿï¼Ÿï¼Ÿ
+					Èç¹û²ÎÊýÖµÊÇÒÔ@¿ªÍ·µÄ£¬ÄÇÃ´ÆäÕæÊµÖµ½«»á´ÓÊý¾Ý¶ÔÏóÖÐÌáÈ¡£¿£¿£¿
 					
-				å‚æ•°2ï¼šå¯ç©ºï¼Œé…ç½®urlä¸­å¸¦æœ‰ï¼šé¡¹çš„å‚æ•°paramsï¼Œå³urlé‡Œé¢çš„å‚æ•°
-				å‚æ•°3ï¼šå¯ç©ºï¼Œä¸ºè‡ªå®šä¹‰èµ„æºæ–¹æ³•
+				²ÎÊý2£º¿É¿Õ£¬ÅäÖÃurlÖÐ´øÓÐ£ºÏîµÄ²ÎÊýparams£¬¼´urlÀïÃæµÄ²ÎÊý
+				²ÎÊý3£º¿É¿Õ£¬Îª×Ô¶¨Òå×ÊÔ´·½·¨
 
-			cardId: '@id' ??? @idæ˜¯ä»€ä¹ˆæ„æ€?
+			cardId: '@id' ??? @idÊÇÊ²Ã´ÒâË¼?
 
-			å°†resourceå°è£…æˆæœåŠ¡åŽï¼Œè°ƒç”¨ï¼š
+			½«resource·â×°³É·þÎñºó£¬µ÷ÓÃ£º
 
 			cardResource.action([parameters], [success], [error])
 
-			ç¬¬ä¸€ä¸ªå‚æ•°æ˜¯paramsï¼Œå¦‚æžœæ²¡æœ‰å¯ä»¥ä¸å¡«ï¼Œå¯ä»¥ç›´æŽ¥å†™successCallbackï¼Œ	
+			µÚÒ»¸ö²ÎÊýÊÇparams£¬Èç¹ûÃ»ÓÐ¿ÉÒÔ²»Ìî£¬¿ÉÒÔÖ±½ÓÐ´successCallback£¬	
 
 			[success], function(data header){....}
 
-30. jsçš„æ ¹å¯¹è±¡æ˜¯ï¼šObject.prototypeå¯¹è±¡,å®ƒæ˜¯ä¸€ä¸ªç©ºçš„å¯¹è±¡ï¼Œåœ¨jsä¸­é‡åˆ°çš„æ¯ä¸ªå¯¹è±¡å®žé™…ä¸Šéƒ½æ˜¯ä»Žè¿™ä¸ªå¯¹è±¡cloneè€Œæ¥ï¼Œå°±æ˜¯ä»–ä»¬çš„åŽŸåž‹ï¼Œ
+30. jsµÄ¸ù¶ÔÏóÊÇ£ºObject.prototype¶ÔÏó,ËüÊÇÒ»¸ö¿ÕµÄ¶ÔÏó£¬ÔÚjsÖÐÓöµ½µÄÃ¿¸ö¶ÔÏóÊµ¼ÊÉÏ¶¼ÊÇ´ÓÕâ¸ö¶ÔÏóclone¶øÀ´£¬¾ÍÊÇËûÃÇµÄÔ­ÐÍ£¬
 
-31. åŽŸåž‹é“¾å¹¶ä¸æ˜¯æ— é™é•¿çš„ï¼Œæˆ‘ä»¬å°è¯•è®¿é—®å¯¹è±¡açš„addresså±žæ€§ï¼ˆå®žé™…ä¸Šaå¹¶æ²¡æœ‰è¿™ä¸ªå±žæ€§ï¼‰ï¼Œè€Œå¯¹è±¡bå’Œå®ƒæž„é€ å™¨çš„åŽŸåž‹ä¸Šéƒ½æ²¡æœ‰addresså±žæ€§ï¼Œnameè¿™ä¸ªè¯·æ±‚ä¼šè¢«æœ€ç»ˆä¼ é€’åˆ°å“ªé‡Œï¼Ÿ
+31. Ô­ÐÍÁ´²¢²»ÊÇÎÞÏÞ³¤µÄ£¬ÎÒÃÇ³¢ÊÔ·ÃÎÊ¶ÔÏóaµÄaddressÊôÐÔ£¨Êµ¼ÊÉÏa²¢Ã»ÓÐÕâ¸öÊôÐÔ£©£¬¶ø¶ÔÏóbºÍËü¹¹ÔìÆ÷µÄÔ­ÐÍÉÏ¶¼Ã»ÓÐaddressÊôÐÔ£¬nameÕâ¸öÇëÇó»á±»×îÖÕ´«µÝµ½ÄÄÀï£¿
 
-	å®žé™…ä¸Šå½“è¯·æ±‚è¾¾åˆ°A.prototypeï¼Œå¹¶ä¸”åœ¨A.prototypeä¸­ä¹Ÿæ²¡æœ‰æ‰¾åˆ°addresså±žæ€§çš„æ—¶å€™ï¼Œè¯·æ±‚ä¼šè¢«ä¼ é€’åˆ°A.prototypeçš„æž„é€ å™¨åŽŸåž‹Object.prototype,æ˜¾ç„¶Object.prototypeä¸­ä¹Ÿæ²¡æœ‰è¯¥å±žæ€§ï¼Œä½†æ˜¯Object.prototypeçš„åŽŸåž‹æ˜¯nullï¼Œè¯´æ˜Žè¿™æ—¶å€™åŽŸåž‹é“¾çš„åŽé¢å·²ç»æ²¡æœ‰åˆ«çš„èŠ‚ç‚¹äº†ï¼Œæ‰€ä»¥è¯¥æ¬¡è¯·æ±‚å°±åˆ°æ­¤æ‰“ä½ï¼Œa.addressè¿”å›žundefinedã€‚
+	Êµ¼ÊÉÏµ±ÇëÇó´ïµ½A.prototype£¬²¢ÇÒÔÚA.prototypeÖÐÒ²Ã»ÓÐÕÒµ½addressÊôÐÔµÄÊ±ºò£¬ÇëÇó»á±»´«µÝµ½A.prototypeµÄ¹¹ÔìÆ÷Ô­ÐÍObject.prototype,ÏÔÈ»Object.prototypeÖÐÒ²Ã»ÓÐ¸ÃÊôÐÔ£¬µ«ÊÇObject.prototypeµÄÔ­ÐÍÊÇnull£¬ËµÃ÷ÕâÊ±ºòÔ­ÐÍÁ´µÄºóÃæÒÑ¾­Ã»ÓÐ±ðµÄ½ÚµãÁË£¬ËùÒÔ¸Ã´ÎÇëÇó¾Íµ½´Ë´ò×¡£¬a.address·µ»Øundefined¡£
 
 
-32. call å’Œ apply
+32. call ºÍ apply
 	
 	x.showName.call(y,m,n);
 
-	ç”¨xä»£æ›¿y,ä¹Ÿå°±æ˜¯xçš„æ–¹æ³•æ”¾åœ¨yä¸Šæ‰§è¡Œã€‚m,næ˜¯å‚æ•°
+	ÓÃx´úÌæy,Ò²¾ÍÊÇxµÄ·½·¨·ÅÔÚyÉÏÖ´ÐÐ¡£m,nÊÇ²ÎÊý
 
 	eg:
 		function add(m,n){
@@ -787,7 +787,7 @@
 		};
 
 		console.log( add(5,3) ); 				// 8
-		console.log( add.call(sub,5,3) );		// 8ï¼Œç”¨addæ›¿æ¢sub
+		console.log( add.call(sub,5,3) );		// 8£¬ÓÃaddÌæ»»sub
 		console.log( add.apply(sub,[5,3]) );	// 8
 
 		console.log( sub.apply(add,[5,3]) );	// 2
@@ -795,80 +795,80 @@
 
 		
 
-33. åº”ç”¨æµ‹è¯•
+33. Ó¦ÓÃ²âÊÔ
 
-	åº”ç”¨æµ‹è¯•æœ‰å¾ˆå¤šç±»åž‹ï¼Œæœ€ä¸ºå¸¸è§çš„æ˜¯å•å…ƒæµ‹è¯•å’Œç«¯å¯¹ç«¯æµ‹è¯•ï¼ˆä¹Ÿç§°ä¸ºé›†æˆæµ‹è¯•ï¼‰ã€
+	Ó¦ÓÃ²âÊÔÓÐºÜ¶àÀàÐÍ£¬×îÎª³£¼ûµÄÊÇµ¥Ôª²âÊÔºÍ¶Ë¶Ô¶Ë²âÊÔ£¨Ò²³ÆÎª¼¯³É²âÊÔ£©¡¢
 
-	å•å…ƒæµ‹è¯•æ˜¯æµ‹è¯•ä»£ç è‡ªèº«è¡Œä¸ºçš„ä¸€ç§æµ‹è¯•ã€‚
+	µ¥Ôª²âÊÔÊÇ²âÊÔ´úÂë×ÔÉíÐÐÎªµÄÒ»ÖÖ²âÊÔ¡£
 
-	é›†æˆæµ‹è¯•æ˜¯æ¨¡ä»¿ç”¨æˆ·è¡Œä¸ºçš„ä¸€ç§æµ‹è¯•ã€‚æ¯”å¦‚ç™»å½•ç³»ç»Ÿï¼Œåˆ›å»ºå¸–å­ï¼Œé€€å‡ºç³»ç»Ÿç­‰è¿™äº›æ“ä½œéƒ½å¯ä»¥è‡ªåŠ¨åŒ–ï¼Œå¹¶ä¸”å¯ä»¥ç”¨çœ¼ç›çœ‹åˆ°å…¶è¿‡ç¨‹æ˜¯æ€Žä¹ˆå‘ç”Ÿçš„ã€‚
+	¼¯³É²âÊÔÊÇÄ£·ÂÓÃ»§ÐÐÎªµÄÒ»ÖÖ²âÊÔ¡£±ÈÈçµÇÂ¼ÏµÍ³£¬´´½¨Ìû×Ó£¬ÍË³öÏµÍ³µÈÕâÐ©²Ù×÷¶¼¿ÉÒÔ×Ô¶¯»¯£¬²¢ÇÒ¿ÉÒÔÓÃÑÛ¾¦¿´µ½Æä¹ý³ÌÊÇÔõÃ´·¢ÉúµÄ¡£
 
-	angular2	e2eæ¨¡å—å°±æ˜¯ç«¯å¯¹ç«¯æµ‹è¯•æ¨¡å—
+	angular2	e2eÄ£¿é¾ÍÊÇ¶Ë¶Ô¶Ë²âÊÔÄ£¿é
 
 
-34. RPCæž¶æž„
+34. RPC¼Ü¹¹
 
-	Remote Promote Call, ä¸€ç§è¿›ç¨‹é—´é€šä¿¡æ–¹å¼ï¼Œå…è®¸åƒè°ƒç”¨æœ¬åœ°æœåŠ¡ä¸€æ ·è°ƒç”¨è¿œç¨‹æœåŠ¡ã€‚
+	Remote Promote Call, Ò»ÖÖ½ø³Ì¼äÍ¨ÐÅ·½Ê½£¬ÔÊÐíÏñµ÷ÓÃ±¾µØ·þÎñÒ»Ñùµ÷ÓÃÔ¶³Ì·þÎñ¡£
 
-	PRCæ¡†æž¶çš„ä¸»è¦ç›®æ ‡å°±æ˜¯è®©è¿œç¨‹æœåŠ¡è°ƒç”¨æ›´ç®€å•ã€é€æ˜Žã€‚RPCæ¡†æž¶è´Ÿè´£å±è”½åº•å±‚çš„ä¼ è¾“æ–¹å¼ï¼ˆTCPæˆ–è€…UDPï¼‰.
+	PRC¿ò¼ÜµÄÖ÷ÒªÄ¿±ê¾ÍÊÇÈÃÔ¶³Ì·þÎñµ÷ÓÃ¸ü¼òµ¥¡¢Í¸Ã÷¡£RPC¿ò¼Ü¸ºÔðÆÁ±Îµ×²ãµÄ´«Êä·½Ê½£¨TCP»òÕßUDP£©.
 
-	åºåˆ—åŒ–æ–¹å¼ï¼ˆXML/JSON/äºŒè¿›åˆ¶ï¼‰å’Œé€šä¿¡ç»†èŠ‚ã€‚å¼€å‘äººå‘˜åœ¨ä½¿ç”¨çš„æ—¶å€™åªéœ€è¦äº†è§£è°åœ¨ä»€ä¹ˆä½ç½®æä¾›äº†ä»€ä¹ˆ
+	ÐòÁÐ»¯·½Ê½£¨XML/JSON/¶þ½øÖÆ£©ºÍÍ¨ÐÅÏ¸½Ú¡£¿ª·¢ÈËÔ±ÔÚÊ¹ÓÃµÄÊ±ºòÖ»ÐèÒªÁË½âË­ÔÚÊ²Ã´Î»ÖÃÌá¹©ÁËÊ²Ã´
 
-	æœåŠ¡æŽ¥å£å³å¯ï¼Œå¹¶ä¸éœ€è¦å…³å¿ƒåº•å±‚é€šä¿¡ç»†èŠ‚å’Œè°ƒç”¨è¿‡ç¨‹ã€‚
+	·þÎñ½Ó¿Ú¼´¿É£¬²¢²»ÐèÒª¹ØÐÄµ×²ãÍ¨ÐÅÏ¸½ÚºÍµ÷ÓÃ¹ý³Ì¡£
 
-35. å›¾ç‰‡ç®—æ³•
+35. Í¼Æ¬Ëã·¨
 
-	é€šå¸¸åœ¨ç½‘é¡µä¸­çœ‹åˆ°çš„å›¾ç‰‡æœ‰ä¸¤ç§åŠ è½½æ–¹å¼ï¼šä¸€ç§ä»Žæ¨¡ç³Šç„¶åŽé€æ¸æ¸…æ™°ï¼Œå¦ä¸€ç§é€è¡ŒåŠ è½½æ˜¾ç¤ºæ¸…æ™°çš„å›¾ç‰‡ã€‚
-	é€ æˆè¿™ç§æ–¹å¼çš„åŽŸå› æ˜¯å¦‚åçš„åŽ‹ç¼©ç®—æ³•ä¸åŒï¼Œç¬¬ä¸€ç§æ˜¯å°æ³¢ç®—æ³•ï¼Œç¬¬äºŒç§æ˜¯ç¦»æ•£ä½™å¼¦å˜æ¢ã€‚
+	Í¨³£ÔÚÍøÒ³ÖÐ¿´µ½µÄÍ¼Æ¬ÓÐÁ½ÖÖ¼ÓÔØ·½Ê½£ºÒ»ÖÖ´ÓÄ£ºýÈ»ºóÖð½¥ÇåÎú£¬ÁíÒ»ÖÖÖðÐÐ¼ÓÔØÏÔÊ¾ÇåÎúµÄÍ¼Æ¬¡£
+	Ôì³ÉÕâÖÖ·½Ê½µÄÔ­ÒòÊÇÈçÆ«µÄÑ¹ËõËã·¨²»Í¬£¬µÚÒ»ÖÖÊÇÐ¡²¨Ëã·¨£¬µÚ¶þÖÖÊÇÀëÉ¢ÓàÏÒ±ä»»¡£
 
-	ä»Žç”¨æˆ·ä½“éªŒä¸Šæ¥äº¬ç¬¬ä¸€ç§åŠ è½½æ–¹å¼æ— ç–‘æ›´åŠ å‹å¥½ï¼Œåˆ¶ä½œæ–¹å¼ï¼Œå°±æ˜¯ç”¨PSå¯¼å‡ºæ—¶åšäº›é…ç½®ï¼š
+	´ÓÓÃ»§ÌåÑéÉÏÀ´¾©µÚÒ»ÖÖ¼ÓÔØ·½Ê½ÎÞÒÉ¸ü¼ÓÓÑºÃ£¬ÖÆ×÷·½Ê½£¬¾ÍÊÇÓÃPSµ¼³öÊ±×öÐ©ÅäÖÃ£º
 
-	PNGå›¾ç‰‡ä½¿ç”¨PSå¯¼å‡ºæ—¶ï¼Œå‹¾é€‰äº¤é”™ï¼›
-	JPGå›¾ç‰‡ä½¿ç”¨PSå¯¼å‡ºæ—¶ï¼Œå‹¾é€‰è¿žç»­ï¼›
+	PNGÍ¼Æ¬Ê¹ÓÃPSµ¼³öÊ±£¬¹´Ñ¡½»´í£»
+	JPGÍ¼Æ¬Ê¹ÓÃPSµ¼³öÊ±£¬¹´Ñ¡Á¬Ðø£»
 
-	å¯¼å‡ºçš„å›¾ç‰‡å°±æ˜¯ä»Žæ¨¡ç³Šåˆ°æ¸…æ™°çš„æ•ˆæžœäº†ï¼Œé€šå¸¸ç§°ä¸ºäº¤é”™å¼PNGå’Œæ¸è¿›å¼JPGã€‚ï¼ˆæœ‰äººè¯´æ²¡æœ‰è¿™ä¸ªé€‰é¡¹ï¼Ÿï¼‰
+	µ¼³öµÄÍ¼Æ¬¾ÍÊÇ´ÓÄ£ºýµ½ÇåÎúµÄÐ§¹ûÁË£¬Í¨³£³ÆÎª½»´íÊ½PNGºÍ½¥½øÊ½JPG¡££¨ÓÐÈËËµÃ»ÓÐÕâ¸öÑ¡Ïî£¿£©
 
-	å¦å¤–ä¸€ç§æ–¹å¼ï¼š
+	ÁíÍâÒ»ÖÖ·½Ê½£º
 
-		<img src="ç¼©ç•¥å›¾.jpg" name="pic" width="800" height="600" id="news" />
+		<img src="ËõÂÔÍ¼.jpg" name="pic" width="800" height="600" id="news" />
 
-		ç„¶åŽç”¨jså¤„ç†ï¼š
+		È»ºóÓÃjs´¦Àí£º
 
-		var img = new Image();//æ–°å»ºä¸€ä¸ªå›¾ç‰‡å¯¹è±¡ 
-		img.src = "åŽŸå›¾.jpg"; //æœ€ç»ˆæ˜¾ç¤ºçš„å¤§å›¾
+		var img = new Image();//ÐÂ½¨Ò»¸öÍ¼Æ¬¶ÔÏó 
+		img.src = "Ô­Í¼.jpg"; //×îÖÕÏÔÊ¾µÄ´óÍ¼
 		img.onload = function() { 
 			document.getElementById('news').src = this.src; 
 		}
 
-36. ç›¸å¯¹åè®®
+36. Ïà¶ÔÐ­Òé
 
-	å¦‚æžœä½ çš„ç½‘ç«™åŒæ—¶å‡†å¤‡äº†httpsèµ„æºå’Œhttpèµ„æºï¼Œnameå¯ä»¥ä½¿ç”¨ç›¸å¯¹åè®®å¸®ä½ å®žçŽ°å½“ç½‘ç«™å¼•å…¥çš„éƒ½æ˜¯httpèµ„æºï¼Œç½‘ç«™åŸŸåæ›´æ¢ä¸ºhttpsåŽçš„æ— ç¼åˆ‡æ¢ã€‚
+	Èç¹ûÄãµÄÍøÕ¾Í¬Ê±×¼±¸ÁËhttps×ÊÔ´ºÍhttp×ÊÔ´£¬name¿ÉÒÔÊ¹ÓÃÏà¶ÔÐ­Òé°ïÄãÊµÏÖµ±ÍøÕ¾ÒýÈëµÄ¶¼ÊÇhttp×ÊÔ´£¬ÍøÕ¾ÓòÃû¸ü»»ÎªhttpsºóµÄÎÞ·ìÇÐ»»¡£
 
-	å¦‚ï¼š <img src='//domain.com/img/logon.png'>
+	Èç£º <img src='//domain.com/img/logon.png'>
 
-	ç®€è€Œè¨€ä¹‹ï¼Œå°±æ˜¯è®²URLçš„åè®®ï¼ˆhttp,httpsï¼‰åŽ»æŽ‰ï¼Œåªä¿ç•™//åŠåŽé¢çš„å†…å®¹
+	¼ò¶øÑÔÖ®£¬¾ÍÊÇ½²URLµÄÐ­Òé£¨http,https£©È¥µô£¬Ö»±£Áô//¼°ºóÃæµÄÄÚÈÝ
 
-	æ³¨æ„ï¼šå¦‚æžœæ˜¯æµè§ˆæœ¬åœ°æ–‡ä»¶ï¼Œæµè§ˆå™¨é€šè¿‡file://åè®®å‘é€è¯·æ±‚,å¯¼è‡´è¯·æ±‚å¤±è´¥ï¼Œå› æ­¤æœ¬åœ°æµ‹è¯•æœ€å¥½æ˜¯æ­å»ºä¸€ä¸ªæœ¬åœ°æœåŠ¡å™¨
+	×¢Òâ£ºÈç¹ûÊÇä¯ÀÀ±¾µØÎÄ¼þ£¬ä¯ÀÀÆ÷Í¨¹ýfile://Ð­Òé·¢ËÍÇëÇó,µ¼ÖÂÇëÇóÊ§°Ü£¬Òò´Ë±¾µØ²âÊÔ×îºÃÊÇ´î½¨Ò»¸ö±¾µØ·þÎñÆ÷
 
 37. placeholder="{{fn.sample}}" 
 
-38. CSSæŠ€æœ¯æ–¹æ¡ˆ
+38. CSS¼¼Êõ·½°¸
 
-	csså…¨å±€ä½œç”¨åŸŸé—®é¢˜ï¼šcssçš„è§„åˆ™éƒ½æ˜¯å…¨å±€çš„,åä½œå¼€å‘æ—¶å¯èƒ½ä¼šå†²çªï¼Œæˆ‘ä»¬çš„è¿½æ±‚æ˜¯sandBoxedï¼ˆæ²™ç®±åŒ–ï¼‰
+	cssÈ«¾Ö×÷ÓÃÓòÎÊÌâ£ºcssµÄ¹æÔò¶¼ÊÇÈ«¾ÖµÄ,Ð­×÷¿ª·¢Ê±¿ÉÄÜ»á³åÍ»£¬ÎÒÃÇµÄ×·ÇóÊÇsandBoxed£¨É³Ïä»¯£©
 
-	è¯´åˆ°åº•å°±æ˜¯cssä½œç”¨åŸŸçš„é—®é¢˜ï¼Œ
+	Ëµµ½µ×¾ÍÊÇcss×÷ÓÃÓòµÄÎÊÌâ£¬
 
-	æŠ€æœ¯æ–¹æ¡ˆï¼š sass / less / postCss / css Modules / styled-component / stylus / BEMçº¦å®š ç­‰
+	¼¼Êõ·½°¸£º sass / less / postCss / css Modules / styled-component / stylus / BEMÔ¼¶¨ µÈ
 
-	BEMï¼š block element modifier å— å…ƒç´  ä¿®é¥°ç¬¦
+	BEM£º block element modifier ¿é ÔªËØ ÐÞÊÎ·û
 
-	è€Œvueä¸­åˆ™æ˜¯æä¾›äº†scopedæ˜¯å…³é”®è¯æ¥è§£å†³ä½œç”¨åŸŸé—®é¢˜
+	¶øvueÖÐÔòÊÇÌá¹©ÁËscopedÊÇ¹Ø¼ü´ÊÀ´½â¾ö×÷ÓÃÓòÎÊÌâ
 
 		<template>
 		  <button class="button button-close">X</button>
 		</template>
 
-		<!-- ä½¿ç”¨ `scoped` ç‰¹æ€§ -->
+		<!-- Ê¹ÓÃ `scoped` ÌØÐÔ -->
 		<style scoped>
 		.button {
 		  border: none;
@@ -880,14 +880,14 @@
 		}
 		</style>
 
-39. ES5æ–¹æ³•
+39. ES5·½·¨
 
-	1. Date.now() èŽ·å–å½“å‰æ—¶é—´æˆ³
+	1. Date.now() »ñÈ¡µ±Ç°Ê±¼ä´Á
 
 		console.log(Date.now());			// ES5 1524903182416			
 		console.log(new Date().getTime());	// ES3 1524903182416
 
-	2. JSON.parse()	 jsonçš„åºåˆ—åŒ–å’Œååºåˆ—åŒ–
+	2. JSON.parse()	 jsonµÄÐòÁÐ»¯ºÍ·´ÐòÁÐ»¯
 
 		eval('({"a": 3})')		// ES3
 		JSON.parse('{"a":3}') 	// ES5
@@ -899,7 +899,7 @@
 		console.log('|'+trim+'|');
 		console.log('|'+str+'|');
 
-	4. ç»§æ‰¿
+	4. ¼Ì³Ð
 
 		ES5:
 
@@ -920,10 +920,214 @@
 			};
 			Rectangle.prototype = new Shape();
 
-		æ€»ç»“ï¼šES5ä½¿ç”¨äº†Object.create()å¯ä»¥å®žçŽ°æ­£ç¡®çš„ç»§æ‰¿ï¼Œè€ŒES3ç¼ºä¹Object.createåˆ™åªèƒ½å†™å‡ºä¸å®Œç¾Žçš„ç»§æ‰¿ï¼ˆå­ç±»è¿˜æœªå®žä¾‹åŒ–çˆ¶ç±»å·²ç»å®žä¾‹åŒ–æ‰§è¡Œäº†æž„é€ å‡½æ•°ï¼Œæž„é€ å‡½æ•°ä¸å¸¦å‚æ•°å¯èƒ½æŠ¥é”™ï¼‰
+		×Ü½á£ºES5Ê¹ÓÃÁËObject.create()¿ÉÒÔÊµÏÖÕýÈ·µÄ¼Ì³Ð£¬¶øES3È±·¦Object.createÔòÖ»ÄÜÐ´³ö²»ÍêÃÀµÄ¼Ì³Ð£¨×ÓÀà»¹Î´ÊµÀý»¯¸¸ÀàÒÑ¾­ÊµÀý»¯Ö´ÐÐÁË¹¹Ôìº¯Êý£¬¹¹Ôìº¯Êý²»´ø²ÎÊý¿ÉÄÜ±¨´í£©
 
-40. åŽŸåž‹é“¾
+40. Ô­ÐÍÁ´
 	
-	æ¯ä¸ªJSç‰ˆæœ¬çš„å®žçŽ°æ–¹æ³•ç•¥æœ‰ä¸åŒï¼Œåº”æ¯”è¾ƒé˜è¿°
+	Ã¿¸öJS°æ±¾µÄÊµÏÖ·½·¨ÂÔÓÐ²»Í¬£¬Ó¦±È½Ï²ûÊö
 
 	https://blog.csdn.net/iispring/article/details/62219444
+
+#. console.log´òÓ¡³öÀ´µÄ¶ÔÏóÊÇ¿ÕµÄ£¬µ«ÊÇµã¿ª¿´ºó£¬ÀïÃæÓÐÓÐÖµ
+
+	jsÖÐÊý×éºÍ¶ÔÏó¶¼ÊÇÒýÓÃÀàÐÍ£¬Æä´Î£¬console.logÕâ¸ö·½·¨ÔÚ¡¤²¢²»ÊÇjsµÄÕýÊ½Ò»²¿·Ö£¬¶øÊÇÓÉËÞÖ÷¶ÔÏóÌí¼Óµ½jsÖÐµÄ£¬²»Í¬µÄä¯ÀÀÆ÷ºÍjs»·¾³¿ÉÒÔ°´ÕÕ×Ô¼ºµÄÒâÔ¸À´ÊµÏÖ¡£ÕâÀïÒÔchromeÎªÀý£¬console.log´òÓ¡µÄÖ»ÊÇÒýÓÃµÄ¿ìÕÕ£¬¶ø²»ÊÇ¿ìÕÕÄÚÈÝ£¬Ö»ÓÐÔÚÓÃ»§µã¿ª¸Ã¶ÔÏóÊ±£¬ÒýÇæ²Å»áÈ¥ÒýÓÃµØÖ·È¡ÄÚÈÝ£¬ËùÒÔ¿´ÆðÀ´ÊÇÒì²½µÄ£¬£¨ÕâÒ²´ÓÁíÒ»·½Ãæ·´²µÁËÒ»²¿·ÖÈËËµconsole.logÊÇÒì²½µÄËµ·¨£©£¬¸öÈË¾õµÃÕâÒ²ËãÊÇchromeµÄÒ»¸öÓÅ»¯°Ñ£¬Èç¹ûÒýÓÃ½Ï´óµÄ»°£¬´òÓ¡³öÀ´Ò²ÊÇ±È½ÏºÄÐÔÄÜµÄ¡£
+
+#. »ù±¾Êý¾ÝÀàÐÍ£º Number string boolean null undefined
+
+#. »ù±¾°ü×°ÀàÐÍ£º Number string boolean
+
+#. ÒýÓÃÊý¾ÝÀàÐÍ£º Array Obejct Function Date 
+
+#. ÒýÓÃÀàÐÍ: µ¥ÌåÄÚÖÃ¶ÔÏóÀàÐÍ
+	
+	¾ÍÊÇÓÐECMAScript ÊµÏÖÌá¹©µÄ£¬²»ÒÀÀµÓÚËÞÖ÷»·¾³µÄ¶ÔÏó£¬ÕâÐ©¶ÔÏóÔÚjs³ÌÐòÖ´ÐÐÇ°¾ÍÒÑ¾­´æÔÚÁË
+
+	Global ºÍ Math
+
+	ÔÚËùÓÐ´úÂëÖ´ÐÐÇ°£¬×÷ÓÃÓòÖÐ¾ÍÒÑ¾­´æÔÚÁ½¸öÄÚÖÃ¶ÔÏóÁË£¬µ«ÊÇ´ó¶àÊýECMAScriptÊµÏÖÖÐ¶¼²»ÄÜÖ±½Ó·ÃÎÊGlobalÊôÐÔ£¬²»¹ýwebä¯ÀÀÆ÷ÊµÏÖÁË³Ðµ£¸Ã½ÇÉ«µÄwindow¶ÔÏó¡£
+
+	GlobalµÄ·½·¨ÓÐ£º
+
+		URL±àÂë·½·¨£ºencodeURL()ºÍencodeURLComponent() ÊÇGlobalµÄ·½·¨
+		eval()
+
+#. Çø·ÖÒýÓÃÀàÐÍºÍ»ù±¾ÀàÐÍ
+
+	ÒýÓÃÀàÐÍ¿ÉÒÔ¶¯Ì¬µÄÌí¼ÓÊôÐÔºÍ·½·¨£¬
+
+#. Êý¾ÝÀàÐÍºÍ¶ÑÕ»
+	
+	»ù±¾ÀàÐÍµÄÊý¾ÝÊÇ´æ·ÅÔÚÕ»ÄÚ´æÖÐµÄ£¬ÒýÓÃÀàÐÍµÄÊý¾Ý´æ·ÅÔÚ¶ÑÄÚ´æÖÐ¡£
+
+	var num = 23;
+	var num2 = num;
+
+	»ù±¾ÀàÐÍµÄ¸´ÖÆ¾ÍÊÇÔÚstackÖÐ¿ª±Ù³öÒ»¸öÐÂµÄ´æ´¢ÇøÓÃÀ´´æ´¢ÐÂµÄ±äÁ¿£¬Õâ¸ö±äÁ¿ÓÐËû×Ô¼ºµÄÖµ£¬Ö»²»¹ýºÍÇ°ÃæµÄÖµÒ»Ñù£¬ËùÒÔÈç¹ûÆäÖÐÒ»¸öµÄÖµ¸Ä±äÁË£¬Ôò²»»áÓ°ÏìÁíÒ»¸ö¡£
+
+	var obj = {name:'join'};
+	var obj2 = obj;
+	obj2.name = 'apple';
+
+	¶¨ÒåÁËÒ»¸ö¶ÔÏó£¬ÆäÊµ¾ÍÊÇÔÚheapÖÐ´æ´¢ÁËÒ»¸öÖ¸Õë£¬Õâ¸öÖ¸ÕëÖ¸Ïò¶ÑÄÚ´æÖÐ¸Ã¶ÔÏóµÄ´æ´¢µØÖ·¡£¸´ÖÆ¸øÁíÒ»¶ÔÏóµÄ¹ý³ÌÆäÊµ¾ÍÊÇ°Ñ¸Ã¶ÔÏóµÄµØÖ·copy¸øÁËÁíÒ»¸ö¶ÔÏó±äÁ¿£¬Á½¸öÖ¸Õë¶¼Ö¸ÏòÍ¬Ò»¸ö¶ÔÏó£¬ËùÒÔÆäÖÐÒ»¸öÐÞ¸Ä£¬ÁíÒ»¸öÒ²»á¸Ä¡£
+
+#. newÐÞÊÎ·û
+
+	newÐÞÊÎ·û´´½¨µÄ¶ÔÏóÊÇÒýÓÃÀàÐÍ£¬¿ÉÒÔ¶¯Ì¬Ìí¼ÓÊôÐÔºÍ·½·¨
+
+	var str = new String('join');
+	str.name = 'apple';
+	str.age = function(){
+		return 10;
+	};
+	console.log(str.name);
+	console.log(str.age());
+
+#. Object
+		
+	var obj = new Object();
+
+	var obj = new Object;
+
+	ÒÔÉÏÁ½ÖÖÐ´·¨¶¼ÊÇ¶ÔµÄ£¬µ±ÓÐ²»Ö¹Ò»¸ö²ÎÊýÊ±£¬ÒªÇóÊ¹ÓÃÀ¨ºÅ£¬ÈçÃ»ÓÐ²ÎÊý£¬¿ÉÊ¡ÂÔ£»¾¡¹ÜÀ¨ºÅ²»ÊÇ±ØÐëµÄ£¬µ«ÊÇÎªÁË±ÜÃâ»ìÏý£¬×îºÃÊ¹ÓÃÀ¨ºÅ¡£ 
+
+#. Set & Map
+
+	ÊÇES6ÐÂÔöµÄÊý¾ÝÀàÐÍ£¬Îª³£¼ûËã·¨µÄÊµÏÖÌá¹©ÁË¸üÓÐÐ§µÄÊý¾Ý½á¹¹¡£²é¿´ä¯ÀÀÆ÷ÊÇ·ñÖ§³Ö£¬ÇëÔËÐÐÒÔÏÂ´úÂë£º
+
+		'user strict';
+		var map = new Map();
+		var set = new Set();
+		console.log('Ö§³Ö');
+
+	JSµÄÄ¬ÈÏ¶ÔÏó·½Ê½Îª{}£¬¿ÉÒÔÊÓÎªÆäËûÓïÑÔÖÐµÄMap»òDictionaryµÄÊý¾Ý½á¹¹£¬¼´Ò»×é¼üÖµ¶Ô
+
+	µ«ÊÇjsÓÐ¸öÐ¡ÎÊÌâ¾ÍÊÇ: ¼ü±ØÐëÊÇ×Ö·û´®£¬µ«Êµ¼ÊÉÏNumber»òÕßÆäËûÊý¾ÝÀàÐÍ×÷Îª¼üÒ²ÊÇ·Ç³£ºÏÀíµÄ£¬
+
+	ÎªÁË½â¾öÕâ¸öÎÊÌâ£¬ES6¹æ·¶ÒýÈëÁËÐÂµÄÊý¾ÝÀàÐÍ£ºMap
+
+	1. Map
+
+		ÊÇÒ»×é¼üÖµ¶ÔµÄ½á¹¹£¬¾ßÓÐ¼«¿ìµÄ²éÕÒËÙ¶È¡£
+
+		³õÊ¼»¯MapÐèÒªÒ»¸ö ¶þÎ¬Êý×é£¬»òÕßÖ±½Ó³õÊ¼»¯Ò»¸ö¿ÕµÄMap,MapµÄ·½·¨ÓÐÒÔÏÂ¼¸ÖÖ£º
+
+	2. Set
+
+		Òª´´½¨Ò»¸öSet,ÐèÒªÌá¹©Ò»¸öArray×÷ÎªÊäÈë,»òÕßÖ±½Ó´´½¨Ò»¸ö¿ÕSet
+
+		var set = new Set([1,2,3,4,5]);	// ½ÓÊÜÒ»¸öÊý×é×÷Îª²ÎÊý½øÐÐ³õÊ¼»¯
+
+		var set1 = set;			// SetÀàÐÍ	 Set(5){1,2,3,4,5}
+		var set1 = [...set];	// Êý×éÀàÐÍ  [1,2,3,4,5]
+
+		½»¼¯ / ²¢¼¯ / ²î¼¯£º
+
+			var set1 = new Set([1,3,4]);
+			var set2 = new Set([4,3,2]);
+
+			var union = new Set([...set1,...set2]);	// Set(4) {1,2,3,4}
+
+			// ÎªÊ²Ã´ÒªÊ¹ÓÃ[...set1]£¬ÒòÎªsetµÄ²ÎÊýÊÇÊý×éÀàÐÍ
+			var intersect = new Set([...set1].filter(el => set2.has(el)));	// Set(2) {3,4}
+
+			// ÊôÓÚa²»ÊôÓÚµÄbµÄÔªËØ
+			var intersect = new Set([...set1].filter(el => !set2.has(el)));	// Set(1) {1}
+
+		a. ºÍarrayÏàËÆ£¬µ«ÊÇsetÃ»ÓÐË÷Òý£¨Ö¸µÄÊÇ»Øµ÷º¯ÊýÖÐ£©,²¢ÇÒ³ÉÔ±Öµ¶¼ÊÇÎ¨Ò»µÄ£¬¼´Ã»ÓÐÖØ¸´Öµ
+
+			var set1 = new Set(['a','b','c']);	
+			set1.forEach(function(element, sameEl, set) {	// µÚ¶þ¸ö²»ÊÇindex
+				console.log(element)
+				console.log('sameEl',sameEl)
+				console.log('set',set)
+			});
+
+			var arr1 = ['d','e','f'];
+			arr1.forEach(function(element, index, self) {
+				console.log(element)
+				console.log(index)
+				console.log(self)
+			});
+
+		b. ËÄ¸ö²Ù×÷·½·¨£º
+
+			add(value)
+			delete(value)
+			has(value)
+			clear()
+
+		c. set.size
+
+			var set7 = new Set();
+		    var aa = {name:'one'};
+		    var bb = {name:'two'};
+		    set7.add(aa).add(bb);	// ¿ÉÒÔÁ´Ê½
+		    console.log(set7.size);
+
+		    console.log(set7[0]);	// undefined ²»Ö§³ÖË÷Òý±éÀú
+
+#. for...in ºÍ for...of
+
+	for...in¸üÊÊºÏ±éÀú¶ÔÏó£¬ÒòÎªËü±éÀúµÄÊÇ¶ÔÏóµÄË÷Òý£¨¼´key£©
+
+			SetºÍMap²»ÄÜÓÃfor...in£¬ÒòÎªËüÃÇÁ½¸öÃ»ÓÐË÷Òý(¼´index)
+
+	for...of±éÀúµÄÊÇÊý×é±¾ÉíµÄÔªËØ£¬²»°üÀ¨Ô­ÐÍÉÏµÄ
+
+#. Proxy
+
+	var p = new Proxy(target, handler);
+
+	Ïàµ±ÓÚ°Ñ¶ÔÏó×öÁËÒ»¸ö°ü×°£¬ÔÚ²Ù×÷µ½´ïÄ¿±êÖ®Ç°ÏÈ¼ÜÉèÒ»²ãÀ¹½Ø¡£
+
+	targetÊÇÒª°ü×°µÄ¶ÔÏó
+
+	handlerÊÇÀ¹½ØµÄ´¦ÀíÆ÷£¬ÊÇÒ»¸ö¶ÔÏó£¬°ÑÀ¹½ØµÄ·½·¨Ð¶ÔØÊôÐÔÀï£¬¿ÉÒÔ¶¨Òå¶Ô¸öÀ¹½ØÊôÐÔ
+
+		var person = {name:'join'}	;
+		var p = new Proxy(person, {
+			get: function(target, prop, receiver){
+				if(prop in target){
+					return target[prop];
+				}else{
+					throw new ReferenceError("Property \"" + prop + "\" does not exist.");
+				}
+			}
+		});
+		console.log(p.name);
+		console.log(p.age);
+
+#. Array.fill(value, start, end)
+	
+	ÓÃÓÚ½«Ò»¸ö¹Ì¶¨ÖµÌæ»»Êý×éµÄÔªËØ
+
+	var arr = ['apple','orange','mango'];
+	arr.fill('pear',1,2);	// ['apple','pear','mango']
+	arr.fill('pear');		// ['pear','pear','pear']
+
+#. includes
+
+	return  boolean;
+
+	1. string.includes(substring, [position])
+
+		eg:	'abc'.includes('bc')	// true
+
+	2. array.includes(value)
+
+		ÅÐ¶ÏÒ»¸öÊý×éÊÇ·ñ°üº¬Ò»¸öÖ¸¶¨µÄÖµ
+
+		[1,2,3].includes(2);	// true
+
+#. Òþ²ØÏÞÇø
+
+	var tmp = new Date();
+	function fn(){
+		console.log(tmp);	// undefined
+		if(false){
+			var tmp = 'apple';
+		}
+	};
+	fn();
+
+	±äÁ¿ÌáÉýÎÊÌâ£¬º¯Êý×ÜÊÇ±È±äÁ¿ÏÈÖ´ÐÐ,ËùÒÔÔÚº¯ÊýÖ´ÐÐµÄÊ±ºò£¬tmpÊÇundefined
