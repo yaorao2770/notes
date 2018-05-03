@@ -1131,3 +1131,177 @@
 	fn();
 
 	变量提升问题，函数总是比变量先执行,所以在函数执行的时候，tmp是undefined
+
+#. rest参数 和 spread
+
+	1. ES6引入了rest参数,形式为: ...变量名,其中rest参数搭配的变量是一个数组,可以使用数组的一切操作
+
+	2. rest参数之后不能有其他参数，否则报错
+
+		function rest(a, ...b, c){}	// 报错， ...b应该放最后一个
+
+	3. 扩展运算符,可以看作是rest参数的逆运算,可以将数组转化为参数列表
+
+		console.log(1, ...[2,3,4], 5);	// 1,2,3,4,5
+
+		数组合并：	
+
+			var arr1 = [1,2,3];
+			var arr2 = [2,3,4];
+			var concat = [...arr1,...arr2];	// 合并1
+			arr1.push(...arr2);				// 合并2
+
+		字符串分割：
+
+			var str = 'hello';
+			str.split('');			// ["h", "e", "l", "l", "o"]
+			console.log(...str)		// ["h", "e", "l", "l", "o"]
+
+		函数参数：
+
+			function fn(...values){
+				console.log(values);	// [1,2,3]
+			};
+
+			fn(1,2,3);
+
+		解构：
+
+			es6允许按照一定模式，从数组和对象中提取值,对变量进行赋值,这杯称为解构(Destructuring)
+
+			以前为变量赋值只能直接指定值：
+
+				var a = 10;
+				var b = 'hello';
+
+				let [a,b] = [10, 'hello'];
+
+			如果结构不成功,变量的值就会等于undefined
+
+				let [foo] = [];
+				let [bar, foo] = [1];	// foo=undefined
+
+			解构的等号右边必须是数组,左边的变量也要包裹在数组中,否则报错：
+			即等号两边的类型要一致，是数组都要是数组，对象都是对象
+
+				let [foo] = 1;	
+				let [foo] = false;	
+				let [foo] = {};	
+
+			解构赋值应用场景：
+
+				1. 交换值
+
+					let x = 1;
+					let y = 2;
+					let [x,y] = [y,x];
+
+#. \uXXXX
+
+	这种格式是Unicode写法，表示一个字符，其中xxxx表示一个16进制数字，范围是0~65535
+
+#. 字符串新增API
+
+	includes()
+	startsWith()
+	endsWith()
+	repeat(num)		num:0,将字符串清空；0-1,取0；小数向下取整
+
+	let str = 'hello world!';
+	str.includes('rld');		// true
+	str.startsWith('hello');	// true
+	str.endsWith('!');			// true
+	'ac'.repeat(2)				// acac
+	'ac'.repeat(0)				// 
+
+#. browser.min.js
+
+	一个让浏览器支持es6语法的库
+
+	babel的浏览器版本是browser.min.js,
+
+	babel主要用途是一个js转换器，他可以转换各种ES*代码为浏览器可识别的ES代码
+
+	<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+	// npm install --save babel
+	<script src='node_modules/babel-polyfill/dist/polyfill.min.js'></script>
+
+	// 不要忘了添加type
+	<script type="text/babel">	
+		let str = 'hello world!';
+		console.log(str.includes('rld'));
+		console.log(str.startsWith('hello'));;
+		console.log(str.endsWith('!'));;
+		console.log(str.repeat(2))
+		console.log(str.repeat(0))
+
+		var html = `
+			hello ${str}
+		`;
+		console.log(html)
+	</script>
+
+#. es6 函数
+
+	1. 可以指定参数的默认值,但是要放在必要参数后面
+
+		ES5:
+
+			function fn(x,y){
+				var x = x || 'hello';
+				console.log(x);
+			};
+			fn(false,2);
+
+
+		ES6:
+
+			function fn1(x=2, y=3){
+				console.log(x,y);
+				let x = 23;				// 错误,默认参数不能再次声明
+			};
+			fn1();
+
+#. 原型和原型链
+	
+		function Person(name){
+			this.name = name;
+		};
+
+		Person.prototype.setName = function(name){
+			this.name = name;
+		};
+
+		function Employee(name, compony){
+			Person.call(this, name);			// 相当于super(),调用父类的构造函数以初始化属性
+			this.compony = compony;
+		};
+
+		Employee.prototype = new Person();
+		Employee.prototype.constructor = Employee;
+
+	1. 建立原型链主要靠proto属性,通过__proto__可以链接到原型的顶端
+
+		Employee.prototype.__proto__ = Person.prototype;		// 1
+		Person.prototype.__proto__ = Object.prototype;			// 2
+		Object.prototype.__proto__ = null;
+
+
+		Employee.prototype.__proto__.__proto__ = Object.prototype;	//	1+2的简写
+
+
+	2. constructor对原型链毫无影响
+
+		prototype.constructor仅仅可以用于识别对象是由哪个构造函数初始化的，仅此而已
+
+		最佳应用场景是：类型判断
+
+			arr.constructor === Array
+			222.constructor === Number
+
+	3. 只有构造函数才有prototype属性，构造函数的实例是没有该属性的
+
+	4. 为什么要重新定义 xxx.prototype.constructor = xxx;
+
+		重新定义prototype对象的话，会导致prototype对象原有的constructor属性丢失,所以我们显示的给该对象添加一个constructor属性，修改constructor去向

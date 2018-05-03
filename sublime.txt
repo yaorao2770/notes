@@ -1,0 +1,7 @@
+1. jslint检查
+
+	1. 安装 SublimeLinter
+	2. 安装 SublimeLinter-jshint
+	3. npm install -g jshint
+	   jshint -v
+	4. 重启sublime

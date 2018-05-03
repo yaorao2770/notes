@@ -37,3 +37,8 @@
 	post-message 弹窗消息
 
 	override 覆盖，推翻，优先于，无视，践踏
+
+6. splice	胶接，粘接
+
+	array.splice(2,1);			// 删除index:2的元素
+	array.splice(2,0,'hello');	// 在index:2的位置添加hello元素
