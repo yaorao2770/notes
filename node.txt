@@ -1628,4 +1628,57 @@
 	MVVM并不关心DOM解构，而关心数据如何存储，最简单的数据存储方式是使用js对象：
 
 	改变js对象的状态，会导致dom结构做出对应的变化这让我们的关注点从操作dom变成了如何更新js对象的状态，而操作js对象比操作dom简单多了。
+
 	MVVM的设计思想：关注model变化，让MVVM框架去自动更新DOM状态，从而把开发者从DOM的频繁操作中解脱出来。
+
+#. angular2的新特性
+
+	移除了controller,scope的概念，采用compoennt组件式开发
+	最贴合未来的开发标准（ES6,ES7，webComponent）
+	优先为移动应用设计
+
+#. 目前市面上的mvvm框架，如ng,vue都是立足于组件化开发，尽管实现方式不同，但是他们的很多理念都是相同的，也都在像webcomponent靠拢，在去年，ES6的普及速度还是很快的，不用说过一两年，从去年来看，ES的新版本已经成为各路组件化开发的默认配置了
+
+#. Observable（观察者模式） 和 Promsie
+
+	Rxjs只是Observable的js实现,
+
+	Promise:
+
+		var promise = new Promise(function(resolve, reject){
+			return resolve();
+		});
+
+		promise.then(function(data){
+			console.log(data);
+		});
+
+	Observable:
+
+		var observable=  Observable.create((observer) = >{
+			observer.onNext('v1');
+			observer.onNext('v2');
+			var complete = setTimeout(() => observer.onComplete(), 2000);
+			return () => {
+				clearTimeout(compolete);
+			}
+		});
+
+	promise只能resolve一次，输出单值，observable能输出多值，
+
+	promise一旦建立就只有两种可能：resolve/reject，对应的observable的complete,error,但是ob可以定义cancel，如：
+
+		let disposable = observable.forEach(value => console.log(value));
+		disposable();	// 在observable输出任何值前就取消了
+
+	observable是懒惰的，observable对象建立并不立即输出值，而是等到有人subscribe的时候才开始输出
+
+#. 深拷贝
+
+	copy的对象之间互不关联，其中一个改变不影响另外一个	
+
+#. AMD / CMD / CommonJS
+
+	这三种都是js模块化开发的标准，规范，目前对应的实现是：RequireJs / SeaJs / Nodejs
+
+	CommonJS主要针对服务端，服务端一般采用同步加载文件的方式，也就是说需要某个模块，服务端便停下来等待他加载完在执行。AMD / CMD主要针对浏览器端，而浏览器要保证效率，需要采用异步加载，这就需要一个预处理，提前将所有的模块文件并行加载好
