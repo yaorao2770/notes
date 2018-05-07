@@ -1305,3 +1305,253 @@
 	4. 为什么要重新定义 xxx.prototype.constructor = xxx;
 
 		重新定义prototype对象的话，会导致prototype对象原有的constructor属性丢失,所以我们显示的给该对象添加一个constructor属性，修改constructor去向
+
+#. Promise对象
+
+	1. 检测浏览器是否支持
+
+		'use strict';
+		new Promise(function(){})
+
+	2. 格式：new Promise(async)
+
+		new Promise(function(resolve, reject){
+			var num = Math.random() * 100;
+			if(num < 1){
+				resolve('小于1');
+			}else{
+				reject('大于1');
+			}
+		}).then(funciton(data){
+			console.log('成功回调',data);
+		}).catch(function(error){
+			console.log('错误回调',error);
+		})
+
+		resolve和reject都是函数
+
+	3. Promise.race()
+
+		比如同时向两个URL读取用户的个人信息，只需要获得先返回的结果即可，这种情况下，用Promise.race()实现：
+
+		var p1 = new Promise(function(resolve, reject){
+			setTimeout(resolve, 500, 'p1');
+		});
+
+		var p2 = new Promise(function(resolve, reject){
+			setTimeout(resolve, 600, 'p2');
+		});
+
+		Promise.race([p1,p2]).then(function(result){
+			console.log(result);	// p1
+		});
+
+		由于p1执行较快，所以最后执行结果是p1，p2仍在继续，但是执行结果将被丢弃
+
+		eg2: 设置超时时间,并在超时后执行相应操作
+
+			var requestImg = new Promise(function(resolve, reject){
+				var img = new Image();
+				img.onload = function(){
+					resolve(img);
+				};
+				img.src = 'xxxxx';
+			});
+
+			var timeout = new Promise(function(resolve, reject){
+				setTimeout(function(){
+					reject('接口请求超时');
+				},5000);
+			});
+
+			// 5s内接口没有请求成功,就返回超时结果
+			Promise.race([requestImg, timeout])
+					.then(function(result){
+						console.log(result); 
+					});
+
+	4. Promise.all()
+
+		并行执行异步任务,接受一个数组参数,then输出的也是一个数组
+
+		实例2就属于串行执行异步任务
+
+		// 同步执行p1,p2，并在他们都完成后执行then
+		Promise.all([p1,p2]).then(function (results) {
+		    console.log(results); // 获得一个Array: ['P1', 'P2']
+		});
+
+	5. 在JS的世界中，所有代码都是单线程执行的，由于这个‘缺陷’，导致js的所有网络操作，浏览器事件都必须是异步执行。ajax就是典型的异步操作
+
+		Promise有各种开源实现，在ES6中被统一规范，由浏览器直接支持。
+
+	6. 串行执行Promise任务
+
+		job1.then(job2).then(job3).catch(handleError);
+
+		其中job1,job2,job3都是Promise对象（var p1 = new Promise(test);p1就是Promise对象）,Promise对象其实就是Promise的实例，有then,catch两个方法可以使用，then()中可以再次传递Promise对象也可以直接输出结果
+
+		catch/then返回的是一个新的promise对象
+
+		function multiply(input){
+			return new Promise(function(resolve, reject){
+				console.log('multiply:input*input');
+				setTimeout(resolve, 500, input*input);
+			});
+		}
+
+		function add(input){
+			return new Promise(function(resolve, reject){
+				console.log('add:input*input');
+				setTimeout(resolve, 500, input+input);
+			});
+		}
+
+		var p = new Promise(function(resolve, reject){
+			return 1;
+		});
+
+		p.then(add)			// 2
+		 .then(multiply)	// 4
+		 .then(add)			// 8
+		 .then(multiply)	// 64
+		 .then(function(result){
+		 	console.log(result);	
+		 });
+
+	7. 错误回调的两种写法：
+
+		a. 直接在then中写两种状态的函数,then方法接受两个参数,第一个对应resolve的回调,第二个对应reject的回调
+
+			new Promise(test).then(function(data){
+				console.log(data);
+				console.log(aa());		// aa未定义,中断js执行
+			},function(error){
+				console.log(22,error);
+			})
+
+		b. 使用catch(handleError)
+
+			效果跟then的第二个参数一样，但是他还有另外一个作用:在执行resolve的回调（即then的第一个参数）时,如果抛出了异常,那么并不会报错卡死js,而是会进到catch中
+
+			new Promise(test).then(function(result){
+				console.log('success',result);
+				console.log(aa());		// aa未定义,会进入到catch方法,不会中断js执行
+			}).catch(function(error){
+				console.log(33,error);
+			});
+
+	8. 
+
+		var p1 = Promise.resolve(1);
+		p1.then(function(result){
+			return result*2;
+		});
+		p1.then(function(result){
+			return result*2;
+		});
+		p1.then(function(result){
+			return result + '1';	// 11
+		});
+
+		以上三个then方法是同步执行的，如果then是链式调用，则上一个then返回的promise对象return的值中的作为下一个then的value值，
+
+			p1.then(function(result){
+				return result*2;
+			}).then(function(result){
+				return result*2;
+			}).then(function(result){
+				return result + '1';	// 41
+			});
+
+	9. 改写ajax轮询
+
+		$.ajax({
+		   url: '',
+		   dataType:'json',
+		   success: function(data) {
+		    	var id = data.id;
+		    	$.ajax({				// ajax轮询
+		       		url:'',
+		        	data:{"id":id},
+		        	success:function(){
+		            	// .....
+		        	}
+		    	});
+		  	}
+		});
+
+
+		====
+
+		var ajaxPromise = new Promise(function(resolve, reject){
+			resolve();	// 什么都不传，是空的
+		});
+
+		ajaxPromise也可以直接简写成： Promise.resolve()
+
+		ajaxPromise.then(function(){
+			$.ajax({
+		        url:'',
+		        dataType:'json',
+		        success: function(data) {
+		            var id = data.id;
+		            return id;
+		        }
+		    });
+		}).then(function(id){
+			$.ajax({
+		        url:'',
+		        dataType:'json',
+		        data:{"id":id},
+		        success: function(data) {
+		            var id = data.id;
+		            return id;
+		        }
+		    })
+		})
+
+	10. Promise状态
+		Promise是基于状态的，状态标识：pending / fullfilled / rejected
+
+		并且状态的改变只能有一次
+
+		当实例刚创建时处于pending状态，当执行reject方法时,变为rejected状态
+
+		当执行resolve方法时,他可能变为fullfiled，也有可能变为rejected状态，也就是说resolve !== fullfiled,为什么：
+
+			new Promise(function(resolve, reject){
+			    resolve(Promise.reject(5))
+			}).then(function(value){
+			    console.log('fulfill', value)
+			}, function(reason){
+			    console.log('reject', reason)
+			})
+
+#. this
+
+	this的指向只有在运行的时候才能确定，最终指向的时那个调用他的对象		
+	1. 	var obj = {
+			a:10,
+			b:{
+				fn:function(){
+					console.log(this.a);
+				}
+			}
+		};
+		obj.b.fn();	// undefined,this指向b,b中没有a，所以undefined
+
+	2. 	function fn(){
+			var user = 'join';
+			console.log(this.user);		
+			console.log(this);
+		}
+
+		fn();	// undefined  window
+
+		this指向最终调用者,这里的调用其实是:window.fn();所以this指向window
+
+	3. 接着例子1的代码写：
+
+		var j = obj.b.fn;
+		j();		// 最终调用:window.j(),所以最终调用者是window,undefined
