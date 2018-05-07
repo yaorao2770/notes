@@ -1306,6 +1306,14 @@
 
 		重新定义prototype对象的话，会导致prototype对象原有的constructor属性丢失,所以我们显示的给该对象添加一个constructor属性，修改constructor去向
 
+	5. Object.create()
+
+		ES5实现继承，新增了Object.create()方法，该方法传入一个对象，染回返回一个对象，返回的对象的原型指向传入的对象
+
+		var output = Object.create(input);
+
+		output.__proto = input; (output的原型是input)
+
 #. Promise对象
 
 	1. 检测浏览器是否支持
@@ -1555,3 +1563,69 @@
 
 		var j = obj.b.fn;
 		j();		// 最终调用:window.j(),所以最终调用者是window,undefined
+
+#. jsonp的原理
+
+	jsonp主要利用script标签没有跨域限制这一特性，通过在客户端注册一个callback方法,然后把callback的名字传递给服务器，服务端得到请求的数据后，将数据包裹在callback中返回给客户端，这样服务器生成的json数据就能被客户端正确接受了	
+
+#. 304
+
+	表示页面资源没有修改，直接使用浏览器缓存
+
+#. 请列举三种禁止浏览器缓存的头字段
+
+	Pragma: no-cache
+	Cache-control: no-cache	
+	Expires: -1/0
+
+#. TCP/IP四层协议：
+
+	应用层、传输层、网络层、数据链路层 (http协议对应的是应用层)
+
+#. 从输入URL到浏览器显示页面发生了什么
+
+	这个过程大致可以分为两部分：网络通信和页面渲染
+
+	1. 网络通信
+
+		TCP/IP协议：
+
+		应用层
+
+		传输层			TCP，三次握手确认连接
+
+		网络层			IP，确定对方的MAC地址
+
+		数据链路层	
+
+
+		a. 在浏览器输入url，这里的url一般是域名
+
+		b. 应用层进行DNS域名解析，客户端会先检查贝蒂是都有对应的IP地址，若没有就请求上级DNS服务器，知道按到对应的IP地址
+
+		c. 客户端发送HTTP请求
+
+		d. 传输层TCP传输报文，传输报文钱要进行三次握手连接
+
+		e. 网络层IP协议查询接受放的MAC地址
+
+		f. 在找到MAC地址后，就将数据发送到数据链路层，至此，客户端请求结束
+
+		g. 服务器接受数据
+
+		h. 服务器响应数据
+
+		j. 页面渲染
+
+#. MVVM
+
+	Model-View-View-Model
+
+	在前端页面中,把Model用纯JS对象表示,View负责显示,两者做到了最大限度的分离
+
+	把Model和View关联起来就是ModelView,ModelView负责把Model的数据同步到view显示出来，还负责把view的数据同步会model。
+
+	MVVM并不关心DOM解构，而关心数据如何存储，最简单的数据存储方式是使用js对象：
+
+	改变js对象的状态，会导致dom结构做出对应的变化这让我们的关注点从操作dom变成了如何更新js对象的状态，而操作js对象比操作dom简单多了。
+	MVVM的设计思想：关注model变化，让MVVM框架去自动更新DOM状态，从而把开发者从DOM的频繁操作中解脱出来。
