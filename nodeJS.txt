@@ -21,6 +21,8 @@
 
 	console.log('hello node!');
 
+	执行node文件： node xxx.js
+
 
 	全局安装你的包：
 

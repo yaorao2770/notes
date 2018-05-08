@@ -1,18 +1,18 @@
-֪ʶ���ܣ�
+﻿知识汇总：
 
 1. ajax
 	
-	�ϴ����Ⱥ����ؽ��ȵ��õ��������¼�,progress�¼�
+	上传进度和下载进度调用的是两个事件,progress事件
 
-	onprogress�¼������������յ�һ��event������target������XHR���󣬵�������������������ԣ�
+	onprogress事件处理程序会接收到一个event对象，其target属性是XHR对象，但包含着三个额外的属性：
 
-		lengthComputable��һ����ʾ������Ϣ�Ƿ���õĲ���ֵ��
+		lengthComputable是一个表示进度信息是否可用的布尔值，
 
-		position��ʾ�Ѿ����յ��ֽ�����
+		position表示已经接收的字节数，
 
-		totalSize��ʾ����Content-Length��Ӧͷ��ȷ����Ԥ���ֽ�����
+		totalSize表示根据Content-Length相应头部确定的预期字节数。
 
-	������Щ��Ϣ�����ǾͿ���Ϊ�û�����һ������ָʾ����
+	有了这些信息，我们就可以为用户创建一个进度指示器了
 
 	function progress(e) {
         if (e.lengthComputable) {
@@ -24,21 +24,21 @@
         }
     };
 
-2. �����ı��ļ���BOM
+2. 关于文本文件的BOM
 
-	UTF-8�� UTF-8������BOM��byte order mark�������ָ�ʽ�ı�����BOM��utf-8����������ֽ�ǰ׺��0xEF0xBB0xBF
+	UTF-8和 UTF-8（不带BOM：byte order mark）是两种格式文本，带BOM的utf-8多出了三个字节前缀，0xEF0xBB0xBF
 
-	�����������ֽ�ǰ׺���ı����ַ�������������Զ��ж���Ϊutf_8��ʽ��������utf_8��ʽ�������ı����ַ���,
+	有了这三个字节前缀的文本或字符串，程序可以自动判断他为utf_8格式，并按照utf_8格式来解析文本或字符串,
 
-	����һ���ı����ַ�����λ�ñ��������£���Ҫ�����ַ�����淶ȥһ������֤��
+	否则一个文本或字符串在位置编码的情况下，需要按照字符编码规范去一个个验证。
 
-	BOM�����ڼ����ı��ļ�ʱʶ����ļ����룬����û��BOM���ļ���һ��༭�����ȡһ�������ݣ��Ը����ݽ��з��������²��Ӧ���ļ����룬���������ļ���������ʱ�򶼻ᱻ��ȷʶ��
+	BOM用来在加载文本文件时识别该文件编码，对于没有BOM的文件，一般编辑器会读取一定的内容，对该内容进行分析，并猜测对应的文件编码，所以这种文件不是所有时候都会被正确识别。
 
-	BOMҲ��ǩ������UTF���뷽�������ڱ�ʾ����ı�׼��ǡ�
+	BOM也叫签名，是UTF编码方案里用于表示编码的标准标记。
 
-3. angularjs ������ڰ��»س��ᴥ������button�ĵ���¼���
+3. angularjs 输入框内按下回车会触发其他button的点击事件，
 
-	����취�� button ��ǩ���� type='button'
+	解决办法： button 标签添加 type='button'
 
 	Default type for the button element is 'submit' : 
 
@@ -47,7 +47,7 @@
 	when you hit enter,the first button is submitted.
 
 
-4. selfָ��ǰ����
+4. self指向当前数组
 
 	angular.forEach(entity.modSecIds, function(element, index, self) {
 		
@@ -59,22 +59,22 @@
 
 5. $location.search('code',null)
 
-	URL�� http://192.168.111.171/ftz/#/MONGODB?code=KvZ4GQ
+	URL： http://192.168.111.171/ftz/#/MONGODB?code=KvZ4GQ
 
-	$location.search('code',null) ���Խ�code �ӵ�ǰurl��ɾ��
+	$location.search('code',null) 可以将code 从当前url中删除
 	
 		  http://192.168.111.171/ftz/#/MONGODB
 
 
 6. concat()
 
-	��������������������Ԫ�أ�����ֵһ��������
+	用于连接两个或多个数组元素，返回值一个新数组
 
-	arrayObj.concat(array1,array2,...); ��������������
+	arrayObj.concat(array1,array2,...); 参数可以是数组
 
-	��
+	或
 
-	arrayObj.concat(1,2,3,...);	Ҳ�����Ǿ����ֵ
+	arrayObj.concat(1,2,3,...);	也可以是具体的值
 
 
 	eg:    var a = [1,2,3];
@@ -89,21 +89,21 @@
 
 7. sort(fn)
 
-	��������,���������Ǻ���,����ֵ������������
+	数组排序,参数必须是函数,返回值，排序后的数组
 
-	a - b  --->  ����С����
+	a - b  --->  升序（小到大）
 
-	b - a  --->  ���� 
+	b - a  --->  降序 
 
 	arrayObj.sort(sortByFn)
 
-	a)  arr.sort()  �ǰ�����ĸ˳�������
+	a)  arr.sort()  是按照字母顺序排序的
 
 		var arr = [1,1000,10,25,40,5];
 
-		console.log(arr.sort()); // [1, 10, 1000, 25, 40, 5]  ���Կ��������ǰ�����ֵ��С���򣬶�����ĸ˳��
+		console.log(arr.sort()); // [1, 10, 1000, 25, 40, 5]  可以看到并不是按照数值大小排序，而是字母顺序
 
-	b) arr.sort(fn)   ������ֵ��С����
+	b) arr.sort(fn)   按照数值大小排序
 
 		function sortNum(a,b){
 			return a-b;
@@ -113,7 +113,7 @@
 
 		console.log(arr.sort(sortNum)); // [1,5,10,25,40,1000]
 
-	c) ��������
+	c) 对象排序
 
 		var arr= [ 
 		    { 'sortNo': 2},
@@ -133,7 +133,7 @@
 
 		arr.sort(sortNum);
 
-	d) sortNo��ͬ������sortNo2����
+	d) sortNo相同，按照sortNo2排序
 
 		var arr1 = [
 			{ 'sortNo': 2, 'sortNo2': 3},
@@ -162,16 +162,16 @@
 
 8. map(fn)
 
-	���鷽��, ��ԭ����ӳ��������飬����ֵ��һ������
+	数组方法, 将原数组映射成新数组，返回值是一个数组
 
 	arrayObj.map(function(el){
 		return el*2;
 	});
 
 	eg:		var users = [
-			  {name: "�ź���", "email": "zhang@email.com"},
-			  {name: "��һ��",  "email": "jiang@email.com"},
-			  {name: "��С�",  "email": "li@email.com"}
+			  {name: "张含韵", "email": "zhang@email.com"},
+			  {name: "江一燕",  "email": "jiang@email.com"},
+			  {name: "李小璐",  "email": "li@email.com"}
 			];
 
 			var email = users.map(function(user){
@@ -180,7 +180,7 @@
 			
 			console.log(email); // ["zhang@email.com", "jiang@email.com", "li@email.com"]
 
-			console.log(users)  //  ����ԭ����users
+			console.log(users)  //  还是原来的users
 
 			2. var arr = [1,2,3,4];
 			   var result = arr.map(String);
@@ -198,40 +198,40 @@
 
    				var result = arr3.map(parseInt);	// [1, NaN, 2, 2, NaN, NaN]
 
-   				map�Ļص�����ʵ��������������,el,index,self,��map(parseInt)ʱ����Ĭ�ϵİ�index����parseInt�ĵڶ�������������������
+   				map的回调函数实际上有三个参数,el,index,self,当map(parseInt)时，会默认的把index当做parseInt的第二个参数（解析基数）
 
 #. parseInt(string|num, radix)
 
-	����һ���ַ�����������һ������
+	解析一个字符串，并返回一个整数
 
-	��һ���������������ַ���Ҳ���������֣��ַ���ֱ��ϴ��һ���ַ�����������Ա�ת�������֣��򷵻�NaN
-	�ڶ����������ǽ������ֵĻ���������������
+	第一个参数，可以是字符串也可以是数字，字符串直接洗第一个字符，如果不可以被转换成数字，则返回NaN
+	第二个参数，是解析数字的基数，即进制数，
 
-				0���ߺ��Ըò����������ֽ���10���ƽ���
-				<2 �� >36������NaN
-				0x �� 0X,��16���ƽ���
+				0或者忽略该参数，则数字将以10进制解析
+				<2 或 >36，返回NaN
+				0x 或 0X,以16进制解析
 
 	parseInt(12);			// 12
 	parseInt('12', 2);		// 1
-	parseInt('f1', 2);		// NaN, �ַ���������һ���ַ�
-	parseInt(3, 2);			// NaN, ֻ��0 1����Ч����������,
-	parseInt(19, 2);		// NaN, ��Ȼ9������Ч�Ķ��������,����1��,����ֻ������1
+	parseInt('f1', 2);		// NaN, 字符串解析第一个字符
+	parseInt(3, 2);			// NaN, 只有0 1是有效二进制数字,
+	parseInt(19, 2);		// NaN, 虽然9不是有效的额二进制数,但是1是,所以只解析了1
 
 9. Object.defineProperty() 
 
-	������ֱ����һ�������϶���һ�������Ի����޸����е����ԣ��������������
+	方法会直接在一个对象上定义一个新属性或者修改已有的属性，并返回这个对象。
 
 	set / get
 
 	writeable --- true / false
 
-	enumable  --- �����Ƿ���� for...in �� Object.keys()
+	enumable  --- 用于是否可以 for...in 或 Object.keys()
 
 		1.	var arr5 = [1,2,3,4,5];
 
 			arr5.length = 0;
 
-			console.log(arr5); // []�����е�Ԫ�ض���ɾ����
+			console.log(arr5); // []，所有的元素都被删除了
 
 
 		2.	var arr5 = [1,2,3,4,5];
@@ -242,9 +242,9 @@
 
 			arr5.length = 0;
 		
-			console.log(arr5); // [1,2,3,4,5]�������޸�length����
+			console.log(arr5); // [1,2,3,4,5]，不能修改length属性
 
-		3. ���ø�APIʵ��˫�����ݰ�
+		3. 利用该API实现双向数据绑定
 
 			var a = {};
 
@@ -266,9 +266,31 @@
 
 			a.b = 'apple'; // apple
 
-		4. HTML:
+		4. 存取器属性（get/set）
 
-				<div id='test'>����<>
+			var obj = {
+				_year: 2004,
+				edition: 1
+			};
+
+			Object.defineProperty(obj, 'year', {
+				get(){
+					return this._year;
+				},
+				set(newValue){
+					if(newValue > 2004){
+						this._year = newValue;
+						this.edition += newValue - 2004;
+					}
+				}
+			});
+
+			obj.year;			// 2004
+			obj.year = 2005;	// 2005
+
+		5. HTML:
+
+				<div id='test'>测试<>
 
 			JS:
 
@@ -291,30 +313,29 @@
 
 				setInterval(function(){
 					i++;
-					data['view'] = '���½���'+i;
+					data['view'] = '更新界面'+i;
 				},1000);
 
 
-10. isNaN() ���ڼ���Ƿ�����ֵ,����ֵ����false, ������ֵ����true
+10. isNaN() 用于检查是否是数值,是数值返回false, 不是数值返回true
 	
-	// ����false�����������ת��
+	// 返回false，会进行隐形转换
 	console.log( isNaN(0) );
 	console.log( isNaN(2) );
-	console.log( isNaN('3') );		// ת����3
-	console.log( isNaN(true) );		// ת����1
-	console.log( isNaN(false) );	// ת����0
-	console.log( isNaN('') ); 		// ת����0
+	console.log( isNaN('3') );		// 转换成3
+	console.log( isNaN(true) );		// 转换成1
+	console.log( isNaN(false) );	// 转换成0
+	console.log( isNaN('') ); 		// 转换成0
 
-	// ����true
+	// 返回true
 	console.log( isNaN(NaN) );
 	console.log( isNaN('apple') );
 
+11. 编程技巧
 
-11. ��̼���
+	I. 当一个函数包含超过三个形参时，要记住调用函数中实参的正确顺序并不容易。
 
-	I. ��һ�������������������β�ʱ��Ҫ��ס���ú�����ʵ�ε���ȷ˳�򲢲����ס�
-
-		����취�����βζ���Ϊһ��������Ҫ���ֶζ���Ϊ�ö�������ԣ������Ͳ��ü�˳����
+		解决办法：将形参定义为一个对象，需要的字段都作为该对象的属性，这样就不用记顺序了
 
 		eg:      function test($scope, entity, action, isBig){
 					 ....
@@ -335,32 +356,31 @@
 				 test(paramsValue);
 
 
-	II. Ҫ���״�
+	II. 要会抛错
 
-		throw new Error('����һ���Զ������');
+		throw new Error('这是一个自定义错误！');
 
 	III. 	(function(){
 				...
 			}());
 
-			�������Эͬ����ʱ��Ϊ�˱��������ͻ����Ⱦ����ý�����ж�����ϸ�ʽ�ĺ����У�
-			���ǿ��Գ�֮Ϊ ģ�飬���Ա���ȫ�ֱ�����Ⱦ��
+			当与别人协同开发时，为了避免变量冲突和污染，最好将代码写在以上格式的函数中，
+			我们可以称之为 模块，可以避免全局变量污染。
 
-			ע�⣬ function��ߵ����ţ�������ʡ�ԣ���Ϊ�����д�����Բ���ţ�js����������ͼ���ؼ���function����Ϊ����������䣬�������������У��������Ż���ȷ�Ľ������Ϊ��������ʽ��ʹ��Բ������ϰ���÷���������ʱ��û�б�Ҫ����Ҳ��Ӧ��ʡ�ԡ�
-
+			注意， function左边的括号，不可以省略，因为如果不写这个左圆括号，js解释器会视图将关键字function解析为函数声明语句，而包裹在括号中，解释器才会正确的将其解析为函数表达式。使用圆括号是习惯用法，尽管有时候没有必要，但也不应当省略。
 
 12. WebSocket
 
-	HTTPЭ����һ����״̬Э�飬����������������ʶ��ͻ��˵���������������ⲿ���ƣ�����session��cookie���������ض��ͻ��˱��ֶԻ�������ٴ���һЩ���㣬�����ڷ���������ͻ�����Ҫ�����������ݵĳ��ϣ������������죩��Ϊ�˽��������⣬HTML5������������WebSocket API��
+	HTTP协议是一种无状态协议，服务器本身不具有识别客户端的能力，必须借助外部机制，比如session和cookie，才能与特定客户端保持对话，这多少带来一些不便，尤其在服务器端与客户端需要持续交换数据的场合（比如网络聊天），为了解决这个问题，HTML5提出了浏览器的WebSocket API。
 
-	WebSocket����Ҫ�����ǣ���������������ͻ��˽���ȫ˫��(full-duplex)��ͨ�ţ�������˵��HTTPЭ���е��񷢵����ʼ������������ȴ�������ţ���WebSocket�����Ǵ�绰���������Ϳͻ��˿���ͬʱ��Է��������ݣ�����֮�������һ�������򿪵�����ͨ����
+	WebSocket的主要作用是：允许服务器端与客户端进行全双工(full-duplex)的通信，举例来说，HTTP协议有点像发电子邮件，发出后必须等待对象回信，而WebSocket则像是打电话，服务器和客户端可以同时向对方发送数据，他们之间存在着一条持续打开的数据通道。
 
 
-	WebSocketЭ����ȫ����ȡ��Ajax������������������˷����ı��Ͷ��������ݣ����һ�û�С�ͬ�����ơ���
+	WebSocket协议完全可以取代Ajax方法，用来向服务器端发送文本和二进制数据，而且还没有“同域限制”。
 
-	WebSocket������HTTPЭ�飬����ʹ���Լ���Э�飬
+	WebSocket不是用HTTP协议，而是使用自己的协议，
 
-		A�� �����������WS����ͷ��Ϣ��������������ӣ�
+		A） 浏览器发出的WS请求头信息类似于下面的样子：
 
 			GET / HTTP/1.1
 			Connection:Upgrade
@@ -371,79 +391,79 @@
 			Sec-WebSocket-Version:13
 
 
-		�����  ��һ��HTTPͷ��Upgrade. HTTP1.1Э��涨��Upgradeͷ��Ϣ��ʾ��ͨ��Э���HTTP/1.1 ת�������ָ����Э�顣
+		解读：  有一个HTTP头是Upgrade. HTTP1.1协议规定，Upgrade头信息表示将通信协议从HTTP/1.1 转向该项所指定的协议。
 
-				Connection:Upgrade���ͱ�ʾ�����֪ͨ��������������ԣ���������wsЭ��
+				Connection:Upgrade，就表示浏览器通知服务器，如果可以，就升级到ws协议
 
-				Origin������֤����������Ƿ��ڷ��������ɵķ�Χ�ڡ�
+				Origin用于验证浏览区域名是否在服务器许可的范围内。
 
-				Sec-WebSocket-Key��������������Э�����Կ����base64�����16�ֽ�����ַ���
+				Sec-WebSocket-Key，则是用于握手协议的密钥，是base64编码的16字节随机字符串
 
 
-		B�� �������˵�ws��Ӧͷ��
+		B） 服务器端的ws响应头：
 
 			HTTP/1.1 101 Switching Protocols
-			Connectino:Upgrade
+			Connection:Upgrade
 			Upgrade:websocket
 			Sec-Websocket-Accept:fFBooB7FAkLlXgRSz0BT3v4hq5s=
 			Sec-WebSocket-Origin: null
 			Sec-WebSocket-Location: ws://example.com/
 
-		�����	��������ͬ���� Connectino:Upgrade ֪ͨ�������Ҫ�ı�Э�顣
+		解读：	服务器端同样用 Connection:Upgrade 通知浏览器需要改变协议。
 
-				Sec-Websocket-Accept���Ƿ�������������ṩ�� Sec-WebSocket-Key �ַ������棬���� 'fFBooB7FAkLlXgRSz0BT3v4hq5s=' �ַ�����Ȼ����ȡ sha-1 ��hashֵ�� ������������ֵ������֤����֤��ȷʵ��Ŀ���������Ӧ��ws����
+				Sec-Websocket-Accept，是服务器在浏览器提供的 Sec-WebSocket-Key 字符串后面，添加 'fFBooB7FAkLlXgRSz0BT3v4hq5s=' 字符串，然后再取 sha-1 的hash值。 浏览器将对这个值进行验证，以证明确实是目标服务器回应了ws请求。
 
-				Sec-WebSocket-Location��ʾ����ͨ�ŵ�WS��ַ
-
-
+				Sec-WebSocket-Location表示进行通信的WS网址
 
 
-	�� ������ֺ�wsЭ�����TCPЭ��֮�ϣ���ʼ��������
-
-	�� WSЭ����Ҫ������֧�֣�Ŀǰ�Ƚ����е�ʵ���Ǹ���node.js ��socket.io��
-		����������ˣ�Ŀǰ�����������֧��wsЭ�飨IE10+��,
 
 
-	` ����ʵ��
+	· 完成握手后，ws协议就在TCP协议之上，开始传送数据
 
-		// 1.�ͻ��˼��������Ƿ�֧��WS
+	· WS协议需要服务器支持，目前比较流行的实现是给予node.js 的socket.io。
+		至于浏览器端，目前主流浏览器都支持ws协议（IE10+）,
+
+
+	· 代码实现
+
+		// 1.客户端检查浏览器是否支持WS
 		if( window.WebSocket !== undefined ){
 
-			// WS����  2. ���������������
-			var ws = new WebSocket('ws://localhostL8081');
+			// WS代码  2. 与服务器建立连接
+			var ws = new WebSocket('ws://localhost:8081');
 
-			// 3. ws �� WebSocket��ʵ�����󣬸ö�����һ�� readySate���ԣ���ʾĿǰ��״̬�����ĸ�ֵ 
+			// 3. ws 是 WebSocket的实例对象，该对象有一个 readySate属性，表示目前的状态，有四个值 
 
-				0����������
-				1: ���ӳɹ�
-				2�����ڹر�
-				3�����ӹر�
+				0：正在连接
+				1: 连接成功
+				2：正在关闭
+				3：连接关闭
 
 
-			// wsһ��֧���ĸ���Ϣ��onopen onmessag onclose onerror
-	        // ��browser��ws���ӳɹ��󣬻ᴥ��onopen��Ϣ
+			// ws一共支持四个消息：onopen onmessag onclose onerror
+	        // 当browser和ws连接成功后，会触发onopen消息
 	        ws.onopen = function(evt) { 
 	            websocket.send(evt); 
 	        }; 
 
-	        // ��browser���յ�ws������������ʱ���ͻᴥ��onmessage��Ϣ��event�а���server�������������
+	        // 当browser接收到ws发送来的数据时，就会触发onmessage消息，event中包含server传输过来的数据
 	        ws.onmessage = function(evt) { 
 	            onMessage(evt) 
 	        }; 
 
-	        // ��browser���յ�ws���͵Ĺر���������ʱ���ͻᴥ��onclose��Ϣ
+	        // 当browser接收到ws发送的关闭连接请求时，就会触发onclose消息
 	        ws.onclose = function(evt) { 
 	            onClose(evt) 
 	        }; 
 
-	        // �������ʧ�ܣ����ͣ���������ʧ�ܻ��ߺʹ������ݳ��ִ���browser�ᴥ��onerror��Ϣ
+	        // 如果连接失败，发送，接受数据失败或者和处理数据出现错误，browser会触发onerror消息
 	        ws.onerror = function(evt) { 
 	            onError(evt) 
 	        }; 
 
 		 
 		    function onClose(evt) { 
-		        writeToScreen("�Ͽ�"); 
+		        writeToScreen("断开"); 
 		    }  
 		 
 		    function onMessage(evt) { 
@@ -466,16 +486,16 @@
 		}
 
 
-	Socket.io��Ŀǰ�����е�WebSocketʵ�֣������������Ϳͻ����������֡����������˽ӿڣ�ʹ�ò��������ף����Ҷ�����Щ��֧��WebSocket������������Զ���ΪAjax���ӣ�����޶ȵر�֤�˼����ԡ�����Ŀ����ͳһͨ�Ż��ƣ�ʹ��������������ƶ��豸�����Խ���ʵʱͨ�š�
+	Socket.io是目前最流行的WebSocket实现，包括服务器和客户端两个部分。它不仅简化了接口，使得操作更容易，而且对于那些不支持WebSocket的浏览器，会自动降为Ajax连接，最大限度地保证了兼容性。它的目标是统一通信机制，使得所有浏览器和移动设备都可以进行实时通信。
 
-	�䱾������ͨ��HTTP/HTTPSЭ��������ֺ󴴽�һ�����ڽ������ݵ�TCP���ӣ��������ͻ���ͨ����TCP���ӽ���ʵʱͨ�š�
+	其本质是先通过HTTP/HTTPS协议进行握手后创建一个用于交换数据的TCP连接，服务端与客户端通过此TCP连接进行实时通信。
 
 
-	c) ������鿴 ws �Ĵ������
+	c) 浏览器查看 ws 的传输过程
 
-		netWort -> filter(�Ǹ�icon) -> WS -> ֻ��ʾwsЭ������� -> ������������ Frames ���Կ������͸��������Լ����������ص�����(���͸������������ݵı���ɫ����ɫ)
+		netWork -> filter(是个icon) -> WS -> 只显示ws协议的请求 -> 点击单个请求的 Frames 可以看到发送给服务器以及服务器返回的数据(发送给服务器的数据的背景色是绿色)
 
-	d) ����ͷ  �� ��Ӧͷ
+	d) 请求头  和 响应头
 
 		HTTP/1.1 101 Web Socket Protocol Handshake
 		Access-Control-Allow-Credentials: true
@@ -487,8 +507,8 @@
 		Access-Control-Allow-Origin: null
 		Date: Tue, 19 Sep 2017 09:30:12 GMT
 		Sec-WebSocket-Accept: O3ZaRYPPdjoMFNU/FVXmWi2lEO0=
-		Server: Kaazing Gateway			--- ��һ���ṩ��ƽ̨�������WebSocket֧�ֵ����أ���Java��д
-		Connection: Upgrade 			--- ����������ʾ��ʹ�õ��� wsЭ�飬����httpЭ��
+		Server: Kaazing Gateway			--- 是一种提供跨平台跨浏览器WebSocket支持的网关，由Java编写
+		Connection: Upgrade 			--- 下面两条表示，使用的是 ws协议，而非http协议
 		Upgrade: websocket
 
 
@@ -500,25 +520,25 @@
 		Upgrade: websocket
 		Origin: file://
 		Sec-WebSocket-Version: 13 
-		Sec-WebSocket-Key: mSPm9O/nmD4KfW4b5fbpfA==     --- ��Ӧ����ͷ�е� Sec-WebSocket-Accpet 	
-															���ؿͻ��ˣ��ͱ�ʾws���ӳɹ�
+		Sec-WebSocket-Key: mSPm9O/nmD4KfW4b5fbpfA==     --- 对应请求头中的 Sec-WebSocket-Accpet 	
+															返回客户端，就表示ws连接成功
 		Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits
 
 
 
-	e) WebSocket Э����õ��� 101״̬�룬server���ܷ��� ����101 reason-phrase (ԭ��̾�)
+	e) WebSocket 协议采用的是 101状态码，server可能返回 两种101 reason-phrase (原因短句)
 
-		1��HTTP/1.1 101 Switching Protocol
+		1）HTTP/1.1 101 Switching Protocol
 
-		2��HTTP/1.1 101 Web Socket Protocol Handshake
+		2）HTTP/1.1 101 Web Socket Protocol Handshake
 
-	f) ��HTTPЭ�������/��Ӧģʽ��ͬ��ws�ڽ�������֮ǰ��һ�� handshake (opening handshake) ���̣��ڹر�����֮ǰҲ��һ��handshake���̣�close handshake�����̣���������֮��˫������˫��ͨ�š�
+	f) 与HTTP协议的请求/响应模式不同，ws在建立连接之前有一个 handshake (opening handshake) 过程，在关闭连接之前也有一个handshake过程（close handshake）过程，建立连接之后，双方即可双向通信。
 
-	��wsЭ�鷢չ������ǰǰ���ͳ����˶���汾������Э�飺
+	在ws协议发展过程中前前后后就出现了多个版本的握手协议：
 
-		1������ flash ������Э��
+		1）基于 flash 的握手协议
 
-			ʹ�ó�����IE�Ķ����汾����ΪIE�Ķ����汾������֧��wsЭ�飬�Լ�ff,chrome��������ĵͰ汾����û��ԭ����֧��ws���˴���serverΨһҪ�����ǣ�����׼��һ�� WebSocket-Location���client��û�м��ܣ��ɿ��Ժܲ
+			使用场景是IE的多数版本，因为IE的多数版本不都不支持ws协议，以及ff,chrome等浏览器的低版本，还没有原生的支持ws，此处，server唯一要做的是，就是准备一个 WebSocket-Location域给client，没有加密，可靠性很差。
 
 			request header:
 
@@ -538,7 +558,7 @@
 
 
 
-		2������ md5 ������Э��
+		2）基于 md5 的握手协议
 
 			request header:
 
@@ -560,9 +580,9 @@
 				WebSocket-Location: ws://example.com/demo
 				[16-byte hash response]
 
-		3������ sha ������Э��
+		3）基于 sha 的握手协议
 		
-			Ҳ��Ŀǰ��������һ�ַ�ʽ������İ汾��Ŀǰ����Ҫ13���ϵİ汾
+			也是目前见的最多的一种方式，这里的版本号目前是需要13以上的版本
 
 			request header:
 
@@ -576,95 +596,87 @@
 
 			response header:
 
-				HTTP/1.1 101 Switching Protocols    ---���з�101��״̬�붼��ʾhandshake��δ��ɡ�
+				HTTP/1.1 101 Switching Protocols    ---所有非101的状态码都表示handshake并未完成。
 				Upgrade: websocket
 				Connection: Upgrade
 				Sec-WebSocket-Accept: mLDKNeBNWz6T9SxU+o0Fy/HgeSw=
 
-
-
-
-13. DOM�¼�
+13. DOM事件
 	
 	oninput   onpropertychange   onchange
 
-	a) onchange������������������
+	a) onchange触发需满足两个条件
 
-		��ǰ�������Ըı䣬�����ɼ��̻�����¼������ģ��ű�������Ч��
+		当前对象属性改变，并且由键盘或鼠标事件触发的（脚本触发无效）
 
-		��ǰ����ʧȥ����(onblur)����
+		当前对象失去焦点(onblur)触发
 
-	b) onpropertychange ֻҪ��ǰ�������Է����ı䣬���ᴥ���¼���IEר��
+	b) onpropertychange 只要当前对象属性发生改变，都会触发事件，IE专属
 
-	c) oninput �� onpropertychange �ķ�IE������汾��֧��ff, opera�������������һ�㲻ͬ�����󶨶���ʱ�����Ǹö������Ըı䶼�ܳ������¼���valueֵ�����ı�����Ч
+	c) oninput 是 onpropertychange 的非IE浏览器版本，支持ff, opera等浏览器，但有一点不同，他绑定对象时，并非该对象属性改变都能出触发事件，value值发生改变是有效
 
+14. ng-repeat 对象时，并不是按照顺序来的，其实就是因为Object类型for in时没有固定顺序的，是无序的
 
-14. ng-repeat ����ʱ�������ǰ���˳�����ģ���ʵ������ΪObject����for inʱû�й̶�˳��ģ��������
+	Object类型for in时没有固定顺序的
 
-	Object����for inʱû�й̶�˳���
+	优先使用数组而不是Object类型来表示有顺序的集合，(确实，对象的数据结构定义就是无序集合)
 
-	����ʹ�����������Object��������ʾ��˳��ļ��ϣ�(ȷʵ����������ݽṹ����������򼯺�)
+	为什么：
 
-	Ϊʲô��
-
-			ECMA ��׼��û�й涨��js��Object�����е����ԵĴ洢˳�򣬵�����ʹ��for..inѭ���ж�Object�е����Խ��б�����ʱ��ȷʵ����Ҫ������ĳ��˳��ġ���ʽ��ΪECMAû�ж����˳�������ȷ�Ĺ淶������ÿ��jsִ�����涼�ܹ������������ص����ʵ�֡���ô�ڲ�ͬ��ִ�л����оͲ��E��֤for..inѭ������Ϊһ�����ˡ�
-
+			ECMA 标准并没有规定对js的Object类型中的属性的存储顺序，但是在使用for..in循环中对Object中的属性进行遍历的时候，确实是需要依赖于某种顺序的。正是因为ECMA没有对这个顺序进行明确的规范，所以每个js执行引擎都能够根据自身的特点进行实现。那么在不同的执行环境中就不能保证for..in循环的行为一致性了。
 
 
-	�����ȷʵ��Ҫ��֤���еĽ���ǽ��������ݵ�˳���ϣ�����ʹ��������������ʾ���ݣ�������ֱ��ʹ��Object���͡�ͬʱ��Ҳ��������ʹ��for..inѭ������ʹ����ʽ��forѭ����
+	如果你确实需要保证运行的结果是建立在数据的顺序上，优先使用数组类型来表示数据，而不是直接使用Object类型。同时，也尽量避免使用for..in循环，而使用显式的for循环：
 
 	 
-	�ܽ᣺
-		��ʹ��for..inѭ��ʱ����Ҫ�����ڱ�����˳��
-		��ʹ��Object��������������ʱ����Ҫ��֤���е�����������ġ�
-		����Ҫ��ʾ����˳��ļ���ʱ��ʹ���������Ͷ�����Object���͡�
+	总结：
+		在使用for..in循环时，不要依赖于遍历的顺序。
+		当使用Object类型来保存数据时，需要保证其中的数据是无序的。
+		当需要表示带有顺序的集合时，使用数组类型而不是Object类型。
 
+15. 101状态码
 
-15. 101״̬��
+		服务器已经理解了客户端的请求，并将通过Upgrade 消息头通知客户端采用不同的协议来完成这个请求。在发送完这个响应最后的空行后，服务器将会切换到在Upgrade 消息头中定义的那些协议。 　　只有在切换新的协议更有好处的时候才应该采取类似措施。例如，切换到新的HTTP 版本比旧版本更有优势，或者切换到一个实时且同步的协议以传送利用此类特性的资源。
 
-		�������Ѿ������˿ͻ��˵����󣬲���ͨ��Upgrade ��Ϣͷ֪ͨ�ͻ��˲��ò�ͬ��Э���������������ڷ����������Ӧ���Ŀ��к󣬷����������л�����Upgrade ��Ϣͷ�ж������ЩЭ�顣 ����ֻ�����л��µ�Э����кô���ʱ���Ӧ�ò�ȡ���ƴ�ʩ�����磬�л����µ�HTTP �汾�Ⱦɰ汾�������ƣ������л���һ��ʵʱ��ͬ����Э���Դ������ô������Ե���Դ��
-
-	WebSocket Э����õ��� 101״̬��
+	WebSocket 协议采用的是 101状态码
 
 16. echarts
 
-	ÿ���۵㶼��ʾ��ֵ:  �� series������ itemStyle : { normal: {label : {show: true}}},
+	每个折点都显示数值:  在 series中添加 itemStyle : { normal: {label : {show: true}}},
 
-17. shebang ���ţ�#!��
+17. shebang 符号（#!）
 	
-	�÷�����unix��Ĳ���ϵͳ��������
+	该符号在unix类的操作系统才有意义
 
-	#!/user/bin/env python �� #!/user/bin/python ������
+	#!/user/bin/env python 和 #!/user/bin/python 的区别
 
+	#!/user/bin/python 是告诉操作系统执行这个脚本的时候,调用/user/bin下的Python解释器
 
-	#!/user/bin/python �Ǹ��߲���ϵͳִ������ű���ʱ��,����/user/bin�µ�Python������
-
-	#!/user/bin/env python �����÷���Ϊ�˷�ֹ�û�û�н�Pythonװ��Ĭ�ϵ�/user/bin·���¡���ϵͳ������һ�е�ʱ�����Ȼᵽenv���������python�İ�װ·�����ٵ��ö�Ӧ·���µĽ�����������ɲ��������Ƽ�����д����
-
+	#!/user/bin/env python 这种用法是为了防止用户没有讲Python装在默认的/user/bin路径下。当系统看到这一行的时候，首先会到env设置里查找python的安装路径，再调用对应路径下的解释器程序完成操作。（推荐这种写法）
 
 18. setDate(1~31)
 
-	���Ի�ȡ����ĳһ���ʱ���ʽ��
+	可以获取该月某一天的时间格式：
 
 	var curDate = new Date();
 
-	curDate.setDate(12);  // �÷����Ĳ����Ǳ���ģ�12˵����ȡ����12�ŵ�date��ʽ
+	curDate.setDate(12);  // 该方法的参数是必须的，12说明获取该月12号的date格式
 
-	console.log(curDate); // Sun Nov 12 2017 16:24:14 GMT+0800 (�й���׼ʱ��)
+	console.log(curDate); // Sun Nov 12 2017 16:24:14 GMT+0800 (中国标准时间)
 
 
 19. getDate()
 
-	����ĳ�µ�ĳһ�죬1~31
+	返回某月的某一天，1~31
 
 
-20. ��ȡ����ĵ�ǰʱ��
+20. 获取明天的当前时间
 
 	var today = new Date();
 
-  	nextWeek.setDate(nextWeek.getDate() + 7);  // ��ȡһ��֮���ʱ��
+  	nextWeek.setDate(nextWeek.getDate() + 7);  // 获取一周之后的时间
 
-21. js ����dom�ڵ�
+21. js 生成dom节点
 
 	var html = '';
 
@@ -676,27 +688,25 @@
 
 	html += '</ul>';
 
-	$('.box').html(html);  // html() ����������Ⱦ��ǩ,�������ʹ��append(),����ԭ����ʾ�������ϣ�һ���ַ���,��������Ⱦ
+	$('.box').html(html);  // html() 方法可以渲染标签,如果这里使用append(),则是原样显示到界面上，一堆字符串,并不会渲染
 
+22. $.extend 和 angular.extend()
 
-22. $.extend �� angular.extend()
-
-	������һ����,��$.extend˵���÷�
+	功能是一样的,以$.extend说明用法
 
 	var obj1 = {name:'apple', age:34};
 
 	var obj2 = {age:45};
 
-	var obj3 = $.extend({}, obj1, obj2);  //  obj2����obj1����ͬ����  {name:'apple',age:45}
+	var obj3 = $.extend({}, obj1, obj2);  //  obj2覆盖obj1的相同属性  {name:'apple',age:45}
 
+23. 自己封装JQ插件
 
-23. �Լ���װJQ���
+	jq提供了两种方法可以在jq上添加方法
 
-	jq�ṩ�����ַ���������jq�����ӷ���
+	$.fn.extend()  -> $('#img').preload();  // 需要先选择一个元素
 
-	$.fn.extend()  -> $('#img').preload();  // ��Ҫ��ѡ��һ��Ԫ��
-
-	$.extend()	   -> $.preload();			// ����ҪԪ��
+	$.extend()	   -> $.preload();			// 不需要元素
 
 	eg:   $.extend({
 				preload:function(imgs, opts){
@@ -710,25 +720,23 @@
 		  	}
 		  })
 
-
-24. ����հ״�ȥ�����¼�ð��
+24. 点击空白处取消事件冒泡
 
 	$('button').on('click',function(event){
 
-		event.stopPropagation();  // ȡ���¼�ð��
+		event.stopPropagation();  // 取消事件冒泡
 
 		$('h1').show();
 	});
 
-	// ����հ״��ر�h1����Ҫȡ���¼�ð�ݣ�����h1һֱ��ʾ������
+	// 点击空白处关闭h1，需要取消事件冒泡，否则h1一直显示不出来
 	$(document).on('click',function(){
 		$('h1').hide();
 	});
 
+25. 事件的绑定和清除
 
-25. �¼��İ󶨺����
-
-		// �����¼�
+		// 键盘事件
 		document.onkeydown = function(e){
 			if(e.keyCode == 38){ // rotate
 				game.rotate();
@@ -743,42 +751,41 @@
 			}
 		};
 
-		// ��������¼�
-		document.onkeydown = null; (һ��������ֱ����ΪNull,���Գ�ʼ�����е�something)
+		// 清除键盘事件
+		document.onkeydown = null; (一般来讲，直接置为Null,可以初始化所有的something)
 
 
-		if(timer){ 		// �ص���ʱ��
+		if(timer){ 		// 关掉定时器
 			clearInterval(timer);
-			timer = null;	�����Կ���timer����Ϊnull��
+			timer = null;	（可以看到timer重置为null）
 		}
 
+26. js中的堆内存（heap）和栈内存（stack）
 
-26. js�еĶ��ڴ棨heap����ջ�ڴ棨stack��
-
-	JS���е�ʱ����ж��ڴ棨heap����ջ�ڴ棨stack����������newʵ����һ�����ʱ�����new�����Ķ���ͱ�����heap���棬����������������洢��stack�С�����ͨ��stack��������ҵ��������
+	JS运行的时候会有堆内存（heap）和栈内存（stack），当我们new实例化一个类的时候，这个new出来的对象就保存在heap里面，而这个对象的引用则存储在stack中。程序通过stack里的引用找到这个对象。
 
 	var arr = [1,2,3];
 
-	����arr��[1,2,3]�����ã�������stack�У�heap��洢��������[1,2,3]
+	其中arr是[1,2,3]的引用，保存在stack中，heap里存储的内容是[1,2,3]
 
-27. �ڴ�й©��memory leak�����ڴ������out of memory��
+27. 内存泄漏（memory leak）和内存溢出（out of memory）
 
-	�ڴ��������ָ�����������ڴ�ʱ��û���㹻���ڴ�ռ乩��ʹ�ã�����˵ջ��ջ��ʱ������ջ�ض������ռ�����������磬ջ��ʱ������ջҲ�����ռ��������Ϊ���磬���Ƿ�����ڴ治���Է������������У���Ϊ�ڴ������
+	内存溢出，是指程序在申请内存时，没有足够的内存空间供其使用，比如说栈，栈满时在做进栈必定产生空间溢出，叫上溢，栈空时再做退栈也产生空间溢出，称为下溢，就是分配的内存不足以放下数据项序列，称为内存溢出。
 
-	�ڴ�й©��ָ������ϵͳ��������ڴ����ʹ�ã�����ʹ�����Ժ�ȴ���黹��dlete��,��������뵽���ǿ��ڴ����Լ�Ҳ�����ڷ��ʣ�Ҳ��������ĵ�ַŪ���ˣ�����ϵͳ�����ٴν�����������Ҫ�ĳ���
+	内存泄漏是指，你想系统申请分配内存进行使用，可是使用完以后却不归还（dlete）,结果你申请到的那块内存你自己也不能在访问（也许你把它的地址弄丢了），而系统不能再次将他分配他需要的程序。
 
-	һ�����ڴ�й©��û��ʲôΣ������Ϊ������ѻ���������Σ�������ڴ�й©�Ķѻ���������պľ�ϵͳ���е��ڴ档
+	一次性内存泄漏并没有什么危害，因为他不会堆积，真正有危害的是内存泄漏的堆积，这会最终耗尽系统所有的内存。
 
-	�ȱ��Ͻ����߼����ڵ���ϸ�ڡ�
+	先保障交互逻辑，在调整细节。
 
-
-28. localStorage �� sessionStorage ��IE��Ҳ��֧�ֵģ����Ǳ����Ƿ������ϵ��ļ�������ͨ���������򿪣���֧�ֱ����ļ�
+28. localStorage 和 sessionStorage 
+	在IE中也是支持的，但是必须是服务器上的文件，就是通过服务器打开，不支持本地文件
 
 29. ngResource
 		
 	.constant('BASEURL', "http://192.168.64.219:8081/")
 
-	��һ��д����
+	第一种写法：
 
 		var User = $resource('/user/:userId', {userId:'@id'});
 		var user = User.get({userId:123}, function(){
@@ -786,7 +793,7 @@
 			user.$save();
 		});
 
-	�ڶ���д����
+	第二种写法：
 
 		var url = dataUrl + 'interface';
         var url1 = dataUrl + 'interface/:id';
@@ -799,20 +806,20 @@
             'getApi': { method: 'JSONP', url: url2+'?callback=JSON_CALLBACK',params:{}}
         });
 
-    �ܽ᣺
+    总结：
 
-		HTTP GET ���ࡱ����: Resource.action([parameters], [success], [error])
-		non-GET ���ࡱ����: Resource.action([parameters], postData, [success], [error])
-		non-GET ʵ������: instance.$action([parameters], [success], [error])
+		HTTP GET “类”动作: Resource.action([parameters], [success], [error])
+		non-GET “类”动作: Resource.action([parameters], postData, [success], [error])
+		non-GET 实例动作: instance.$action([parameters], [success], [error])
 
-		Success�ص���(value, responseHeaders)�������á�Error�ص���(httpResponse)�����ص���
+		Success回调以(value, responseHeaders)参数调用。Error回调以(httpResponse)参数回调。
 
 
-	����:
+	问题:
 
-		1. $resource(url, params?, �Զ��巽��{})
+		1. $resource(url, params?, 自定义方法{})
 
-			�ڶ���������ʲô��
+			第二个参数是什么？
 
 			.factory('UserCardResource', ['$resource', function ($resource) {
 
@@ -826,39 +833,40 @@
 			        { charge: { method: 'post', params: { charge: true }, isArray: false } });
 			}]);
 
-			������˵��
-				����1��url ���룬url�д���:����Ǹ��ݲ���2���������õ�,������õ�û�г�����urlģ���У�������search query�ķ�ʽ���ӣ�
+			参数解说：
+				参数1：url 必须，url中带有:项的是根据参数2来进行配置的,如果设置的没有出现在url模板中，将会以search query的方式添加，
 					eg: 
-						url��/card/user/:userID/:id  ---  {userID:123, name:'john', id:'@id'}
-						���յ�url���ɣ� /card/user/123��name='john'
+						url：/card/user/:userID/:id  ---  {userID:123, name:'john', id:'@id'}
+						最终的url会变成： /card/user/123？name='john'
 
-					�������ֵ����@��ͷ�ģ���ô����ʵֵ��������ݶ�������ȡ������
+					如果参数值是以@开头的，那么其真实值将会从数据对象中提取？？？
 					
-				����2���ɿգ�����url�д��У���Ĳ���params����url����Ĳ���
-				����3���ɿգ�Ϊ�Զ�����Դ����
+				参数2：可空，配置url中带有：项的参数params，即url里面的参数
+				参数3：可空，为自定义资源方法
 
-			cardId: '@id' ??? @id��ʲô��˼?
+			cardId: '@id' ??? @id是什么意思?
 
-			��resource��װ�ɷ���󣬵��ã�
+			将resource封装成服务后，调用：
 
 			cardResource.action([parameters], [success], [error])
 
-			��һ��������params�����û�п��Բ������ֱ��дsuccessCallback��	
+			第一个参数是params，如果没有可以不填，可以直接写successCallback，	
 
 			[success], function(data header){....}
 
-30. js�ĸ������ǣ�Object.prototype����,����һ���յĶ�����js��������ÿ������ʵ���϶��Ǵ��������clone�������������ǵ�ԭ�ͣ�
+30. js的根对象是：Object.prototype对象,它是一个空的对象，在js中遇到的每个对象实际上都是从这个对象clone而来，就是他们的原型，
 
-31. ԭ�������������޳��ģ����ǳ��Է��ʶ���a��address���ԣ�ʵ����a��û��������ԣ���������b������������ԭ���϶�û��address���ԣ�name�������ᱻ���մ��ݵ����
+31. 原型链并不是无限长的，我们尝试访问对象a的address属性（实际上a并没有这个属性）,而对象b和它构造器的原型上都没有address属性，name这个请求会被最终传递到哪里？
 
-	ʵ���ϵ�����ﵽA.prototype��������A.prototype��Ҳû���ҵ�address���Ե�ʱ������ᱻ���ݵ�A.prototype�Ĺ�����ԭ��Object.prototype,��ȻObject.prototype��Ҳû�и����ԣ�����Object.prototype��ԭ����null��˵����ʱ��ԭ�����ĺ����Ѿ�û�б�Ľڵ��ˣ����Ըô�����͵��˴�ס��a.address����undefined��
+	实际上当请求达到A.prototype，并且在A.prototype中也没有找到address属性的时候，请求会被传递到A.prototype的构造器原型Object.prototype,显然Object.prototype中也没有该属性，但是Object.prototype的原型是null，说明这时候原型链的后面已经没有别的节点了，所以该次请求就到此打住，a.address返回undefined。
 
-
-32. call �� apply
+32. call 和 apply
 	
+	动态改变this指向,可以调用另一个对象的方法
+
 	x.showName.call(y,m,n);
 
-	��x����y,Ҳ����x�ķ�������y��ִ�С�m,n�ǲ���
+	用x代替y,也就是x的方法放在y上执行。m,n是参数
 
 	eg:
 		function add(m,n){
@@ -870,88 +878,85 @@
 		};
 
 		console.log( add(5,3) ); 				// 8
-		console.log( add.call(sub,5,3) );		// 8����add�滻sub
+		console.log( add.call(sub,5,3) );		// 8，用add替换sub
 		console.log( add.apply(sub,[5,3]) );	// 8
 
 		console.log( sub.apply(add,[5,3]) );	// 2
 		console.log( sub.call(add,5,3) );		// 2
 
-		
+33. 应用测试
 
-33. Ӧ�ò���
+	应用测试有很多类型，最为常见的是单元测试和端对端测试（也称为集成测试）、
 
-	Ӧ�ò����кܶ����ͣ���Ϊ�������ǵ�Ԫ���ԺͶ˶Զ˲��ԣ�Ҳ��Ϊ���ɲ��ԣ���
+	单元测试是测试代码自身行为的一种测试。
 
-	��Ԫ�����ǲ��Դ���������Ϊ��һ�ֲ��ԡ�
+	集成测试是模仿用户行为的一种测试。比如登录系统，创建帖子，退出系统等这些操作都可以自动化，并且可以用眼睛看到其过程是怎么发生的。
 
-	���ɲ�����ģ���û���Ϊ��һ�ֲ��ԡ������¼ϵͳ���������ӣ��˳�ϵͳ����Щ�����������Զ��������ҿ������۾��������������ô�����ġ�
+	angular2	e2e模块就是端对端测试模块
 
-	angular2	e2eģ����Ƕ˶Զ˲���ģ��
+34. RPC架构
 
+	Remote Promote Call, 一种进程间通信方式，允许像调用本地服务一样调用远程服务。
 
-34. RPC�ܹ�
+	PRC框架的主要目标就是让远程服务调用更简单、透明。RPC框架负责屏蔽底层的传输方式（TCP或者UDP）.
 
-	Remote Promote Call, һ�ֽ��̼�ͨ�ŷ�ʽ����������ñ��ط���һ������Զ�̷���
+	序列化方式（XML/JSON/二进制）和通信细节。开发人员在使用的时候只需要了解谁在什么位置提供了什么
 
-	PRC��ܵ���ҪĿ�������Զ�̷�����ø��򵥡�͸����RPC��ܸ������εײ�Ĵ��䷽ʽ��TCP����UDP��.
+	服务接口即可，并不需要关心底层通信细节和调用过程。
 
-	���л���ʽ��XML/JSON/�����ƣ���ͨ��ϸ�ڡ�������Ա��ʹ�õ�ʱ��ֻ��Ҫ�˽�˭��ʲôλ���ṩ��ʲô
+35. 图片算法
 
-	����ӿڼ��ɣ�������Ҫ���ĵײ�ͨ��ϸ�ں͵��ù��̡�
+	通常在网页中看到的图片有两种加载方式：一种从模糊然后逐渐清晰，另一种逐行加载显示清晰的图片。
+	造成这种方式的原因是图片的压缩算法不同，第一种是小波算法，第二种是离散余弦变换。
 
-35. ͼƬ�㷨
+	从用户体验上来第一种加载方式无疑更加友好，制作方式，就是用PS导出时做些配置：
 
-	ͨ������ҳ�п�����ͼƬ�����ּ��ط�ʽ��һ�ִ�ģ��Ȼ������������һ�����м�����ʾ������ͼƬ��
-	������ַ�ʽ��ԭ������ƫ��ѹ���㷨��ͬ����һ����С���㷨���ڶ�������ɢ���ұ任��
+	PNG图片使用PS导出时，勾选交错；
+	JPG图片使用PS导出时，勾选连续；
 
-	���û�������������һ�ּ��ط�ʽ���ɸ����Ѻã�������ʽ��������PS����ʱ��Щ���ã�
+	导出的图片就是从模糊到清晰的效果了，通常称为交错式PNG和渐进式JPG。（有人说没有这个选项？）
 
-	PNGͼƬʹ��PS����ʱ����ѡ������
-	JPGͼƬʹ��PS����ʱ����ѡ������
+	另外一种方式：
 
-	������ͼƬ���Ǵ�ģ����������Ч���ˣ�ͨ����Ϊ����ʽPNG�ͽ���ʽJPG��������˵û�����ѡ���
+		<img src="缩略图.jpg" name="pic" width="800" height="600" id="news" />
 
-	����һ�ַ�ʽ��
+		然后用js处理：
 
-		<img src="����ͼ.jpg" name="pic" width="800" height="600" id="news" />
-
-		Ȼ����js������
-
-		var img = new Image();//�½�һ��ͼƬ���� 
-		img.src = "ԭͼ.jpg"; //������ʾ�Ĵ�ͼ
+		var img = new Image();//新建一个图片对象 
+		img.src = "原图.jpg"; //最终显示的大图
 		img.onload = function() { 
 			document.getElementById('news').src = this.src; 
 		}
 
-36. ���Э��
+36. 相对协议
 
-	��������վͬʱ׼����https��Դ��http��Դ��name����ʹ�����Э�����ʵ�ֵ���վ����Ķ���http��Դ����վ��������Ϊhttps����޷��л���
+	如果你的网站同时准备了https资源和http资源，name可以使用相对协议帮你实现当网站引入的都是http资源，网站域名更换为https后的无缝切换。
 
-	�磺 <img src='//domain.com/img/logon.png'>
+	如： <img src='//domain.com/img/logon.png'>
 
-	�����֮�����ǽ�URL��Э�飨http,https��ȥ����ֻ����//�����������
+	简而言之，就是讲URL的协议（http,https）去掉，只保留//及后面的内容
 
-	ע�⣺�������������ļ��������ͨ��file://Э�鷢������,��������ʧ�ܣ���˱��ز�������Ǵһ�����ط�����
+	注意：如果是浏览本地文件，浏览器通过file://协议发送请求,导致请求失败，因此本地测试最好是搭建一个本地服务器
 
 37. placeholder="{{fn.sample}}" 
 
-38. CSS��������
+38. CSS技术方案
 
-	cssȫ�����������⣺css�Ĺ�����ȫ�ֵ�,Э������ʱ���ܻ��ͻ�����ǵ�׷����sandBoxed��ɳ�仯��
+	css全局作用域问题：css的规则都是全局的,协作开发时可能会冲突，我们的追求是sandBoxed（沙箱化）
 
-	˵���׾���css����������⣬
+	说到底就是css作用域的问题，
 
-	���������� sass / less / postCss / css Modules / styled-component / stylus / BEMԼ�� ��
+	技术方案： sass / less / postCss / css Modules / styled-component / stylus / BEM约定 等
 
-	BEM�� block element modifier �� Ԫ�� ���η�
+	BEM： block element modifier 块 元素 修饰符
 
-	��vue�������ṩ��scoped�ǹؼ������������������
+	而vue中则是提供了scoped是关键词来解决作用域问题
 
 		<template>
 		  <button class="button button-close">X</button>
 		</template>
 
-		<!-- ʹ�� `scoped` ���� -->
+		<!-- 使用 `scoped` 特性 -->
 		<style scoped>
 		.button {
 		  border: none;
@@ -963,14 +968,14 @@
 		}
 		</style>
 
-39. ES5����
+39. ES5方法
 
-	1. Date.now() ��ȡ��ǰʱ���
+	1. Date.now() 获取当前时间戳
 
 		console.log(Date.now());			// ES5 1524903182416			
 		console.log(new Date().getTime());	// ES3 1524903182416
 
-	2. JSON.parse()	 json�����л��ͷ����л�
+	2. JSON.parse()	 json的序列化和反序列化
 
 		eval('({"a": 3})')		// ES3
 		JSON.parse('{"a":3}') 	// ES5
@@ -982,7 +987,7 @@
 		console.log('|'+trim+'|');
 		console.log('|'+str+'|');
 
-	4. �̳�
+	4. 继承
 
 		ES5:
 
@@ -1003,59 +1008,114 @@
 			};
 			Rectangle.prototype = new Shape();
 
-		�ܽ᣺ES5ʹ����Object.create()����ʵ����ȷ�ļ̳У���ES3ȱ��Object.create��ֻ��д���������ļ̳У����໹δʵ���������Ѿ�ʵ����ִ���˹��캯�������캯�������������ܱ�����
+		总结：ES5使用了Object.create()可以实现正确的继承，而ES3缺乏Object.create则只能写出不完美的继承（子类还未实例化父类已经实例化执行了构造函数，构造函数不带参数可能报错）
 
-40. ԭ����
+#. Object.assign(target, sources) 深copy
+
+	var obj1 = {name:'join', age:12};
+
+	var obj2 = Obejct.assign({}, obj1);
+
+	obj2.sex = 'man';
+
+	console.log(obj1);	// obj1的值不会变
+
+	1. 如果target中的属性跟source中的属性重复，以source中的属性值为准
+
+		var obj2 = Obejct.assign({name:'mike'}, obj1);	// {name:'join', age:12}
+
+	2. 如果source对象的属性值是一个指向对象的引用,它也只是copy的引用
+
+		var obj3 = {
+			a: 0,
+			b: {
+				c: 1
+			}
+		};
+
+		var obj4 = Object.assign({}, obj3);
+		obj4.b.c = 10;
+		console.log('obj4', obj4);	// obj4中的c改变了
+		console.log('obj3', obj3);	// obj3中的c也改变了,因为copy的是引用
+
+	3. 多个对象合并
+
+		var obj5 = {a: 1};
+		var obj6 = {b: 2};
+		var obj7 = {c: 3};
+		var union = Object.assign({}, obj5, obj6, obj7);
+		console.log(union);	// {a:1, b:2, c:3}
+		console.log(obj5);	// {a: 1}
+
+		如果是：var union = Object.assign(obj5, obj6, obj7);
+		也会改变原对象obj5/6/7，都是{a:1, b:2, c:3}
+
+	4. 对象合并时,重复属性后面覆盖前面
+	   null 和 undefined 被忽略
+
+		var obj5 = {a: 1, b: 11};
+		var obj6 = {b: 21, c: 22};
+		var obj7 = {c: 31};
+		var union = Object.assign({}, obj5, null, obj6, obj7, undefined);
+		console.log(union);	// {a:1, b:21, c:31}
+		console.log(obj5);
+
+
+#. 原型链
 	
-	ÿ��JS�汾��ʵ�ַ������в�ͬ��Ӧ�Ƚϲ���
+	每个JS版本的实现方法略有不同，应比较阐述
 
 	https://blog.csdn.net/iispring/article/details/62219444
 
-#. console.log��ӡ�����Ķ����ǿյģ����ǵ㿪������������ֵ
+#. console.log打印出来的对象是空的，但是点开看后，里面有有值
 
-	js������Ͷ������������ͣ���Σ�console.log��������ڡ�������js����ʽһ���֣������������������ӵ�js�еģ���ͬ���������js�������԰����Լ�����Ը��ʵ�֡�������chromeΪ����console.log��ӡ��ֻ�����õĿ��գ������ǿ������ݣ�ֻ�����û��㿪�ö���ʱ������Ż�ȥ���õ�ַȡ���ݣ����Կ��������첽�ģ�����Ҳ����һ���淴����һ������˵console.log���첽��˵���������˾�����Ҳ����chrome��һ���Ż��ѣ�������ýϴ�Ļ�����ӡ����Ҳ�ǱȽϺ����ܵġ�
+	js中数组和对象都是引用类型，其次，console.log这个方法在·并不是js的正式一部分，而是由宿主对象添加到js中的，不同的浏览器和js环境可以按照自己的意愿来实现。这里以chrome为例，console.log打印的只是引用的快照，而不是快照内容，只有在用户点开该对象时，引擎才会去引用地址取内容，所以看起来是异步的，（这也从另一方面反驳了一部分人说console.log是异步的说法），个人觉得这也算是chrome的一个优化把，如果引用较大的话，打印出来也是比较耗性能的。
 
-#. �����������ͣ� Number string boolean null undefined
+#. 基本数据类型： Number string boolean null undefined
 
-#. ������װ���ͣ� Number string boolean
+#. 基本包装类型： Number string boolean
 
-#. �����������ͣ� Array Obejct Function Date 
+#. 引用数据类型： Array Obejct Function Date 
 
-#. ��������: �������ö�������
+#. 引用类型: 单体内置对象类型
 	
-	������ECMAScript ʵ���ṩ�ģ������������������Ķ�����Щ������js����ִ��ǰ���Ѿ�������
+	就是有ECMAScript 实现提供的，不依赖于宿主环境的对象，这些对象在js程序执行前就已经存在了
 
-	Global �� Math
+	Global 和 Math
 
-	�����д���ִ��ǰ���������о��Ѿ������������ö����ˣ����Ǵ����ECMAScriptʵ���ж�����ֱ�ӷ���Global���ԣ�����web�����ʵ���˳е��ý�ɫ��window����
+	在所有代码执行前，作用域中就已经存在两个内置对象了，但是大多数ECMAScript实现中都不能直接访问Global属性，不过web浏览器实现了承担该角色的window对象。
 
-	Global�ķ����У�
+	Global的方法有：
 
-		URL���뷽����encodeURL()��encodeURLComponent() ��Global�ķ���
+		URL编码方法：encodeURL()和encodeURLComponent() 是Global的方法
+		parseInt(string|number, radix);
+		isNaN();
 		eval()
 
-#. �����������ͺͻ�������
+#. 区分引用类型和基本类型
 
-	�������Ϳ��Զ�̬���������Ժͷ�����
+	引用类型可以动态的添加属性和方法，
 
-#. �������ͺͶ�ջ
+#. 数据类型和堆栈
 	
-	�������͵������Ǵ����ջ�ڴ��еģ��������͵����ݴ���ڶ��ڴ��С�
+	基本类型的数据是存放在栈内存中的，引用类型的数据存放在堆内存中。
+
+	var obj = {};	obj是指针，引用或者快照,存储在stack中
 
 	var num = 23;
 	var num2 = num;
 
-	�������͵ĸ��ƾ�����stack�п��ٳ�һ���µĴ洢�������洢�µı�����������������Լ���ֵ��ֻ������ǰ���ֵһ���������������һ����ֵ�ı��ˣ��򲻻�Ӱ����һ����
+	基本类型的复制就是在stack中开辟出一个新的存储区用来存储新的变量，这个变量有他自己的值，只不过和前面的值一样，所以如果其中一个的值改变了，则不会影响另一个。
 
 	var obj = {name:'join'};
 	var obj2 = obj;
 	obj2.name = 'apple';
 
-	������һ��������ʵ������heap�д洢��һ��ָ�룬���ָ��ָ����ڴ��иö���Ĵ洢��ַ�����Ƹ���һ����Ĺ�����ʵ���ǰѸö���ĵ�ַcopy������һ���������������ָ�붼ָ��ͬһ��������������һ���޸ģ���һ��Ҳ��ġ�
+	定义了一个对象，其实就是在heap中存储了一个指针，这个指针指向堆内存中该对象的存储地址。复制给另一对象的过程其实就是把该对象的地址copy给了另一个对象变量，两个指针都指向同一个对象，所以其中一个修改，另一个也会改。
 
-#. new���η�
+#. new修饰符
 
-	new���η������Ķ������������ͣ����Զ�̬�������Ժͷ���
+	new修饰符创建的对象是引用类型，可以动态添加属性和方法
 
 	var str = new String('join');
 	str.name = 'apple';
@@ -1071,55 +1131,60 @@
 
 	var obj = new Object;
 
-	��������д�����ǶԵģ����в�ֹһ������ʱ��Ҫ��ʹ�����ţ���û�в�������ʡ�ԣ��������Ų��Ǳ���ģ�����Ϊ�˱�����������ʹ�����š� 
+	以上两种写法都是对的，当有不止一个参数时，要求使用括号，如没有参数，可省略；尽管括号不是必须的，但是为了避免混淆，最好使用括号。 
 
 #. Set & Map
 
-	��ES6�������������ͣ�Ϊ�����㷨��ʵ���ṩ�˸���Ч�����ݽṹ���鿴������Ƿ�֧�֣����������´��룺
+	是ES6新增的数据类型，为常见算法的实现提供了更有效的数据结构。查看浏览器是否支持，请运行以下代码：
 
 		'user strict';
 		var map = new Map();
 		var set = new Set();
-		console.log('֧��');
+		console.log('支持');
 
-	JS��Ĭ�϶���ʽΪ{}��������Ϊ���������е�Map��Dictionary�����ݽṹ����һ���ֵ��
+	JS的默认对象方式为{}，可以视为其他语言中的Map或Dictionary的数据结构，即一组键值对
 
-	����js�и�С�������: ���������ַ�������ʵ����Number������������������Ϊ��Ҳ�Ƿǳ������ģ�
+	但是js有个小问题就是: 键必须是字符串，但实际上Number或者其他数据类型作为键也是非常合理的，
 
-	Ϊ�˽��������⣬ES6�淶�������µ��������ͣ�Map
+	为了解决这个问题，ES6规范引入了新的数据类型：Map
 
 	1. Map
 
-		��һ���ֵ�ԵĽṹ�����м���Ĳ����ٶȡ�
+		是一组键值对的结构，具有极快的查找速度。
 
-		��ʼ��Map��Ҫһ�� ��ά���飬����ֱ�ӳ�ʼ��һ���յ�Map,Map�ķ��������¼��֣�
+		初始化Map需要一个 二维数组，或者直接初始化一个空的Map,Map的方法有以下几种：
+
+		var map = new Map([['name','join']]);
+		map.set('hello','world');	// Map(2) {"name" => "join", "hello" => "world"}
+		map.get('hello');			// world
+		console.log(map);
 
 	2. Set
 
-		Ҫ����һ��Set,��Ҫ�ṩһ��Array��Ϊ����,����ֱ�Ӵ���һ����Set
+		要创建一个Set,需要提供一个Array作为输入,或者直接创建一个空Set
 
-		var set = new Set([1,2,3,4,5]);	// ����һ��������Ϊ�������г�ʼ��
+		var set = new Set([1,2,3,4,5]);	// 接受一个数组作为参数进行初始化
 
-		var set1 = set;			// Set����	 Set(5){1,2,3,4,5}
-		var set1 = [...set];	// ��������  [1,2,3,4,5]
+		var set1 = set;			// Set类型	 Set(5){1,2,3,4,5}
+		var set1 = [...set];	// 数组类型  [1,2,3,4,5]
 
-		���� / ���� / ���
+		交集 / 并集 / 差集：
 
 			var set1 = new Set([1,3,4]);
 			var set2 = new Set([4,3,2]);
 
 			var union = new Set([...set1,...set2]);	// Set(4) {1,2,3,4}
 
-			// ΪʲôҪʹ��[...set1]����Ϊset�Ĳ�������������
+			// 为什么要使用[...set1]，因为set的参数是数组类型
 			var intersect = new Set([...set1].filter(el => set2.has(el)));	// Set(2) {3,4}
 
-			// ����a�����ڵ�b��Ԫ��
+			// 属于a不属于的b的元素
 			var intersect = new Set([...set1].filter(el => !set2.has(el)));	// Set(1) {1}
 
-		a. ��array���ƣ�����setû��������ָ���ǻص������У�,���ҳ�Աֵ����Ψһ�ģ���û���ظ�ֵ
+		a. 和array相似，但是set没有索引（指的是回调函数中）,并且成员值都是唯一的，即没有重复值
 
 			var set1 = new Set(['a','b','c']);	
-			set1.forEach(function(element, sameEl, set) {	// �ڶ�������index
+			set1.forEach(function(element, sameEl, set) {	// 第二个不是index
 				console.log(element)
 				console.log('sameEl',sameEl)
 				console.log('set',set)
@@ -1132,7 +1197,7 @@
 				console.log(self)
 			});
 
-		b. �ĸ�����������
+		b. 四个操作方法：
 
 			add(value)
 			delete(value)
@@ -1144,30 +1209,66 @@
 			var set7 = new Set();
 		    var aa = {name:'one'};
 		    var bb = {name:'two'};
-		    set7.add(aa).add(bb);	// ������ʽ
+		    set7.add(aa).add(bb);	// 可以链式
 		    console.log(set7.size);
 
-		    console.log(set7[0]);	// undefined ��֧����������
+		    console.log(set7[0]);	// undefined 不支持索引遍历
 
-#. for...in �� for...of
+		d. 转化为数组
 
-	for...in���ʺϱ���������Ϊ���������Ƕ������������key��
+			[...set];
+			Array.from(set);
 
-			Set��Map������for...in����Ϊ��������û������(��index)
+#. Array.from()
 
-	for...of�����������鱾����Ԫ�أ�������ԭ���ϵ�
+	1. 转化类数组对象为真正的数组
+
+		function fn(){
+			console.log(arguments);
+			console.log(Array.from(arguments));
+		}
+
+		fn(1,2,3);
+
+		用rest操作符实现
+
+		function fn1(...values){
+			console.log(value);
+		}
+
+		fn1(1,2,3);
+
+	2. 转化Set/Map
+
+		var set = new Set([1,2,3]);
+		Array.from(set);	// [1,2,3]
+		[...set]			// [1,2,3]
+
+	3. 转化string
+
+		var str = 'hello world!';
+
+		Array.from(str);	// ["h", "e", "l", "l", "o", " ", "w", "o", "r", "l", "d", "!"]
+
+#. for...in 和 for...of
+
+	for...in更适合遍历对象，因为它遍历的是对象的索引（即key）
+
+			Set和Map不能用for...in，因为它们两个没有索引(即index)
+
+	for...of遍历的是数组本身的元素，不包括原型上的
 
 #. Proxy
 
 	var p = new Proxy(target, handler);
 
-	�൱�ڰѶ�������һ����װ���ڲ�������Ŀ��֮ǰ�ȼ���һ�����ء�
+	相当于把对象做了一个包装，在操作到达目标之前先架设一层拦截。
 
-	target��Ҫ��װ�Ķ���
+	target是要包装的对象
 
-	handler�����صĴ���������һ�����󣬰����صķ���ж����������Զ���Ը���������
+	handler是拦截的处理器，是一个对象，把拦截的方法写在属性里，可以定义拦截属性
 
-		var person = {name:'join'}	;
+		var person = {name:'join'};
 		var p = new Proxy(person, {
 			get: function(target, prop, receiver){
 				if(prop in target){
@@ -1182,11 +1283,12 @@
 
 #. Array.fill(value, start, end)
 	
-	���ڽ�һ���̶�ֵ�滻�����Ԫ��
+	ES6 用于将一个固定值替换数组的元素
 
 	var arr = ['apple','orange','mango'];
 	arr.fill('pear',1,2);	// ['apple','pear','mango']
-	arr.fill('pear');		// ['pear','pear','pear']
+	arr.fill('pear');		// 没有start,end, 初始化数组参数为指定value ['pear','pear','pear']
+	arr.fill('pear',1);		// 没有end, 从start之后的元素全部替换成指定值['apple','pear','pear']
 
 #. includes
 
@@ -1198,11 +1300,11 @@
 
 	2. array.includes(value)
 
-		�ж�һ�������Ƿ����һ��ָ����ֵ
+		判断一个数组是否包含一个指定的值
 
 		[1,2,3].includes(2);	// true
 
-#. ��������
+#. 隐藏限区
 
 	var tmp = new Date();
 	function fn(){
@@ -1213,34 +1315,34 @@
 	};
 	fn();
 
-	�����������⣬�������Ǳȱ�����ִ��,�����ں���ִ�е�ʱ��tmp��undefined
+	变量提升问题，函数总是比变量先执行,所以在函数执行的时候，tmp是undefined
 
-#. rest���� �� spread
+#. rest参数 和 spread
 
-	1. ES6������rest����,��ʽΪ: ...������,����rest��������ı�����һ������,����ʹ�������һ�в���
+	1. ES6引入了rest参数,形式为: ...变量名,其中rest参数搭配的变量是一个数组,可以使用数组的一切操作
 
-	2. rest����֮�������������������򱨴�
+	2. rest参数之后不能有其他参数，否则报错
 
-		function rest(a, ...b, c){}	// ������ ...bӦ�÷����һ��
+		function rest(a, ...b, c){}	// 报错， ...b应该放最后一个
 
-	3. ��չ�����,���Կ�����rest������������,���Խ�����ת��Ϊ�����б�
+	3. 扩展运算符,可以看作是rest参数的逆运算,可以将数组转化为参数列表
 
 		console.log(1, ...[2,3,4], 5);	// 1,2,3,4,5
 
-		����ϲ���	
+		数组合并：	
 
 			var arr1 = [1,2,3];
 			var arr2 = [2,3,4];
-			var concat = [...arr1,...arr2];	// �ϲ�1
-			arr1.push(...arr2);				// �ϲ�2
+			var concat = [...arr1,...arr2];	// 合并1
+			arr1.push(...arr2);				// 合并2
 
-		�ַ����ָ
+		字符串分割：
 
 			var str = 'hello';
 			str.split('');			// ["h", "e", "l", "l", "o"]
 			console.log(...str)		// ["h", "e", "l", "l", "o"]
 
-		����������
+		函数参数：
 
 			function fn(...values){
 				console.log(values);	// [1,2,3]
@@ -1248,32 +1350,32 @@
 
 			fn(1,2,3);
 
-		�⹹��
+		解构：
 
-			es6��������һ��ģʽ��������Ͷ�������ȡֵ,�Ա������и�ֵ,�Ɑ��Ϊ�⹹(Destructuring)
+			es6允许按照一定模式，从数组和对象中提取值,对变量进行赋值,这杯称为解构(Destructuring)
 
-			��ǰΪ������ֵֻ��ֱ��ָ��ֵ��
+			以前为变量赋值只能直接指定值：
 
 				var a = 10;
 				var b = 'hello';
 
 				let [a,b] = [10, 'hello'];
 
-			����ṹ���ɹ�,������ֵ�ͻ����undefined
+			如果结构不成功,变量的值就会等于undefined
 
 				let [foo] = [];
 				let [bar, foo] = [1];	// foo=undefined
 
-			�⹹�ĵȺ��ұ߱���������,��ߵı���ҲҪ������������,���򱨴���
-			���Ⱥ����ߵ�����Ҫһ�£������鶼Ҫ�����飬�����Ƕ���
+			解构的等号右边必须是数组,左边的变量也要包裹在数组中,否则报错：
+			即等号两边的类型要一致，是数组都要是数组，对象都是对象
 
 				let [foo] = 1;	
 				let [foo] = false;	
 				let [foo] = {};	
 
-			�⹹��ֵӦ�ó�����
+			解构赋值应用场景：
 
-				1. ����ֵ
+				1. 交换值
 
 					let x = 1;
 					let y = 2;
@@ -1281,14 +1383,14 @@
 
 #. \uXXXX
 
-	���ָ�ʽ��Unicodeд������ʾһ���ַ�������xxxx��ʾһ��16�������֣���Χ��0~65535
+	这种格式是Unicode写法，表示一个字符，其中xxxx表示一个16进制数字，范围是0~65535
 
-#. �ַ�������API
+#. 字符串新增API
 
 	includes()
 	startsWith()
 	endsWith()
-	repeat(num)		num:0,���ַ�����գ�0-1,ȡ0��С������ȡ��
+	repeat(num)		num:0,将字符串清空；0-1,取0；小数向下取整
 
 	let str = 'hello world!';
 	str.includes('rld');		// true
@@ -1299,18 +1401,18 @@
 
 #. browser.min.js
 
-	һ���������֧��es6�﷨�Ŀ�
+	一个让浏览器支持es6语法的库
 
-	babel��������汾��browser.min.js,
+	babel的浏览器版本是browser.min.js,
 
-	babel��Ҫ��;��һ��jsת������������ת������ES*����Ϊ�������ʶ���ES����
+	babel主要用途是一个js转换器，他可以转换各种ES*代码为浏览器可识别的ES代码
 
 	<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 
 	// npm install --save babel
 	<script src='node_modules/babel-polyfill/dist/polyfill.min.js'></script>
 
-	// ��Ҫ��������type
+	// 不要忘了添加type
 	<script type="text/babel">	
 		let str = 'hello world!';
 		console.log(str.includes('rld'));
@@ -1325,9 +1427,9 @@
 		console.log(html)
 	</script>
 
-#. es6 ����
+#. es6 函数
 
-	1. ����ָ��������Ĭ��ֵ,����Ҫ���ڱ�Ҫ��������
+	1. 可以指定参数的默认值,但是要放在必要参数后面
 
 		ES5:
 
@@ -1342,11 +1444,11 @@
 
 			function fn1(x=2, y=3){
 				console.log(x,y);
-				let x = 23;				// ����,Ĭ�ϲ��������ٴ�����
+				let x = 23;				// 错误,默认参数不能再次声明
 			};
 			fn1();
 
-#. ԭ�ͺ�ԭ����
+#. 原型和原型链
 	
 		function Person(name){
 			this.name = name;
@@ -1357,73 +1459,73 @@
 		};
 
 		function Employee(name, compony){
-			Person.call(this, name);			// �൱��super(),���ø���Ĺ��캯���Գ�ʼ������
+			Person.call(this, name);			// 相当于super(),调用父类的构造函数以初始化属性
 			this.compony = compony;
 		};
 
 		Employee.prototype = new Person();
 		Employee.prototype.constructor = Employee;
 
-	1. ����ԭ������Ҫ��proto����,ͨ��__proto__�������ӵ�ԭ�͵Ķ���
+	1. 建立原型链主要靠proto属性,通过__proto__可以链接到原型的顶端
 
 		Employee.prototype.__proto__ = Person.prototype;		// 1
 		Person.prototype.__proto__ = Object.prototype;			// 2
 		Object.prototype.__proto__ = null;
 
 
-		Employee.prototype.__proto__.__proto__ = Object.prototype;	//	1+2�ļ�д
+		Employee.prototype.__proto__.__proto__ = Object.prototype;	//	1+2的简写
 
 
-	2. constructor��ԭ��������Ӱ��
+	2. constructor对原型链毫无影响
 
-		prototype.constructor������������ʶ����������ĸ����캯����ʼ���ģ����˶���
+		prototype.constructor仅仅可以用于识别对象是由哪个构造函数初始化的，仅此而已
 
-		���Ӧ�ó����ǣ������ж�
+		最佳应用场景是：类型判断
 
 			arr.constructor === Array
 			222.constructor === Number
 
-	3. ֻ�й��캯������prototype���ԣ����캯����ʵ����û�и����Ե�
+	3. 只有构造函数才有prototype属性，构造函数的实例是没有该属性的
 
-	4. ΪʲôҪ���¶��� xxx.prototype.constructor = xxx;
+	4. 为什么要重新定义 xxx.prototype.constructor = xxx;
 
-		���¶���prototype����Ļ����ᵼ��prototype����ԭ�е�constructor���Զ�ʧ,����������ʾ�ĸ��ö�������һ��constructor���ԣ��޸�constructorȥ��
+		重新定义prototype对象的话，会导致prototype对象原有的constructor属性丢失,所以我们显示的给该对象添加一个constructor属性，修改constructor去向
 
 	5. Object.create()
 
-		ES5ʵ�ּ̳У�������Object.create()�������÷�������һ������Ⱦ�ط���һ�����󣬷��صĶ����ԭ��ָ����Ķ���
+		ES5实现继承，新增了Object.create()方法，该方法传入一个对象，染回返回一个对象，返回的对象的原型指向传入的对象
 
 		var output = Object.create(input);
 
-		output.__proto = input; (output��ԭ����input)
+		output.__proto = input; (output的原型是input)
 
-#. Promise����
+#. Promise对象
 
-	1. ���������Ƿ�֧��
+	1. 检测浏览器是否支持
 
 		'use strict';
 		new Promise(function(){})
 
-	2. ��ʽ��new Promise(async)
+	2. 格式：new Promise(async)
 
 		new Promise(function(resolve, reject){
 			var num = Math.random() * 100;
 			if(num < 1){
-				resolve('С��1');
+				resolve('小于1');
 			}else{
-				reject('����1');
+				reject('大于1');
 			}
 		}).then(funciton(data){
-			console.log('�ɹ��ص�',data);
+			console.log('成功回调',data);
 		}).catch(function(error){
-			console.log('����ص�',error);
+			console.log('错误回调',error);
 		})
 
-		resolve��reject���Ǻ���
+		resolve和reject都是函数
 
 	3. Promise.race()
 
-		����ͬʱ������URL��ȡ�û��ĸ�����Ϣ��ֻ��Ҫ����ȷ��صĽ�����ɣ���������£���Promise.race()ʵ�֣�
+		比如同时向两个URL读取用户的个人信息，只需要获得先返回的结果即可，这种情况下，用Promise.race()实现：
 
 		var p1 = new Promise(function(resolve, reject){
 			setTimeout(resolve, 500, 'p1');
@@ -1437,9 +1539,9 @@
 			console.log(result);	// p1
 		});
 
-		����p1ִ�нϿ죬�������ִ�н����p1��p2���ڼ���������ִ�н����������
+		由于p1执行较快，所以最后执行结果是p1，p2仍在继续，但是执行结果将被丢弃
 
-		eg2: ���ó�ʱʱ��,���ڳ�ʱ��ִ����Ӧ����
+		eg2: 设置超时时间,并在超时后执行相应操作
 
 			var requestImg = new Promise(function(resolve, reject){
 				var img = new Image();
@@ -1451,11 +1553,11 @@
 
 			var timeout = new Promise(function(resolve, reject){
 				setTimeout(function(){
-					reject('�ӿ�����ʱ');
+					reject('接口请求超时');
 				},5000);
 			});
 
-			// 5s�ڽӿ�û������ɹ�,�ͷ��س�ʱ���
+			// 5s内接口没有请求成功,就返回超时结果
 			Promise.race([requestImg, timeout])
 					.then(function(result){
 						console.log(result); 
@@ -1463,26 +1565,26 @@
 
 	4. Promise.all()
 
-		����ִ���첽����,����һ���������,then�����Ҳ��һ������
+		并行执行异步任务,接受一个数组参数,then输出的也是一个数组
 
-		ʵ��2�����ڴ���ִ���첽����
+		实例2就属于串行执行异步任务
 
-		// ͬ��ִ��p1,p2���������Ƕ���ɺ�ִ��then
+		// 同步执行p1,p2，并在他们都完成后执行then
 		Promise.all([p1,p2]).then(function (results) {
-		    console.log(results); // ���һ��Array: ['P1', 'P2']
+		    console.log(results); // 获得一个Array: ['P1', 'P2']
 		});
 
-	5. ��JS�������У����д��붼�ǵ��߳�ִ�еģ����������ȱ�ݡ�������js���������������������¼����������첽ִ�С�ajax���ǵ��͵��첽����
+	5. 在JS的世界中，所有代码都是单线程执行的，由于这个‘缺陷’，导致js的所有网络操作，浏览器事件都必须是异步执行。ajax就是典型的异步操作
 
-		Promise�и��ֿ�Դʵ�֣���ES6�б�ͳһ�淶���������ֱ��֧�֡�
+		Promise有各种开源实现，在ES6中被统一规范，由浏览器直接支持。
 
-	6. ����ִ��Promise����
+	6. 串行执行Promise任务
 
 		job1.then(job2).then(job3).catch(handleError);
 
-		����job1,job2,job3����Promise����var p1 = new Promise(test);p1����Promise����,Promise������ʵ����Promise��ʵ������then,catch������������ʹ�ã�then()�п����ٴδ���Promise����Ҳ����ֱ��������
+		其中job1,job2,job3都是Promise对象（var p1 = new Promise(test);p1就是Promise对象）,Promise对象其实就是Promise的实例，有then,catch两个方法可以使用，then()中可以再次传递Promise对象也可以直接输出结果
 
-		catch/then���ص���һ���µ�promise����
+		catch/then返回的是一个新的promise对象
 
 		function multiply(input){
 			return new Promise(function(resolve, reject){
@@ -1510,24 +1612,24 @@
 		 	console.log(result);	
 		 });
 
-	7. ����ص�������д����
+	7. 错误回调的两种写法：
 
-		a. ֱ����then��д����״̬�ĺ���,then����������������,��һ����Ӧresolve�Ļص�,�ڶ�����Ӧreject�Ļص�
+		a. 直接在then中写两种状态的函数,then方法接受两个参数,第一个对应resolve的回调,第二个对应reject的回调
 
 			new Promise(test).then(function(data){
 				console.log(data);
-				console.log(aa());		// aaδ����,�ж�jsִ��
+				console.log(aa());		// aa未定义,中断js执行
 			},function(error){
 				console.log(22,error);
 			})
 
-		b. ʹ��catch(handleError)
+		b. 使用catch(handleError)
 
-			Ч����then�ĵڶ�������һ������������������һ������:��ִ��resolve�Ļص�����then�ĵ�һ��������ʱ,����׳����쳣,��ô�����ᱨ������js,���ǻ����catch��
+			效果跟then的第二个参数一样，但是他还有另外一个作用:在执行resolve的回调（即then的第一个参数）时,如果抛出了异常,那么并不会报错卡死js,而是会进到catch中
 
 			new Promise(test).then(function(result){
 				console.log('success',result);
-				console.log(aa());		// aaδ����,����뵽catch����,�����ж�jsִ��
+				console.log(aa());		// aa未定义,会进入到catch方法,不会中断js执行
 			}).catch(function(error){
 				console.log(33,error);
 			});
@@ -1545,7 +1647,7 @@
 			return result + '1';	// 11
 		});
 
-		��������then������ͬ��ִ�еģ����then����ʽ���ã�����һ��then���ص�promise����return��ֵ�е���Ϊ��һ��then��valueֵ��
+		以上三个then方法是同步执行的，如果then是链式调用，则上一个then返回的promise对象return的值中的作为下一个then的value值，
 
 			p1.then(function(result){
 				return result*2;
@@ -1555,14 +1657,14 @@
 				return result + '1';	// 41
 			});
 
-	9. ��дajax��ѯ
+	9. 改写ajax轮询
 
 		$.ajax({
 		   url: '',
 		   dataType:'json',
 		   success: function(data) {
 		    	var id = data.id;
-		    	$.ajax({				// ajax��ѯ
+		    	$.ajax({				// ajax轮询
 		       		url:'',
 		        	data:{"id":id},
 		        	success:function(){
@@ -1576,10 +1678,10 @@
 		====
 
 		var ajaxPromise = new Promise(function(resolve, reject){
-			resolve();	// ʲô���������ǿյ�
+			resolve();	// 什么都不传，是空的
 		});
 
-		ajaxPromiseҲ����ֱ�Ӽ�д�ɣ� Promise.resolve()
+		ajaxPromise也可以直接简写成： Promise.resolve()
 
 		ajaxPromise.then(function(){
 			$.ajax({
@@ -1602,14 +1704,14 @@
 		    })
 		})
 
-	10. Promise״̬
-		Promise�ǻ���״̬�ģ�״̬��ʶ��pending / fullfilled / rejected
+	10. Promise状态
+		Promise是基于状态的，状态标识：pending / fullfilled / rejected
 
-		����״̬�ĸı�ֻ����һ��
+		并且状态的改变只能有一次
 
-		��ʵ���մ���ʱ����pending״̬����ִ��reject����ʱ,��Ϊrejected״̬
+		当实例刚创建时处于pending状态，当执行reject方法时,变为rejected状态
 
-		��ִ��resolve����ʱ,�����ܱ�Ϊfullfiled��Ҳ�п��ܱ�Ϊrejected״̬��Ҳ����˵resolve !== fullfiled,Ϊʲô��
+		当执行resolve方法时,他可能变为fullfiled，也有可能变为rejected状态，也就是说resolve !== fullfiled,为什么：
 
 			new Promise(function(resolve, reject){
 			    resolve(Promise.reject(5))
@@ -1621,7 +1723,7 @@
 
 #. this
 
-	this��ָ��ֻ�������е�ʱ�����ȷ��������ָ���ʱ�Ǹ��������Ķ���		
+	this的指向只有在运行的时候才能确定，最终指向的时那个调用他的对象		
 	1. 	var obj = {
 			a:10,
 			b:{
@@ -1630,7 +1732,7 @@
 				}
 			}
 		};
-		obj.b.fn();	// undefined,thisָ��b,b��û��a������undefined
+		obj.b.fn();	// undefined,this指向b,b中没有a，所以undefined
 
 	2. 	function fn(){
 			var user = 'join';
@@ -1640,91 +1742,91 @@
 
 		fn();	// undefined  window
 
-		thisָ�����յ�����,����ĵ�����ʵ��:window.fn();����thisָ��window
+		this指向最终调用者,这里的调用其实是:window.fn();所以this指向window
 
-	3. ��������1�Ĵ���д��
+	3. 接着例子1的代码写：
 
 		var j = obj.b.fn;
-		j();		// ���յ���:window.j(),�������յ�������window,undefined
+		j();		// 最终调用:window.j(),所以最终调用者是window,undefined
 
-#. jsonp��ԭ��
+#. jsonp的原理
 
-	jsonp��Ҫ����script��ǩû�п���������һ���ԣ�ͨ���ڿͻ���ע��һ��callback����,Ȼ���callback�����ִ��ݸ�������������˵õ���������ݺ󣬽����ݰ�����callback�з��ظ��ͻ��ˣ��������������ɵ�json���ݾ��ܱ��ͻ�����ȷ������	
+	jsonp主要利用script标签没有跨域限制这一特性，通过在客户端注册一个callback方法,然后把callback的名字传递给服务器，服务端得到请求的数据后，将数据包裹在callback中返回给客户端，这样服务器生成的json数据就能被客户端正确接受了	
 
 #. 304
 
-	��ʾҳ����Դû���޸ģ�ֱ��ʹ�����������
+	表示页面资源没有修改，直接使用浏览器缓存
 
-#. ���о����ֽ�ֹ����������ͷ�ֶ�
+#. 请列举三种禁止浏览器缓存的头字段
 
 	Pragma: no-cache
 	Cache-control: no-cache	
 	Expires: -1/0
 
-#. TCP/IP�Ĳ�Э�飺
+#. TCP/IP四层协议：
 
-	Ӧ�ò㡢����㡢����㡢������·�� (httpЭ���Ӧ����Ӧ�ò�)
+	应用层、传输层、网络层、数据链路层 (http协议对应的是应用层)
 
-#. ������URL���������ʾҳ�淢����ʲô
+#. 从输入URL到浏览器显示页面发生了什么
 
-	������̴��¿��Է�Ϊ�����֣�����ͨ�ź�ҳ����Ⱦ
+	这个过程大致可以分为两部分：网络通信和页面渲染
 
-	1. ����ͨ��
+	1. 网络通信
 
-		TCP/IPЭ�飺
+		TCP/IP协议：
 
-		Ӧ�ò�
+		应用层
 
-		�����			TCP����������ȷ������
+		传输层			TCP，三次握手确认连接
 
-		�����			IP��ȷ���Է���MAC��ַ
+		网络层			IP，确定对方的MAC地址
 
-		������·��	
+		数据链路层	
 
 
-		a. �����������url�������urlһ��������
+		a. 在浏览器输入url，这里的url一般是域名
 
-		b. Ӧ�ò����DNS�����������ͻ��˻��ȼ�鱴���Ƕ��ж�Ӧ��IP��ַ����û�о������ϼ�DNS��������֪��������Ӧ��IP��ַ
+		b. 应用层进行DNS域名解析，客户端会先检查贝蒂是都有对应的IP地址，若没有就请求上级DNS服务器，知道按到对应的IP地址
 
-		c. �ͻ��˷���HTTP����
+		c. 客户端发送HTTP请求
 
-		d. �����TCP���䱨�ģ����䱨��ǮҪ����������������
+		d. 传输层TCP传输报文，传输报文钱要进行三次握手连接
 
-		e. �����IPЭ���ѯ���ܷŵ�MAC��ַ
+		e. 网络层IP协议查询接受放的MAC地址
 
-		f. ���ҵ�MAC��ַ�󣬾ͽ����ݷ��͵�������·�㣬���ˣ��ͻ����������
+		f. 在找到MAC地址后，就将数据发送到数据链路层，至此，客户端请求结束
 
-		g. ��������������
+		g. 服务器接受数据
 
-		h. ��������Ӧ����
+		h. 服务器响应数据
 
-		j. ҳ����Ⱦ
+		j. 页面渲染
 
 #. MVVM
 
 	Model-View-View-Model
 
-	��ǰ��ҳ����,��Model�ô�JS�����ʾ,View������ʾ,��������������޶ȵķ���
+	在前端页面中,把Model用纯JS对象表示,View负责显示,两者做到了最大限度的分离
 
-	��Model��View������������ModelView,ModelView�����Model������ͬ����view��ʾ�������������view������ͬ����model��
+	把Model和View关联起来就是ModelView,ModelView负责把Model的数据同步到view显示出来，还负责把view的数据同步会model。
 
-	MVVM��������DOM�⹹��������������δ洢����򵥵����ݴ洢��ʽ��ʹ��js����
+	MVVM并不关心DOM解构，而关心数据如何存储，最简单的数据存储方式是使用js对象：
 
-	�ı�js�����״̬���ᵼ��dom�ṹ������Ӧ�ı仯�������ǵĹ�ע��Ӳ���dom�������θ���js�����״̬��������js����Ȳ���dom�򵥶��ˡ�
+	改变js对象的状态，会导致dom结构做出对应的变化这让我们的关注点从操作dom变成了如何更新js对象的状态，而操作js对象比操作dom简单多了。
 
-	MVVM�����˼�룺��עmodel�仯����MVVM���ȥ�Զ�����DOM״̬���Ӷ��ѿ����ߴ�DOM��Ƶ�������н��ѳ�����
+	MVVM的设计思想：关注model变化，让MVVM框架去自动更新DOM状态，从而把开发者从DOM的频繁操作中解脱出来。
 
-#. angular2��������
+#. angular2的新特性
 
-	�Ƴ���controller,scope�ĸ������compoennt���ʽ����
-	������δ���Ŀ�����׼��ES6,ES7��webComponent��
-	����Ϊ�ƶ�Ӧ�����
+	移除了controller,scope的概念，采用compoennt组件式开发
+	最贴合未来的开发标准（ES6,ES7，webComponent）
+	优先为移动应用设计
 
-#. Ŀǰ�����ϵ�mvvm��ܣ���ng,vue�������������������������ʵ�ַ�ʽ��ͬ���������ǵĺܶ��������ͬ�ģ�Ҳ������webcomponent��£����ȥ�꣬ES6���ռ��ٶȻ��Ǻܿ�ģ�����˵��һ���꣬��ȥ��������ES���°汾�Ѿ���Ϊ��·�����������Ĭ��������
+#. 目前市面上的mvvm框架，如ng,vue都是立足于组件化开发，尽管实现方式不同，但是他们的很多理念都是相同的，也都在像webcomponent靠拢，在去年，ES6的普及速度还是很快的，不用说过一两年，从去年来看，ES的新版本已经成为各路组件化开发的默认配置了
 
-#. Observable���۲���ģʽ�� �� Promsie
+#. Observable（观察者模式） 和 Promsie
 
-	Rxjsֻ��Observable��jsʵ��,
+	Rxjs只是Observable的js实现,
 
 	Promise:
 
@@ -1747,21 +1849,21 @@
 			}
 		});
 
-	promiseֻ��resolveһ�Σ������ֵ��observable�������ֵ��
+	promise只能resolve一次，输出单值，observable能输出多值，
 
-	promiseһ��������ֻ�����ֿ��ܣ�resolve/reject����Ӧ��observable��complete,error,����ob���Զ���cancel���磺
+	promise一旦建立就只有两种可能：resolve/reject，对应的observable的complete,error,但是ob可以定义cancel，如：
 
 		let disposable = observable.forEach(value => console.log(value));
-		disposable();	// ��observable����κ�ֵǰ��ȡ����
+		disposable();	// 在observable输出任何值前就取消了
 
-	observable������ģ�observable�����������������ֵ�����ǵȵ�����subscribe��ʱ��ſ�ʼ���
+	observable是懒惰的，observable对象建立并不立即输出值，而是等到有人subscribe的时候才开始输出
 
-#. ���
+#. 深拷贝
 
-	copy�Ķ���֮�以������������һ���ı䲻Ӱ������һ��	
+	copy的对象之间互不关联，其中一个改变不影响另外一个	
 
 #. AMD / CMD / CommonJS
 
-	�����ֶ���jsģ�黯�����ı�׼���淶��Ŀǰ��Ӧ��ʵ���ǣ�RequireJs / SeaJs / Nodejs
+	这三种都是js模块化开发的标准，规范，目前对应的实现是：RequireJs / SeaJs / Nodejs
 
-	CommonJS��Ҫ��Է���ˣ������һ�����ͬ�������ļ��ķ�ʽ��Ҳ����˵��Ҫĳ��ģ�飬����˱�ͣ�����ȴ�����������ִ�С�AMD / CMD��Ҫ���������ˣ��������Ҫ��֤Ч�ʣ���Ҫ�����첽���أ������Ҫһ��Ԥ��������ǰ�����е�ģ���ļ����м��غ�
+	CommonJS主要针对服务端，服务端一般采用同步加载文件的方式，也就是说需要某个模块，服务端便停下来等待他加载完在执行。AMD / CMD主要针对浏览器端，而浏览器要保证效率，需要采用异步加载，这就需要一个预处理，提前将所有的模块文件并行加载好

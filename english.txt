@@ -42,3 +42,13 @@
 
 	array.splice(2,1);			// 删除index:2的元素
 	array.splice(2,0,'hello');	// 在index:2的位置添加hello元素
+
+#. embed 	/im`bed/	把...嵌入，栽种，深留(记忆中)
+
+	an operation to remove glass that was embedded in his leg.
+
+		取出扎入他腿部玻璃的手术
+
+	the bullet embedded itself in the wall.
+
+		子弹射进了墙里
