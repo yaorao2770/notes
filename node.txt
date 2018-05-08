@@ -1219,7 +1219,7 @@
 			[...set];
 			Array.from(set);
 
-#. Array.from()
+#. Array.from()		ES6
 
 	1. 转化类数组对象为真正的数组
 
@@ -1341,6 +1341,8 @@
 			var str = 'hello';
 			str.split('');			// ["h", "e", "l", "l", "o"]
 			console.log(...str)		// ["h", "e", "l", "l", "o"]
+
+			Array.from(str);		// ["h", "e", "l", "l", "o"]
 
 		函数参数：
 
@@ -1705,6 +1707,7 @@
 		})
 
 	10. Promise状态
+
 		Promise是基于状态的，状态标识：pending / fullfilled / rejected
 
 		并且状态的改变只能有一次
@@ -1724,6 +1727,7 @@
 #. this
 
 	this的指向只有在运行的时候才能确定，最终指向的时那个调用他的对象		
+
 	1. 	var obj = {
 			a:10,
 			b:{
@@ -1810,7 +1814,7 @@
 
 	把Model和View关联起来就是ModelView,ModelView负责把Model的数据同步到view显示出来，还负责把view的数据同步会model。
 
-	MVVM并不关心DOM解构，而关心数据如何存储，最简单的数据存储方式是使用js对象：
+	MVVM并不关心DOM结构，而关心数据如何存储，最简单的数据存储方式是使用js对象：
 
 	改变js对象的状态，会导致dom结构做出对应的变化这让我们的关注点从操作dom变成了如何更新js对象的状态，而操作js对象比操作dom简单多了。
 
