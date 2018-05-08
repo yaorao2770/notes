@@ -26,11 +26,15 @@
 
 2. 关于文本文件的BOM
 
-	UTF-8和 UTF-8（不带BOM）是两种格式文本，带BOM的utf-8多出了三个字节前缀，0xEF0xBB0xBF
+	UTF-8和 UTF-8（不带BOM：byte order mark）是两种格式文本，带BOM的utf-8多出了三个字节前缀，0xEF0xBB0xBF
 
 	有了这三个字节前缀的文本或字符串，程序可以自动判断他为utf_8格式，并按照utf_8格式来解析文本或字符串,
 
 	否则一个文本或字符串在位置编码的情况下，需要按照字符编码规范去一个个验证。
+
+	BOM用来在加载文本文件时识别该文件编码，对于没有BOM的文件，一般编辑器会读取一定的内容，对该内容进行分析，并猜测对应的文件编码，所以这种文件不是所有时候都会被正确识别。
+
+	BOM也叫签名，是UTF编码方案里用于表示编码的标准标记。
 
 3. angularjs 输入框内按下回车会触发其他button的点击事件，
 
@@ -38,7 +42,7 @@
 
 	Default type for the button element is 'submit' : 
 
-		<button></button> ==== <button type='submit'></button>
+		<button></button> === <button type='submit'></button>
 
 	when you hit enter,the first button is submitted.
 
@@ -83,7 +87,6 @@
 		   console.log( a.concat(b) ); // [1,2,3,'apple','banana']
 
 
-
 7. sort(fn)
 
 	数组排序,参数必须是函数,返回值，排序后的数组
@@ -110,6 +113,52 @@
 
 		console.log(arr.sort(sortNum)); // [1,5,10,25,40,1000]
 
+	c) 对象排序
+
+		var arr= [ 
+		    { 'sortNo': 2},
+		    { 'sortNo': 1},
+		    { 'sortNo': 5},
+		    { 'sortNo': 6},
+		    { 'sortNo': 7},
+		    { 'sortNo': 3},
+		    { 'sortNo': 9},
+		    { 'sortNo': 4},
+		    { 'sortNo': 0}
+		];
+
+		function sortNum(a, b){
+			return a.sortNo - b.sortNo;
+		}
+
+		arr.sort(sortNum);
+
+	d) sortNo相同，按照sortNo2排序
+
+		var arr1 = [
+			{ 'sortNo': 2, 'sortNo2': 3},
+		    { 'sortNo': 1, 'sortNo2': 3},
+		    { 'sortNo': 5, 'sortNo2': 3},
+		    { 'sortNo': 6, 'sortNo2': 3},
+		    { 'sortNo': 7, 'sortNo2': 3},
+		    { 'sortNo': 3, 'sortNo2': 4},
+		    { 'sortNo': 3, 'sortNo2': 2},
+		    { 'sortNo': 3, 'sortNo2': 1},
+		    { 'sortNo': 3, 'sortNo2': 3},
+		    { 'sortNo': 8, 'sortNo2': 3},
+		    { 'sortNo': 4, 'sortNo2': 1},
+		    { 'sortNo': 4, 'sortNo2': 2}
+		];
+
+		function secondSort(a,b){
+			if(a.sortNo == b.sortNo){
+				return a.sortNo2 - b.sortNo2;
+			}else{
+				return a.sortNo - b.sortNo;
+			}
+		}
+
+		arr1.sort(secondSort);
 
 8. map(fn)
 
@@ -119,7 +168,7 @@
 		return el*2;
 	});
 
-	eg:		s var users = [
+	eg:		var users = [
 			  {name: "张含韵", "email": "zhang@email.com"},
 			  {name: "江一燕",  "email": "jiang@email.com"},
 			  {name: "李小璐",  "email": "li@email.com"}
@@ -133,6 +182,40 @@
 
 			console.log(users)  //  还是原来的users
 
+			2. var arr = [1,2,3,4];
+			   var result = arr.map(String);
+		       console.log(result);		// ['1','2','3','4']
+
+		    3. var arr = [undefined, null, true, 0, 1, 10];
+
+   			   var result = arr.filter(el => {
+   			   		return el;		// [true,1,10]
+   			   });	
+
+   			4. xx.map(parseInt)
+
+   				var arr3 = [1,1000,10,25,40,5];
+
+   				var result = arr3.map(parseInt);	// [1, NaN, 2, 2, NaN, NaN]
+
+   				map的回调函数实际上有三个参数,el,index,self,当map(parseInt)时，会默认的把index当做parseInt的第二个参数（解析基数）
+
+#. parseInt(string|num, radix)
+
+	解析一个字符串，并返回一个整数
+
+	第一个参数，可以是字符串也可以是数字，字符串直接洗第一个字符，如果不可以被转换成数字，则返回NaN
+	第二个参数，是解析数字的基数，即进制数，
+
+				0或者忽略该参数，则数字将以10进制解析
+				<2 或 >36，返回NaN
+				0x 或 0X,以16进制解析
+
+	parseInt(12);			// 12
+	parseInt('12', 2);		// 1
+	parseInt('f1', 2);		// NaN, 字符串解析第一个字符
+	parseInt(3, 2);			// NaN, 只有0 1是有效二进制数字,
+	parseInt(19, 2);		// NaN, 虽然9不是有效的额二进制数,但是1是,所以只解析了1
 
 9. Object.defineProperty() 
 
