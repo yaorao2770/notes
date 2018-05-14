@@ -52,3 +52,15 @@
 	the bullet embedded itself in the wall.
 
 		子弹射进了墙里
+
+#. deem		/dim/ 认为，视为，以为，做某种评价，主张，断定
+
+	the evening was deemed a great success.
+
+		大家认为这次晚会非常成功。
+
+	they would take any action deemed necessary.
+
+		他们会采取认为必要的行动。
+
+#. reject	拒绝，排斥，抛弃，扔掉		
