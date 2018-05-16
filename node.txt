@@ -1871,3 +1871,63 @@
 	这三种都是js模块化开发的标准，规范，目前对应的实现是：RequireJs / SeaJs / Nodejs
 
 	CommonJS主要针对服务端，服务端一般采用同步加载文件的方式，也就是说需要某个模块，服务端便停下来等待他加载完在执行。AMD / CMD主要针对浏览器端，而浏览器要保证效率，需要采用异步加载，这就需要一个预处理，提前将所有的模块文件并行加载好
+
+#. promise
+
+	如果一个promise什么都不返回，既没有return也没有resolve，那么下一个then的接受到的value是undefined
+
+	catch方法返回的也是promise函数，如果catch中没有抛错的话，catch后面的then方法可以继续执行，如果抛错，绕过then执行下一个catch方法	
+
+	2. then() 方法
+
+		Promise.resolve(12).then(value => {
+			return value;						// 返回值
+			return Promise.resolve(value);		// 返回一个简写的promise对象
+			return new Promise((resolve, reject) => {
+				resolve(value);					// 返回一个完整的promise对象
+				return resolve(value);	(加不加return都一样)
+				return value;	（错误的，什么都不会返回 ）
+			})
+		})
+
+	3. 应用场景
+
+		关闭modal时，有两个按钮：
+
+		var confirm = document.getElementById('confirm');
+	    var cancel = document.getElementById('cancel');
+
+	    new Promise(function(resolve, reject){
+	        cancel.onclick = reject;
+	        confirm.onclick = resolve;			//  用户点击哪个按钮就执行哪个逻辑，
+											        后面如果加上()，不用用户点击，
+											        就顺序执行第一个resolve方法，
+											        如果reject点击函数放在resolve前面，
+											        就先执行reject
+	    }).then(
+	        data => {
+	            console.log('你确定么');
+	        }
+	    ).catch( reason =>{
+	        console.log('取消关闭--catch');
+	    })
+
+
+	    其实，promise中的resove和reject本身就是函数
+
+	3. IE支持promise
+
+		bluebird.js
+
+		promise profill
+
+#. fetch api
+
+	替代XHRRequest的现在解决方案，将cors和原生的请求头结合
+
+#. async/await		
+
+#. ES6的优势
+
+	前后端的差异越来越小
+

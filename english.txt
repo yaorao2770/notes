@@ -64,3 +64,13 @@
 		他们会采取认为必要的行动。
 
 #. reject	拒绝，排斥，抛弃，扔掉		
+
+#. ideal	理想的，完美的，
+
+	the beach is ideal for children.
+
+		这个海滩是孩子的理想去处。
+
+	she`s the ideal candidate for the job.
+
+		她是这项工作最合适的人选。
