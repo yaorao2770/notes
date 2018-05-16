@@ -1,0 +1,7 @@
+1. 去掉眼睛和X
+
+	::-ms-clear,::-ms-reveal{display:none;}   
+
+2. favicon.ico
+
+	必须是16*16的，32*32不显示
