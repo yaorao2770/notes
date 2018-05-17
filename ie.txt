@@ -5,3 +5,15 @@
 2. favicon.ico
 
 	必须是16*16的，32*32不显示
+
+3. invalid date
+
+	传给接口的 dateOfBirth: "2018-05-08 00:00:00+0800"
+
+	再次请求接口时,发现IE下报错，解决办法是：
+
+	1. 将-替换成/ : 2018/05/08 00:00:00+0800
+
+	2. new Date(2011, 01, 07, 11, 05, 00)
+
+	   new Date(year, month, day, hours, minutes, seconds, milliseconds)
