@@ -1,4 +1,4 @@
-1. 小程序适合哪些
+#. 小程序适合哪些
 
 	像知乎这种社区性的应用，是依赖于系统的主动消息推送的，但是小程序只有一个模板机制，并且不是主动推送的
 
@@ -8,7 +8,215 @@
 
 	不能跟ios、Android这些寄生于操作系统上的应用来比较，
 
-2. html 	骨架
+#. html 	骨架
 	css		样式
 	js		逻辑
 	json	配置
+
+#. <text>	
+
+	该标签包裹的文字，可以实现长按选中复制功能，
+
+	可以转义字符： <text>你好 \n 吃饭了么？</text>
+
+					你好
+					吃饭了么
+
+
+#. <image>	
+
+	如不指定宽高，默认是300 * 225
+
+	绝对路径(从根目录像下查找): src='/images/avater.jpg'			
+
+	相对路径(以当前页面为参照标准向外查找): src='../../images/avater.jpg'		
+
+#. <page>
+
+	通过查看DOM发现，自己写的所有结构都包裹在了<page>标签中，所以我们可以在此标签上添加background-color,确保上拉下滑时还是有底色的
+
+#. vertical-align:middle
+	
+	实现图片和文字水平对齐
+
+	图片和文字都要有 vertical-align:middle 语句，这样才会基于基线对齐
+
+#. MINA框架
+
+	onload
+
+	onshow
+
+	onready
+
+#. wx:if
+
+	显示：	<image wx:if='{{true}}'>		
+			<image ex:if='{{isShow}}'>		isShow = true;
+
+	隐藏：	<image wx:if='{{false}}'>		会对花括号里的值进行boolean转换,所以这里的false还是false，这里的true就是true
+			<image ex:if='{{isShow}}'>		没有对isShow赋值
+
+
+#. <block>
+	
+	1. <block>只是一个包装元素，类似于view，不会在页面中做任何渲染，只接受控制属性：
+
+		<block wx:if>
+
+		<block wx:for>
+
+	2. 一般，block会包含多个节点（view）
+
+		<block wx:for='{{lists}}'>
+			<view>{{index}}</view>
+			<view>{{item}}</view>
+		</block>
+
+	3. <block wx:for='{{lists}}'  wx:for-item='item' wx:for-index='i' wx:key='index'>
+
+		wx:for的默认value是item，默认索引是index
+
+#. wx:if 和 hidden
+
+	wx:if是惰性的，如果在初始渲染条件为false，框架什么也不做，在条件第一次变成真的时候才开始局部渲染		
+
+	hidden，始终都会渲染，只是简单地的控制显示与隐藏
+
+	总结：	wx:if有更高的切换消耗，hidden有更高的初始渲染消耗。
+
+			因此，如果需要频繁切换的情景，用hidden更好，如果在运行时条件不大可能改变，则用wx:if较好。
+
+#. font-weight
+
+	bold === 700
+
+	normal === 400
+
+#. 事件
+	
+	事件，是视图层到逻辑层的通讯方式，事件可以将用户的行为反馈到逻辑层进行处理
+
+	冒泡事件： 由target像父节点传递，
+
+		<view id="outer" bindtap="handleTap1">
+		  outer 
+		  <view id="middle" catchtap="handleTap2">
+		    middle 
+		    <view id="inner" bindtap="handleTap3">
+		      inner 
+		    </view>
+		  </view>
+		</view>
+
+		实际表现就是，点击inner，会打印三个event信息，即，父节点都执行了
+
+#. wx.navigateTo()		
+	
+	
+	url必须是绝对路径 /pages/posts/post
+
+	使用该方法跳转，是有返回按钮的，说明当前页面是跳转前页面的子页面
+
+	是父子关系页面的跳转
+
+	调用onHide钩子，页面隐藏
+
+
+#. wx.redirectTo()
+
+	wx.redirectTo({
+      url: '/pages/posts/post',
+      success: function(){
+        console.log('redirect--success');
+      },
+      fail: function () {
+        console.log('redirect--fail');
+      },
+      complete: function () {
+        console.log('redirect--complete');
+      }
+    })
+
+	关闭当前页面，跳转到应用内的某个页面，没有返回键
+
+	是平级之间的跳转
+
+	调用onUnload钩子,页面卸载
+
+	应用场景： 首页中的 "开启应用" 按钮点击后，正式跳转到应用首页
+
+	运行顺序是：		redirect--success > redirect--complete > 启动页：onunload
+
+
+#. 冒泡事件的应用场景
+
+	1. 不好的应用：
+
+		点击div隐藏另一个div，点击空白页，显示div
+
+		如果不阻止事件冒泡，红色div永远不会显示，因为总会冒泡到document上，
+
+		var blue = document.getElementById('blue');
+		var red = document.getElementById('red');
+
+		blue.onclick = function(e){
+			e.stopPropagation();
+			red.style.display = 'block';
+		};
+
+		document.addEventListener('click', function(){		// 阻止事件冒泡
+			red.style.display = 'none';
+		}, true);
+
+	2. 优点： 事件委托（事件代理）
+
+		可以提高很大的性能
+
+			<ul id="ul">
+				<li>1</li>
+				<li>2</li>
+				<li>3</li>
+				<li>4</li>
+				<li>5</li>
+			</ul>
+
+			a. 不好的写法：
+
+				每个li上绑定一个click事件
+
+			b. 在ul上绑定事件
+
+				ul.onclick = function(ev){
+					var e = ev || window.ev;				// 获取event对象
+					var target = e.target || e.srcElement;	// 获取触发事件的目标对象
+					target.style.color = 'red';	// 主流
+				};
+
+
+	2. 阻止事件冒泡
+
+		event.stopPropagation();	// 主流
+
+		window.event.cancelBubble = true;	// IE，注意是window.event
+
+		封装：
+
+			function stopBubble(e){
+				if( e && e.stopPropagation){
+					e.stopPropagation();
+				}else{
+					window.e.cancelBubble = true;
+				}
+			}
+
+#. flex模型
+
+	1. 元素是垂直布局，并且左右居中：
+
+		.container{
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}	
+

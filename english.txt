@@ -74,3 +74,7 @@
 	she`s the ideal candidate for the job.
 
 		她是这项工作最合适的人选。
+
+#. mustache	胡子，须状物
+
+	js中值模板插值表达式
