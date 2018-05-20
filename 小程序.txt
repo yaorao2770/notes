@@ -261,3 +261,26 @@
 			align-items: center;
 		}	
 
+#. babel index.js
+	
+	运行该命令，会将index.js中es6语法转化对应的es5语法输出
+
+	如： 
+
+		[1,2,3].map(el => el+1);
+
+		转化后：
+
+		[1,2,3].map(function(el){
+			return el+1;
+		});
+
+	如运行该命令报错，可能是没有安装 npm install --save-dev babel-cli
+
+#. source map	
+
+	项目上线时，我们通常会对代码进行压缩打包以减少体积，从而有效提高访问速度。然而压缩代码的报错信息是很难debug的，因为他的行号和列号已经失真，这个时候我们就需要sourcemap来还原真实的出错位置。
+
+	各种前端主流任务管理工具，打包工具都支持生成source map
+
+	source map是一个json文件，包含代码转换前后的位置信息
