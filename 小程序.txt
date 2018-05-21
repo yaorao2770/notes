@@ -220,3 +220,5 @@
 			align-items: center;
 		}	
 
+
+#. 时刻注意用this.setData去更新值
