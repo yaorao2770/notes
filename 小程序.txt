@@ -210,6 +210,47 @@
 				}
 			}
 
+#. 格式化代码
+	
+	alt + shift + F
+
+#. template
+
+	定义template代码片段
+
+		<template name='postItem'>...</template>
+
+	使用：
+
+		WXML:
+
+			<import src='../../template/post-item-template.wxml' />
+
+			<template is='postItem' data='{{item}}'></template>
+
+		WXSS：
+
+			@import './post-item/post-item-template.wxss';
+
+	注意：
+
+		使用时，import导入需要的模板文件，必须加/封闭import标签，否则报错
+
+		template中的is属性对应定义好的代码片段中的name属性值
+
+		data属性是将template需要的数据传递给代码片段
+
+#. wx.getStorage
+
+	同步： wx.getStorageSync('hello');
+
+	异步： wx.getStorage({
+			key: 'hello',
+			success: function(data){
+
+			}
+		  });		
+
 #. flex模型
 
 	1. 元素是垂直布局，并且左右居中：
