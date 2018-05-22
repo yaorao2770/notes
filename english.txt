@@ -78,3 +78,9 @@
 #. mustache	胡子，须状物
 
 	js中值模板插值表达式
+
+#. refactor	重构		/reifacter/	
+
+#. charm	魅力，魔力，使陶醉，对...使用魔法
+
+	works like a charm	非常管用，十分好用
