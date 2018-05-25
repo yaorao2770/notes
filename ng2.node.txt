@@ -7,7 +7,7 @@
 
 	cd first-app
 
-	ng server --open
+	ng serve --open
 
 	ng g component directive --spec=false	创建组件
 
@@ -40,6 +40,14 @@
 
 
 	ng g module custom   用于生成特性模块
+
+	ng g module app-routing --flat --module=app
+
+		--flat 把这个文件放进src/app中，而不是单独的目录中
+
+		--module=app 	告诉cli把他注册到AppModule的imports数组中
+
+		生成的文件中可以删除CommonModule引用及@NgModule中的东西
 
 =========== angular2 ===========
 
@@ -183,6 +191,8 @@ declarations 数组只能注入 管道，组件和指令
 	ng1.x 中，用$scope.$watch监听数据变化
 
 	ng2.x 中，用ngOnChanges钩子，需要注意的是，当且仅当组件输入数据变化时被调用， "输入数据"指的是通过 @Input 装饰器显示指定的那些数据。如果 @ViewChildren,@ContentChildren的结果集增加、删除了数据，ngOnChanges是不会被调用的。
+
+	新值跟旧值相等的话，不会触发ngOnChanges
 
 9. 双向绑定是有两个单向绑定组成的：
 
@@ -1386,7 +1396,7 @@ declarations 数组只能注入 管道，组件和指令
 
 40. 开发习惯
 
-	a) 共有的成员定义放在私有的成员定义前面
+	a) 公有的成员定义放在私有的成员定义前面
 
 	b) 元数据装饰器  @Compoennt @Input....
 
@@ -2173,3 +2183,129 @@ declarations 数组只能注入 管道，组件和指令
 	  <app-confused-hero *ngSwitchCase="'confused'" [hero]="currentHero"></app-confused-hero>
 	  <app-unknown-hero  *ngSwitchDefault           [hero]="currentHero"></app-unknown-hero>
 	</div>
+
+67. 构造函数
+
+	让构造函数保持简单，只做初始化操作，比如把构造函数的参数赋值给属性。构造函数不应该做任何事，
+	他肯定不能调用某个函数来向远端服务发起http请求
+
+68. http返回类型
+
+	1. 明确指定responseType
+
+		hero.service.ts
+
+			getDatas(){
+				return this.http.get<ResType>('v2/movie/top250');
+			}
+
+		调用：
+
+			this.heroService.getDatas().subscribe( data => console.log(data));
+
+			这里的data就是正常的对象 {code:200,data:{}}，关键在于<ResType>
+
+	2. 需要返回header头信息
+
+		hero.service.ts
+
+			import { HttpClient, HttpResponse } from '@angular/common/http';
+			import { Observable } from 'rxjs';
+
+			getDatas(): Observable<HttpResponse<ResType>>{
+				this.http.get<ResType>('assets/test.json', {observe: 'response'});
+			}	
+
+			(注意：{observe: 'response'}不能省，否则报错)		
+
+		调用：
+
+			this.heroService.getDatas().subscribe( data => {
+				console.log(data)	// 输出： HttpResponse{...}
+
+				const keys = res.headers.keys(); // 输出数组 ["date", "content-type", "content-length",...]
+
+	          	var headers = keys.map(el => {
+	            	console.log(res.headers.get(el)); // application/json; charset=UTF-8
+	            										 Wed, 23 May 2018 07:57:55 GMT
+	          	});
+
+			});
+
+	3. 请求非json格式的接口
+
+
+		接口返回文本文件，二进制文件等，非json格式的内容
+
+		本地assets/textfile.txt文件
+
+		getTextFile(filename: string){
+	  		return this.http.get(filename, {responseType: 'text'})
+	  				.pipe(
+	  					tap(
+	  						data => console.log('tap-data:',filename, data),
+	  						error => console.log('tap-error:',filename, error)
+	  					)
+	  				)
+	  	}
+
+		tap操作符，只是探测由可观察对象传过来的正确值和错误值，而不打扰他们
+
+		调用：
+
+			download(){
+				var fileStream = this.heroService.getTextFile('assets/testfile.txt').subscribe(
+		          	result => console.log('文本文件返回结果',result)  // hello world!
+		      	);
+			}
+
+69. http.post
+
+	import { HttpHeaders } from '@angular/common/http';
+
+	const httpOptions = {
+		'Content-Type': 'application/json',
+		'Authorization': 'Bear token'
+	};
+
+	var data = {
+		name: 'join',
+		age:12
+	};
+
+	addHero(hero: Hero): Observable<Hero>{
+		return this.http.post<Hro>(url, data, httpOptions)
+	}
+
+70. constructor中的修饰符
+
+	该服务必须是public，因为将会在模板中绑定到他
+
+  	constructor(public messageService: MessageService) { }
+
+  	HTML:
+
+  		<div *ngIf="messageService.message.length">
+			<h3>消息：</h3>
+			<button class="clear" (click)='messageService.clear()'>clear</button>
+			<div *ngFor="let item of messageService.message">{{item}}</div>
+		</div>
+	
+
+71. routerLink的两种写法，带[]和不带
+
+	<a routerLink="/dashboard">Dashboard</a>
+
+	<a [routerLink]="['/heros']">heros</a>
+
+	注意： *ngFor中的不要带[]，否则报错
+
+		<a *ngFor="let item of heros" 
+		   class="col-1-4" 
+		   routerLink="/heroDetail/{{item.id}}"></a>
+
+#. find 和 filter
+
+	find 查询到奥第一个符合条件的就返回
+
+	filter 能够查询出所有符合条件的		   
