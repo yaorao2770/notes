@@ -17,3 +17,16 @@
 	2. new Date(2011, 01, 07, 11, 05, 00)
 
 	   new Date(year, month, day, hours, minutes, seconds, milliseconds)
+
+#. select文字不垂直居中
+
+	select{
+	    height: 30px;
+	    line-height: 38px;
+	    padding: 3px 13px;
+	    font-size: 12px;
+	}	   
+
+#. placeholder 文本消失是在input聚焦时
+
+	其他浏览器是在键盘输入时消失	

@@ -78,3 +78,23 @@
 #. mustache	胡子，须状物
 
 	js中值模板插值表达式
+
+#. refactor	重构		/reifacter/	
+
+#. charm	魅力，魔力，使陶醉，对...使用魔法
+
+	works like a charm	非常管用，十分好用
+
+#. bulk	大量，批量，整批，成堆（块）	
+
+	in bulk 
+
+	buying in bulk is more economical than shopping for small quantities.
+
+	批量采购要比零卖实惠很多。
+
+#. clues 线索
+
+	the response body may contain clues as to what went wrong.
+
+	响应提可能包含关于出错的线索	
