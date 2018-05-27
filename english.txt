@@ -98,3 +98,9 @@
 	the response body may contain clues as to what went wrong.
 
 	响应提可能包含关于出错的线索	
+
+#. rating	等级，评估，收视率，估价，
+
+#. rate 	速度，比率，等级；认为，被评价
+
+	API rate limit		速率限制

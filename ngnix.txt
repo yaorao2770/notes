@@ -1,0 +1,14 @@
+1. 运行nginx.exe闪退
+
+	打开cmd,切换到安装目录下，运行nginx命令：
+
+	d:\nginx-1.14.0>nginx
+
+	在浏览器中输入： localhost
+
+2. 停止nginx
+
+	nginx -s stop	强制停止服务器，如果有未处理完的数据，丢弃
+
+	nginx -s quit	如果有未处理完的数据，等待处理完成之后再退出
+
