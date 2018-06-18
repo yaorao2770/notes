@@ -5,3 +5,24 @@
 	3. npm install -g jshint
 	   jshint -v
 	4. 重启sublime
+
+2. editorConfig
+
+	项目根目录设置 .editorconfig 
+
+	# Editor configuration, see http://editorconfig.org
+	root = true
+
+	[*]
+	charset = utf-8
+	indent_style = tab
+	indent_size = 4
+	insert_final_newline = true
+	trim_trailing_whitespace = true
+
+	[*.md]
+	max_line_length = off
+	trim_trailing_whitespace = false
+
+	[*.ts]
+	indent_size = 4

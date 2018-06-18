@@ -460,3 +460,7 @@
 #. 动态设置导航条title
 
 	在onReady钩子中设置，不能再onLoad中，onLoad中不能操作UI相关，因为这个时候页面还没渲染完毕
+
+#. 现在浏览器支持使用两种不同的API发起http请求：
+
+	XMLHttpRequest接口 和 fetch() API

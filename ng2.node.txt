@@ -2304,8 +2304,494 @@ declarations 数组只能注入 管道，组件和指令
 		   class="col-1-4" 
 		   routerLink="/heroDetail/{{item.id}}"></a>
 
+#. 正则语法
+
+	* 	0-多次
+	+ 	1-多次
+	?   0次或1次
+
+	run*b 表示n可以不出现，也可以出现多次： rub  runb  runnnnnnb
+	run+b 表示n至少应该出现1次或多次： runb  runnnnb
+	run?b 表示n只能出现0次或1次： rub  runb
+
 #. find 和 filter
 
-	find 查询到奥第一个符合条件的就返回
+	find 查询到第一个符合条件的就返回
 
 	filter 能够查询出所有符合条件的		   
+
+
+#. reduce
+	
+	返回数组元素相加后的总和
+
+	对于空数组不会执行
+
+	IE9+
+
+	Array.reduce(callback, initValue);
+
+	var getSum = function(total, num){
+		return total + num;
+	};
+
+	var arr = [12,23,45,67,25];
+
+	var result = arr.reduce(getSum, 0);	// 172
+	var result = arr.reduce(getSum, 1);	// 173
+
+
+	var arr = [12,23,'12','23','45',67,25];		// 351223456725
+	var arr = [12,'12','23','45',67,25];		// 121223456725
+
+#. splice
+
+	会改变原始数组
+
+	返回值： 如果从arr中删除了元素，则返回的是一个数组，数组是被删除的元素
+
+#. 组件间通讯
+
+	1) 使用Subject实现
+
+		message.service.ts
+
+			private subject = new Subject<any>();
+
+			sendMessage(message: string) {
+				this.subject.next(message);
+			}
+
+			getMessage(): Observable<any>{
+				return this.subject.asObservable();
+			}
+
+			clearMessage(){
+				this.subject.next();
+			}
+
+		home.component.ts
+
+			<button (click)='sendMsg()'>Send Message</button>
+			<button (click)='clearMsg()'>Clear Message</button>
+
+			construtor (private messageService: MessageService){}
+
+			sendMsg(){
+				this.messageService.sendMessage('学习中....');
+			}
+
+			clearMsg(){
+				this.messageService.clearMessage();
+			}
+
+		app.component.ts
+
+			<app-home></app-home>
+
+			subscription: Subjectbscription;	// 表示一个可以终止资源的对象,有方法: unscribe
+
+			construtor (private messageService: MessageService){
+				this.subscription = this.messageService.getMessage().subscribe(message => {
+					this.message = message;
+				})
+			}
+
+			ngOnDestory(){
+				this.subscription.unscribe();
+			}
+
+
+	3) 使用EventEmitter实现
+
+		message.service.ts
+
+			projectId: EventEmitter<number> = new EventEmitter();
+
+		home.component.ts
+
+			emitValue(){
+				this.messageService.projectId.emit(666);
+			}
+
+		app.component.ts
+
+			this.messageService.projectId.subscribe(id => this.id = id);
+
+
+#. Subject对象
+
+	subject = new Subject<any>();
+
+	this.subject.next(111);
+
+	this.subject.error('error');
+
+	this.subject.complete();
+
+	this.subject.asObservable();	// 不能再使用next方法
+
+	// subscribe 添加订阅者
+	this.subject.subscribe(value => console.log(value));  等于下面的写法
+
+	    this.subject.subscribe({ 
+	      next: data => console.log('subscribe内又有一个next',data)
+	    });
+
+	this.subject.unsubscribe ();
+
+
+
+#. Subscription（订阅）
+
+	是一个代表可以终止资源的对象，表示Observable的执行，主要用于取消Observable的执行
+
+  	Subscription有一个重要的方法： unsubscribe，该方法不需要传入参数，调用后会终止相应的资源
+
+  	使用场景： 一般在使用subject类型后，要用到这个对象，目的是 unsubscribe 掉Observable
+
+
+  	更正以上说法： 不是只有在subject中使用才需要取消订阅，而是只要有subscribe这个方法，
+
+  	都要来取消订阅，通常是在组件销毁的时候来取消订阅，以防订阅的引用在应用中越来越多
+
+  	https://segmentfault.com/a/1190000010104703
+
+  	https://segmentfault.com/q/1010000014482161
+
+  		ruleSubscription: Subscription = null;
+
+  		getRule(){
+  			if(this.ruleSubscription === null){
+  				this.ruleSubscription = this.service.getInfo().subscribe(...)
+  			}
+  		}
+
+  		ngOnDestroy() {
+		    if (this.ruleSubscription) {
+		        this.ruleSubscription.unsubscribe();
+		     }
+		}
+
+
+#. this.subject.asObservable();
+
+	service.ts
+
+		private subject = new Subject<any>();
+		message$ = this.subject.asObservable();			1
+
+		sendMessage(msg: string){
+			this.subject.next(msg);
+		}
+
+	调用：
+
+		子组件： this.service.sendMessage(111);
+		父组件： this.service.message$.subscribe(...)
+
+
+	这个例子主要想说明，服务中subject获取值时，可以直接写成 1 的形式，也可以写成下面的形式
+
+		getMessage(){
+			return this.subject.asObservable();
+		}
+
+		this.service.getMessage().subscribe(...)
+
+	 另外，使用subject做通信时，最好使用subscription对象unscribe掉observable资源
+
+
+#. switchMap
+
+	将请求发送到服务器
+
+	switchMap( name => this.http.get(...) )
+
+	它的参数是一个返回Observable的函数，this.http.get()会返回Observable
+
+	如果以前的搜索结果仍然是在途状态（这会出现在慢速网络中），它会取消那个请求，并发起这个新的搜索 (即，退订前一个未处理完的Observable对象)
+
+
+#. mergeMap 解决嵌套订阅
+
+	1. 原始写法
+
+		apiUrl = 'https://jsonplaceholder.typicode.com/users';
+	  	username: string = '';
+	  	user: any;
+
+	  	// http1
+		this.http.get(this.apiUrl)
+	        .subscribe(users => {
+	          let username = users[6].username;
+
+	          // http2
+	          this.http.get(`${this.apiUrl}?username=${username}`)
+	              .subscribe(user => {
+	                console.log('人员详情',user);
+	                this.username = username;
+	                this.user = user;
+	              })
+	        })
+
+	2. mergeMap
+
+	  	user: Observable<any>;
+
+		this.user = this.http.get(this.apiUrl)
+						.mergeMap(users => {
+							this.username = users[6].username;
+
+							return this.http.get(`${this.apiUrl}?username=${username}`)
+						})
+
+						或者可以写成：
+
+                    	.mergeMap(users => 
+                    		this.http.get(`${this.apiUrl}?username=${users[6].username}`)
+                    	)
+
+                    	没有return，直接返回http
+
+
+		上面那种方法可以不用写subscribe方法，因为已经定义user为observable对象了，或者
+
+		也可以写成：
+
+			user:any;
+
+			.subscribe(user => this.user = user;)
+
+
+
+#. forkJoin 解决并行处理多个http请求
+
+	=== Promise.all([p1,p2])
+
+	import { Observable } from 'rxjs/Observable';
+	import 'rxjs/add/operator/map';
+	import 'rxjs/add/operator/mergeMap';
+	import 'rxjs/add/observable/forkJoin';
+
+	let post1 = this.http.get(`${this.apiUrl}/1`);
+    let post2 = this.http.get(`${this.apiUrl}/2`);
+
+    Observable.forkJoin([post1, post2]).subscribe(results => {
+      this.post1 = results[0];
+      this.post2 = results[1];
+    });
+
+
+#. ng6中关于RxJS的一些变动
+	
+	主要改变了包的结构，变化在import方式和operator及pipe()使用
+
+	import { Observable, Subject, asapScheduler, pipe, of, from, interval, merge, fromEvent } from 'rxjs';
+
+	import { webSocket } from 'rxjs/webSocket';
+
+
+
+	1. RxJS6之前对Operator的引入方式
+
+		之前： 
+
+			import 'rxjs/add/operator/map';
+			import 'rxjs/add/operator/of';
+			import 'rxjs/add/operator/mergeMap';
+			import 'rxjs/add/observable/forkJoin';
+
+		现在： 
+
+			import { map } from 'rxjs/operators';
+
+		总而言之，类似于创建之类的用的API都是从rxjs引入，类似于map之类的操作都是从rxjs/operators引入
+
+	2. import方式变化
+
+		之前： import { Observable }	from 'rxjs/observable';
+		现在： import { Observable }	from 'rxjs';
+
+		从rxjs中类似像导入Observable，Subject等的不再进一步导入，而是止于rxjs
+
+	3. pipe使用
+
+		全部需要包裹在.pipe()中使用具体的操作费
+
+		之前：
+
+			someObserable
+				.map(...)		
+				.throttle(...)
+				.subscribe(...)
+
+		现在：	
+
+			import { map, throttle } from 'rxjs/operators';
+
+			someObserable
+				.pipe(
+					.map(...)		
+					.throttle(...)
+				)
+				.subscribe(...)
+
+
+	4. 被重新命名的API
+
+		之前： do() 	catch()  switch()  finally()  throw()
+		现在： tap() catchError()  switchAll()  finalize()  throwError
+
+
+#. http返回的时一个Observable<any>流，同时组件使用的时候不用考虑注销订阅，angular自动执行取消订阅
+
+
+#. as 类型断言
+
+	const newHero: Hero = {sex: name} as Hero;
+
+	const newHero: Hero = {name} as Hero;
+
+	注意： {name} = {name: name};
+
+
+#.  拦截器
+	
+	提供商注册语句：
+
+		{ provide: HTTP_INTERCEPTORS, useClass: NoopInterceptor, multi: true },
+
+		multi:true, 该选项会告诉angular HTTP_INTERCEPTORS是一个多重提供商的令牌，表示它会注入一个多值的数组，而不是单一的值
+
+	1. 可以直接在app.module.ts中注入单个的拦截器：
+
+		providers: [
+		    {
+		      provide: HTTP_INTERCEPTORS,
+		      useClass: AuthInterceptor,
+		      multi: true
+		    },
+		    SubscribeService
+		]
+
+
+	2. 多个有多个拦截器的话，可以考虑创建一个封装通（barrel）文件，用于把所有拦截器收集起来，一起提供给 httpInterceptorProviders 数组：
+
+		/http-interceptor
+			index.ts
+			logging-interceptor.ts
+
+		其中index.ts文件：
+
+			import { HTTP_INTERCEPTORS } from '@angular/common/http';
+			import { NoopInterceptor } from './noop-interceptor';
+
+			export const httpInterceptorProviders = [
+			  { provide: HTTP_INTERCEPTORS, useClass: NoopInterceptor, multi: true },
+			];
+
+		app.module.ts
+
+			providers: [
+			  httpInterceptorProviders
+			],
+
+#. upload
+
+	文件上传
+
+	<input type='file' #files (change)='onPicked(files)'>
+
+	onPicked(input: HTMLInputElement){
+		const file = input.files[0];
+	}
+
+	注意类型，写代码一定要严谨，表明变量的类型是必须的，有时候返回值也是必须的，如上面的input： HTMLInputElement
+
+
+
+####################	ReactiveX (RxJS)
+
+1. RxJs是Reactive编程理念的js版本。ReactiveX来自微软，他是一种针对异步数据流的编程。简单来说，它将一切数据，包括HTTP请求，DOM事件，或者普通数据包装成流的形式，然后用强大丰富的操作符对流进行处理，使你能以同步变成的方式处理异步数据，并组合不同的操作符来轻松优雅的实现你所需要的功能。
+
+2. 在变量末尾加 $ 表示Observable类型的对象
+
+   Rxjs中的流以Obserable对象呈现，获取数据需要订阅Observable
+
+   httpClient的所有方法返回的都是可观察对象，调用subscribe()会触发这个可观察对象的执行，并且只有在subscribe时才会真正发起请求
+
+	searchChange$ = new BehaviorSubject('');
+	optionList = [];
+
+	onSearch(value){
+		this.searchChange$.next(value);
+	}
+
+	// optionList$是流，是observable类型，流可以用subscribe订阅，也可以用pipe操作
+	const optionList$: observable<string[]> = this.searchChange$.asobservable()
+		.pipe(debounceTime(500))
+		.pipe(switchMap(getRandomNameList))
+
+
+3. https://segmentfault.com/a/1190000011625330
+
+	封装库的底层原理
+
+4. 升级为ng6
+
+	https://segmentfault.com/a/1190000015248816
+
+
+1. observe 			观察者
+
+2. observable 		可观察对象
+
+3. subject 			主题
+
+4. 观察者
+
+5. 被观察者
+
+6. this.subject.asObservable();
+	
+	可观察对象 订阅 观察者
+	Observable.subscribe(observer)
+
+	Observer（观察者）是 Observable（可观察对象）推送数据的消费者，在RxJs中，
+
+	Observer是一个回调函数的集合，它知道如何去监听由Observable提供的值。 键名分别为: next, error, complete
+
+	以此接受Observable推送的不同类型的通知：
+
+		var observer = {
+			next: x=> console.log('Observer get a value:', x),
+			error: err => console.log(err),
+			complete: () => console.log('get a completenotification')
+		};
+
+		调用Observer：
+
+			Observable.subscribe(observer)
+
+			在RxJS中，Observer是可选的，在next,error,complete处理逻辑部分缺失的情况下，
+			Observable仍然能正常运行
+
+			subscribe完整的签名函数是：
+
+				observable.subscribe({
+				  next: data => console.log('Observer got a next value: ' + x),
+				  error: err => console.error('Observer got an error: ' + err),
+				  complete () => console.log('Observer got a complete notification')
+				});
+
+			但是我们一般都简写成
+
+				observable.subscribe({
+				  data => console.log('Observer got a next value: ' + x),
+				});	
+
+
+在 TypeScript 中， 经常要使用 export 和 import 两个关键字， 这两个关键字和 es6 中的语法是一致的， 因为 TypeScript = es6 + type !
+
+注意： 目前没有任何浏览器实现 export 和 import ，要在浏览器中执行， 必须借助 TypeScript 或者其它的转换器！				
