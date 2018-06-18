@@ -2632,10 +2632,14 @@ declarations 数组只能注入 管道，组件和指令
 
 			someObserable
 				.pipe(
-					.map(...)		
+					.map(...),		
 					.throttle(...)
 				)
 				.subscribe(...)
+
+
+			注意： .pipe() 内如果有多个操作符的话，逗号分隔
+
 
 
 	4. 被重新命名的API
@@ -2708,6 +2712,221 @@ declarations 数组只能注入 管道，组件和指令
 	}
 
 	注意类型，写代码一定要严谨，表明变量的类型是必须的，有时候返回值也是必须的，如上面的input： HTMLInputElement
+
+#. handler的设计一般是：
+
+	private handlerError(file: File) {
+		const message = `${file.name} 上传失败！`;
+
+		// return 1
+		return (error: HttpErrorResponse): Observable<string> {
+			const errorReason = (error.error instanceof ErrorEvent) ? error.error.message :
+				`服务器返回的状态码是： ${error.status}, body是：${error.error}`;
+
+			this.messageService.add(`${message},原因是：${errorReason}`);
+
+			// return 2
+			return of(message);
+		};
+	}
+
+
+#. switch 
+	
+	1. 第一种，带beak;
+
+		switch (this.type) {
+	      case "story":
+	        this.settings = storySettingMenu;
+	        break;
+	      case "task":
+	        this.settings = taskSettingMenu;
+	        break;
+	      case "issue":
+	        this.settings = issueSettingMenu;
+	        break;
+	    }
+
+	2. 第二种，里面有return，就不需要break了，
+
+		switch (event.type) {
+			case HttpEventType.Sent:
+				return `要上传的文件是：${file.name}，size: ${file.size}`;
+
+			case HttpEventType.UploadProgress:
+				const percentDone = Math.round(100 * event.loaded / event.total);
+				return `${file.name}上传进度： ${percentDone}%`;
+
+			case HttpEventType.Response:
+				return `${file.name}上传完成`;
+
+			default:
+				return `${file.name} surprising upload event: ${event.type}`;
+		}
+
+#. HttpEventType 
+
+	import {
+	  HttpClient, HttpEvent, HttpEventType, HttpProgressEvent,
+	  HttpRequest, HttpResponse, HttpErrorResponse
+	} from '@angular/common/http';
+
+
+	
+	枚举值有：								 console.log(event.type);
+
+		Sent 					0 			 // {type: 0}
+
+		UploadProgress			1			 // {type: 1, loaded: 2469134, total: 11}
+
+		ResponseHeader			2
+
+		DownloadProgress		3
+
+		Response 				4 			 // HttpResponse{headers:{...}, status:.}
+
+		user 					5
+
+
+	getEventMessage (event: HttpEvent<any>){
+
+		switch(event.type){
+
+			case HttpEventType.Sent:
+				....
+
+			case HttpEventType.UploadProgress:
+				....
+
+			case HttpEventType.ResponseHeader:
+				....
+
+			case HttpEventType.DownloadProgress:
+				....
+
+			case HttpEventType.Response:
+				....
+
+			case HttpEventType.user:
+				....
+		}
+	}
+
+#. 在服务中，如果该方法是服务自己使用的，并不能被外界直接调用的话，可以写成 private 私有的
+
+
+#. error类型
+	
+	// 只有一个return，可以在catchError操作符中直接写 .catchError(this.handleError)
+	handleError(error: HttpErrorResponse){
+
+		if(error.error instanceof ErrorEvent){
+
+			// client-side or network error occured
+
+			console.log(error.error.message);
+
+		}else{
+
+			// backend returned an unsuccessful response
+
+			console.log(error.status, error.error);
+		}
+
+		return throwError(`请重试。。。`);
+	}
+
+	.catchError(this.handleError)
+
+	由上面可以看出， HttpErrorResponse 的类型高于 ErrorEvent 类型，
+
+	也可以理解为:  error.erorr 才属于 ErrorEvent 类型
+
+	// 两个return的handleError,在catchError操作符中写 
+	// catchError(this.handleError(file))
+	private handleError(file: File) {
+		const message = `${file.name} 上传失败！`;
+
+		// return 1
+		return (error: HttpErrorResponse): Observable<string> {
+			const errorReason = (error.error instanceof ErrorEvent) ? error.error.message :
+				`服务器返回的状态码是： ${error.status}, body是：${error.error}`;
+
+			this.messageService.add(`${message},原因是：${errorReason}`);
+
+			// return 2
+			return of(message);
+		};
+	}
+
+
+#. HttpProgressEvent
+
+	interface HttpProgressEvent {
+	  type: HttpEventType.DownloadProgress | HttpEventType.UploadProgress
+	  loaded: number
+	  total?: number
+	}
+
+
+	重新定义：
+
+	const loaded = 12;
+	const total = 12;
+
+	const progressEvent: HttpProgressEvent = {
+		type: HttpEventType.UploadProgress,
+		loaded,				// 正好定义的字段值跟接口中的key相同，就可以省略key
+		total 				// ==== total: total
+	}
+
+
+#. 不管是服务还是组件中，如果需要export好几个东西的话，他们的并行写的，
+
+	export interface Hero {....}
+
+	export const searchUrl = 'https://www.baidu.com';
+
+	export class PackageSearchService {...}
+
+	虽然我们的主要逻辑是写在PackageSearchService服务中的，但是如果要同时导出好几个东西，要并行写
+
+
+#. HttpParams
+
+	普通写法：
+
+	1. append 
+
+		let codeParams = new HttpParams();
+  		codeParams = codeParams.append('client_id', 'subscription');
+	    codeParams = codeParams.append('response_type', 'code');
+	    codeParams = codeParams.append('redirect_uri', 'https://www.baidu.com/');
+	    codeParams = codeParams.append('state', 'active');
+
+  		return this.http.get(OAUTH_URL + 'oauth/authorize', {params: codeParams})
+
+  	2. set
+
+  		const params = new HttpParams()
+  							.set('page', page)
+  							.set('name', name)
+  							.set('sex', sex)
+  							.set('age', age)
+
+  		return this.http.post(url, params)
+
+  	3. 改写2，传一个对象
+
+  		let paramsObj = {
+  			page: page,
+  			name: name,
+  			age: age,
+  			sex: sex
+  		};
+
+  		const params = new HttpParams({fromObject: paramsObj});
+
 
 
 

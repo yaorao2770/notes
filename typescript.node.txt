@@ -1458,3 +1458,20 @@
 	Typings工具用来安装类型定义文件
 
 	https://github.com/typings/typings
+
+19. type 关键字 定义类型
+
+	type myNumber = number;
+
+	export type handlerError = 
+	<T> (operation?:string, result?:T) => (error: HttpErrorResponse) => Observable<T>;
+
+	解说：
+
+		handlerError类型，自定义参数列表是: (operation?:string, result?:T)
+
+		返回值是一个函数： (error: HttpErrorResponse) => Observable<T>
+
+	使用：
+
+		handleError: handlerError;
