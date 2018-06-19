@@ -460,3 +460,55 @@
 #. 动态设置导航条title
 
 	在onReady钩子中设置，不能再onLoad中，onLoad中不能操作UI相关，因为这个时候页面还没渲染完毕
+
+#. 0/0 = NaN	
+   1/0 = Infinity
+   -1/0 = -Infinity
+
+   总结： 任何数值除以0都会导致错误而终止程序执行。但是在js中，会返回特殊的值，因此不会影响程序的执行。
+
+   比0大的数除以0，则会得到无穷大
+
+#. 上下左右居中
+	
+	HTML: 
+			<div class="box">
+				<span>
+					<a>a</a>
+					<a>b</a>
+				</span>
+			</div>
+
+	CSS:
+		1. position + trnasfrom
+
+			.box{
+				width: 200px;
+				height: 200px;
+				border:1px solid #ccc;
+				position: relative;
+			}
+			span{
+				background: pink;
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				transform: translate(-50%, -50%);		// 关键（之前都是负margin）
+			}
+
+		2. flex
+
+			.box{
+				width: 200px;
+				height: 200px;
+				border:1px solid #ccc;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+			span{
+				background: pink;
+			}
+
+
+#. 附件上传的安全过滤问题

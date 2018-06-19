@@ -17,6 +17,8 @@
 
 	ng g pipe filter --spec=false		filter.pipe.ts
 
+		需要手动注入到app.module.ts
+
 	ng g s logging --spec=false			logging.service.ts
 
 		注意,创建服务不会自动加入到app.module.ts中，要及时手动加入
@@ -2309,3 +2311,15 @@ declarations 数组只能注入 管道，组件和指令
 	find 查询到奥第一个符合条件的就返回
 
 	filter 能够查询出所有符合条件的		   
+
+#. RXJS 操作符
+
+	mergeMap 解决嵌套订阅的问题	
+
+#. ts中使用管道
+
+	import { CardStatusPipe } from '../../../pipe/card-status.pipe';
+
+	constructor(private cardStatusPipe:CardStatusPipe){}
+
+	const PublishDate =  this.cardStatusPipe.transform(cardStatus);	
