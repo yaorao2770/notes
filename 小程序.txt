@@ -512,3 +512,7 @@
 
 
 #. 附件上传的安全过滤问题
+
+#. 现在浏览器支持使用两种不同的API发起http请求：
+
+	XMLHttpRequest接口 和 fetch() API
