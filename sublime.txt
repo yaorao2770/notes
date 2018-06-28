@@ -26,3 +26,21 @@
 
 	[*.ts]
 	indent_size = 4
+
+3. 自定义快捷键
+
+	perferences -> key bindings 
+
+	[
+
+	    //chrome
+	    { "keys": ["alt+z"], "command": "side_bar_files_open_with",
+	            "args": {
+	                "paths": [],
+	                "application": "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
+	                "extensions":".*"
+	            }
+	    },
+	    { "keys": ["ctrl+1"], "command": "build" },
+	    { "keys": ["ctrl+shift+g"], "command": "reindent" }
+	]
