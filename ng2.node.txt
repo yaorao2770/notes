@@ -3052,3 +3052,43 @@ declarations 数组只能注入 管道，组件和指令
 
 	const PublishDate =  this.cardStatusPipe.transform(cardStatus);	
 注意： 目前没有任何浏览器实现 export 和 import ，要在浏览器中执行， 必须借助 TypeScript 或者其它的转换器！				
+
+#. throwError
+
+	是rxjs6的最新写法
+
+	rxjs 5.5.6 中如果想用的话： Observable.throw('xxx');
+
+	private handleError(error: HttpErrorResponse) {
+
+		let errorMsg = '';
+
+	 	if (error.error instanceof ErrorEvent) {
+	 		// error.error.message
+	 	  	console.error('客户端的错误：', error);
+	 	  	errorMsg = '客户端的错误。';
+	 	} else {
+	 	  	console.error(`服务器的错误: `, error);
+	 	  	if(error.status == 403){
+		 		errorMsg = '无操作权限。';
+	 	  	}
+	 	}
+
+	 	// return an observable with a user-facing error message
+	 	// 这里抛出去的错，最后会返回到接口的error中
+	 	// 比如 errorMsg = '无操作权限。' 如果更换卡片状态这个接口用了catchError,那么
+	 	// 这个接口的error回调中只会返回 无操作权限。 几个字 
+	 	return Observable.throw(errorMsg);
+	};
+
+
+	// 更新卡片状态
+	cardStatusOperate(type,criteria){
+		return this.http.get<ResponseFormat>(ALM_URL + type + '/operate', {params: criteria})
+					.pipe(
+						tap(
+							data => console.log('tap--更新卡片状态--success:', data),
+						),
+						catchError(this.handleError) // 注意，这里没有()
+					);
+	}
