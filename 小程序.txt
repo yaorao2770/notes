@@ -341,7 +341,7 @@
 
 #. api rate limit
 
-	速率限制，为防止滥用，应该考虑对API做限流。例如，可以限制每个用户10分钟呃逆最多调用API 100次。如果在规定的时间内接收了一个用户大量的请求，将返回相应状态码429（这以为这过多的请求）
+	速率限制，为防止滥用，应该考虑对API做限流。例如，可以限制每个用户10分钟内最多调用API 100次。如果在规定的时间内接收了一个用户大量的请求，将返回相应状态码429（这以为是过多的请求）
 
 #. 4个新的HTTP状态码
 
@@ -359,7 +359,7 @@
 
 	仅当发生协议降级（如：https页面引入http资源，从https页面跳到http等）	时不发送Referrer信息。这个规则是现在大部分浏览器默认采用的。
 
-	在叶敏引入图片，js等资源，或者从一个页面跳到另一个页面，都会产生新的http请求，浏览器一般都会给这些请求头加上表上来源的Referrer字段。该字段在分析用户来源时很有用
+	在页面引入图片，js等资源，或者从一个页面跳到另一个页面，都会产生新的http请求，浏览器一般都会给这些请求头加上表示来源的Referrer字段。该字段在分析用户来源时很有用
 
 #. node转发豆瓣api，解决403问题
 	
@@ -460,6 +460,58 @@
 #. 动态设置导航条title
 
 	在onReady钩子中设置，不能再onLoad中，onLoad中不能操作UI相关，因为这个时候页面还没渲染完毕
+
+#. 0/0 = NaN	
+   1/0 = Infinity
+   -1/0 = -Infinity
+
+   总结： 任何数值除以0都会导致错误而终止程序执行。但是在js中，会返回特殊的值，因此不会影响程序的执行。
+
+   比0大的数除以0，则会得到无穷大
+
+#. 上下左右居中
+	
+	HTML: 
+			<div class="box">
+				<span>
+					<a>a</a>
+					<a>b</a>
+				</span>
+			</div>
+
+	CSS:
+		1. position + trnasfrom
+
+			.box{
+				width: 200px;
+				height: 200px;
+				border:1px solid #ccc;
+				position: relative;
+			}
+			span{
+				background: pink;
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				transform: translate(-50%, -50%);		// 关键（之前都是负margin）
+			}
+
+		2. flex
+
+			.box{
+				width: 200px;
+				height: 200px;
+				border:1px solid #ccc;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+			span{
+				background: pink;
+			}
+
+
+#. 附件上传的安全过滤问题
 
 #. 现在浏览器支持使用两种不同的API发起http请求：
 

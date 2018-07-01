@@ -17,6 +17,8 @@
 
 	ng g pipe filter --spec=false		filter.pipe.ts
 
+		需要手动注入到app.module.ts
+
 	ng g s logging --spec=false			logging.service.ts
 
 		注意,创建服务不会自动加入到app.module.ts中，要及时手动加入
@@ -675,7 +677,8 @@ declarations 数组只能注入 管道，组件和指令
 		接口做类型有两种：数组或对象
 
 		person = <Question>{};	// 类型是Question并且是对象类型
-		person = <Stock>[];	// 类型是Stock并且是数组类型
+		person = <Stock>[];		// 类型是Stock并且是数组类型
+		person: Stock[] = [];	
 
 		stock.ts （接口文件）
 
@@ -816,7 +819,7 @@ declarations 数组只能注入 管道，组件和指令
 
 	当一个可观察对象被订阅后，就会返回一个Subscription对象，主要用于取消注册
 
-		subscription。unsubscribe();
+		subscription.unsubscribe();
 
 	操作符Operators,纯粹的函数，使开发者可以以函数编程的方式处理集合
 
@@ -994,7 +997,7 @@ declarations 数组只能注入 管道，组件和指令
 
 		 @angular/forms 提供三个类进行创建底层数据模型: FormControl FormGroup FormArray
 
-	a) novalidate 添加到form元素上,表示不适用浏览器默认的表单校验机制
+	a) novalidate 添加到form元素上,表示不使用浏览器默认的表单校验机制
 
 	b) FormControl 它是一个为单个表单控件提供支持的类，可用于跟踪控件的值和验证状态
 
@@ -1104,7 +1107,7 @@ declarations 数组只能注入 管道，组件和指令
 
 		` ngForm 代表了整个form表单，默认ng会自动添加到form标签上
 
-		  创建了ngForm后，ng会隐式创建一个FormGroup类的实例，然后ngForm会寻找其子元素中标有ngModel的标签的值《
+		  创建了ngForm后，ng会隐式创建一个FormGroup类的实例，然后ngForm会寻找其子元素中标有ngModel的标签的值
 
 		  并添加在FormGroup中。然后页面上即可通过ngForm这个对象访问到表单数据，ngForm可以使用模板本地变量引用,
 
@@ -1141,7 +1144,7 @@ declarations 数组只能注入 管道，组件和指令
 
 		等于
 
-		constructor( private fn: FormBulder){
+		constructor( private fb: FormBulder){
 
 			this.myForm = this.fb.group({
 		  		username:[''],
@@ -1455,7 +1458,7 @@ declarations 数组只能注入 管道，组件和指令
 
 42. 302
 
-	对于js来说，301 302 这种跳转时透明的，无法处理
+	对于js来说，301 302 这种跳转是透明的，无法处理
 
 	重定向是浏览器自动透明完成的，所以服务器将302响应发给浏览器时，浏览器并不是直接处理ajax的回调，而是先执行302重定向，这也就是为什么获取不到xhr.status=302的值
 
@@ -1525,7 +1528,6 @@ declarations 数组只能注入 管道，组件和指令
 	        }
 	      }
 	    );
-
 	
 
 
@@ -1610,6 +1612,8 @@ declarations 数组只能注入 管道，组件和指令
 
 		next.handle返回的是一个Observable类型，可以用操作符来改变响应的值
 
+		在拦截器中可以不返回next.handle方法，可以直接返回Observable.next() 只要是observable类型的就行
+
 
 	mergeMap 操作符：
 
@@ -1682,7 +1686,7 @@ declarations 数组只能注入 管道，组件和指令
 
 47.	当我们调用 router.navigateByUrl('/inbox/33/message/44') 方法后，此时的 URL 地址将变成 /inbox/33/message/44 。但如果我们是调用 router.navigate('/inbox/33/message/44') 方法，当前的 URL 地址将变成 /inbox/33/message/44(popup:compose)
 
-48. 在表单中，如果忘记给按钮添加属性，会默认为submit
+48(！). 在表单中，如果忘记给按钮添加属性，会默认为submit
 
 	<button (click)="toDetail()">detail</button>
 
@@ -1845,13 +1849,13 @@ declarations 数组只能注入 管道，组件和指令
 
 	ng应用的index.html会在文档中写入根组件，如： <app-root>loading...</app-root>
 
-	知道ng初始化完成后，loading...字样才会从页面小时，并进入实际的应用。
+	直到ng初始化完成后，loading...字样才会从页面小时，并进入实际的应用。
 
 	对于ng而言，真正开始渲染组件会在 plateformBrowserDynamic().bootstrapModule 之后，可以在此之前把loading...换成一个动画或更友好的效果。
 
 	1. 尽可能早显示启动动画，并尽可能在组建渲染之前关掉动画。
 
-	组件树的渲染会在bootstrapModule之后，而其接口有事返回一个Promise<NgModuleRef<AppModule>>,Promise意味着允许我们可以通过then在ng启动后做点什么擦屁股的事情，例如去掉动画代码：
+	组件树的渲染会在bootstrapModule之后，而其接口又是返回一个Promise<NgModuleRef<AppModule>>,Promise意味着允许我们可以通过then在ng启动后做点什么擦屁股的事情，例如去掉动画代码：
 
 	HTML:
 
@@ -2102,7 +2106,7 @@ declarations 数组只能注入 管道，组件和指令
 
 		如果你在network中看到某个 chunk 文件出现，就表示你已经惰性加载并接入了这个特性模块，chunk只应该出现一次
 
-		RouterModule.forRoot(routes)	表示一个跟路由模块，它会配置你传入的所有路由，让你能访问路由器指令并注册RouterService
+		RouterModule.forRoot(routes)	表示一个根路由模块，它会配置你传入的所有路由，让你能访问路由器指令并注册RouterService
 		RouterModule.forChild(routes)可以添加到各个特性模块。这种方式下，ng就会知道这个路由列表只负责提供额外的路由并且其设计意图是作为特性模块使用，你可以再多个模块中使用forFChild()	
 
 	2) 贪婪加载
@@ -2132,7 +2136,7 @@ declarations 数组只能注入 管道，组件和指令
 				imports: [
 					CommonModule
 				],
-				declarations>: []
+				declarations: []
 			})
 			export class CustomModule{ }
 
@@ -2842,22 +2846,43 @@ declarations 数组只能注入 管道，组件和指令
 
 	也可以理解为:  error.erorr 才属于 ErrorEvent 类型
 
-	// 两个return的handleError,在catchError操作符中写 
-	// catchError(this.handleError(file))
-	private handleError(file: File) {
-		const message = `${file.name} 上传失败！`;
+	2.  // 两个return的handleError,在catchError操作符中写 
+		// catchError(this.handleError(file))
+		private handleError(file: File) {
+			const message = `${file.name} 上传失败！`;
 
-		// return 1
-		return (error: HttpErrorResponse): Observable<string> {
-			const errorReason = (error.error instanceof ErrorEvent) ? error.error.message :
-				`服务器返回的状态码是： ${error.status}, body是：${error.error}`;
+			// return 1
+			return (error: HttpErrorResponse): Observable<string> {
+				const errorReason = (error.error instanceof ErrorEvent) ? error.error.message :
+					`服务器返回的状态码是： ${error.status}, body是：${error.error}`;
 
-			this.messageService.add(`${message},原因是：${errorReason}`);
+				this.messageService.add(`${message},原因是：${errorReason}`);
 
-			// return 2
-			return of(message);
-		};
-	}
+				// return 2
+				return of(message);
+			};
+		}
+
+
+	3. .catch((res: HttpResponse<any>) => {
+			switch(res.status){
+				case 401:
+					// 权限处理
+					location.href = ''; // 重新登录
+					break;
+				case 200:
+					// 业务层级错误处理
+					console.log('业务错误：' + res.body.code);
+					break;
+				case 404:
+					console.log('api不存在');
+					break;
+			}
+			return Observable.throw(res);
+		});
+
+	只要catchError中是错误的observable就行了：
+
 
 
 #. HttpProgressEvent
@@ -3013,4 +3038,57 @@ declarations 数组只能注入 管道，组件和指令
 
 在 TypeScript 中， 经常要使用 export 和 import 两个关键字， 这两个关键字和 es6 中的语法是一致的， 因为 TypeScript = es6 + type !
 
+	filter 能够查询出所有符合条件的		   
+
+#. RXJS 操作符
+
+	mergeMap 解决嵌套订阅的问题	
+
+#. ts中使用管道
+
+	import { CardStatusPipe } from '../../../pipe/card-status.pipe';
+
+	constructor(private cardStatusPipe:CardStatusPipe){}
+
+	const PublishDate =  this.cardStatusPipe.transform(cardStatus);	
 注意： 目前没有任何浏览器实现 export 和 import ，要在浏览器中执行， 必须借助 TypeScript 或者其它的转换器！				
+
+#. throwError
+
+	是rxjs6的最新写法
+
+	rxjs 5.5.6 中如果想用的话： Observable.throw('xxx');
+
+	private handleError(error: HttpErrorResponse) {
+
+		let errorMsg = '';
+
+	 	if (error.error instanceof ErrorEvent) {
+	 		// error.error.message
+	 	  	console.error('客户端的错误：', error);
+	 	  	errorMsg = '客户端的错误。';
+	 	} else {
+	 	  	console.error(`服务器的错误: `, error);
+	 	  	if(error.status == 403){
+		 		errorMsg = '无操作权限。';
+	 	  	}
+	 	}
+
+	 	// return an observable with a user-facing error message
+	 	// 这里抛出去的错，最后会返回到接口的error中
+	 	// 比如 errorMsg = '无操作权限。' 如果更换卡片状态这个接口用了catchError,那么
+	 	// 这个接口的error回调中只会返回 无操作权限。 几个字 
+	 	return Observable.throw(errorMsg);
+	};
+
+
+	// 更新卡片状态
+	cardStatusOperate(type,criteria){
+		return this.http.get<ResponseFormat>(ALM_URL + type + '/operate', {params: criteria})
+					.pipe(
+						tap(
+							data => console.log('tap--更新卡片状态--success:', data),
+						),
+						catchError(this.handleError) // 注意，这里没有()
+					);
+	}
