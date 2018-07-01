@@ -26,3 +26,20 @@
 
 	[*.ts]
 	indent_size = 4
+
+
+3. perferences -> key binding
+
+	[
+		{ "keys": ["ctrl+shift+enter"], "command": "open_in_browser" },
+		{
+	        "keys": ["alt+z"],
+	        "command": "side_bar_open_in_browser",
+	        "args": {
+	                    "paths": [],
+	                    "type": "testing",
+	                    "browser": ""
+	                }
+	    },
+	    { "keys": ["ctrl+1"], "command": "build" }
+	]
