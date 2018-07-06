@@ -41,7 +41,13 @@
 		})		
 
 
-	ng g module custom   用于生成特性模块
+	ng g module custom   
+	
+		用于生成特性模块(新建的是一个目录，目录中有一个custom.module.ts文件)
+
+	ng g module custom  --flat 
+
+		用于生成特性模块,不会单独生成目录,只是生成一个custom.module.ts文件
 
 	ng g module app-routing --flat --module=app
 
@@ -3092,3 +3098,31 @@ declarations 数组只能注入 管道，组件和指令
 						catchError(this.handleError) // 注意，这里没有()
 					);
 	}
+
+#. 如果想用pipe，一定要在subscribe方法之前
+
+	ngOninit() {
+		this.rout.paramMap.pipe(
+			switchMao( (params: ParamMap) => {
+				this.service.getHero(params.get('id'));
+			})
+		).subscribe( data => {
+			this.hero = data.data;
+		})
+	}
+
+#. paramMap
+
+	this.rout.paramMap.subscribe(
+		(params: ParamMap) => {
+
+			// 注意： (+) before `params.get()` turns the string into a number
+			let projectId = +params.get('id');	
+			
+			if(projectId){
+				// numebr
+			}else{
+				// NaN
+			}
+		}
+	);	
