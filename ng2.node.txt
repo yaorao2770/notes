@@ -213,6 +213,8 @@ declarations 数组只能注入 管道，组件和指令
 		<a [routerLink]="['/']">主页</a>
 		<a [routerLink]="['directive']">关于</a>
 
+
+
 	2. 模板占位符
 		<router-outlet></router-outlet>
 
@@ -2298,7 +2300,7 @@ declarations 数组只能注入 管道，组件和指令
 
 71. routerLink的两种写法，带[]和不带
 
-	<a routerLink="/dashboard">Dashboard</a>
+	<a routerLink="/dashboard">Dashboard</a>  // 带[]说明值是一个变量
 
 	<a [routerLink]="['/heros']">heros</a>
 
