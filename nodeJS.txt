@@ -70,3 +70,14 @@ where node 		得到安装路径
 			node_modules/
 
 	git仓库没有该目录，但是安装node插件的时候最好加上 --save-dev ，这样即使git上传没有node_modules目录，重新clone该项目时，依然可以通过 npm install 重新下载依赖的包，重新生成该目录
+
+
+#. 升级 nodejs 本身	
+
+	需安装 npm install -g n
+
+	n latest
+
+	n stable
+
+	n v8

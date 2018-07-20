@@ -1,9 +1,13 @@
-
+﻿
 	npm install -g @angular/cli
 
-	ng new first-app --routing		
+	ng new first-app --routing 
 
 		--routing参数会生成 app-routing.module.ts 文件,并且会在 app.component.html 文件中自动生成 <router-outlet></router-outlet>
+	
+	ng new first-app --style=scss		
+
+		--style scss参数,使用sass
 
 	cd first-app
 
@@ -166,7 +170,7 @@ declarations 数组只能注入 管道，组件和指令
 
 	child.component.html
 
-		<button *ngFor="let item of lists; let i=index;" (click)='fireYellEvent(i)'>
+		<button hello</button>*ngFor="let item of lists; let i=index;" (click)='fireYellEvent(i)'>
 			{{item.name}}
 		</button>
 
@@ -191,6 +195,22 @@ declarations 数组只能注入 管道，组件和指令
 7. ng-content
 
 	该指令用于内容映射，即在组件中嵌入模板代码，方便定制可复用的组件。
+
+	test.component.html
+		<h3>你好，这是test.component.html</h3>
+		<ng-content></ng-content>
+
+	引用 该组件
+
+	home.component.html
+
+		<app-test>
+			我在这里写的内容，会写入到test.component.html模板页面中
+		</app-test>	
+
+	一般情况下，都是直接引用组件，如果在组件中间写入了内容，会插入到该组件模板页面的
+
+	<ng-content></ng-content> 的位置	
 
 8. ngOnChanges()
 	
@@ -726,7 +746,7 @@ declarations 数组只能注入 管道，组件和指令
 
 18. 样式绑定
 	
-	<p [ngClass]="{'red':isShow===true, 'blue':isShow===false}" (click)='testStyleBind()' >显示红色还是蓝色</p>
+	<p [ngClass]="{'red':isShow===true, 'blue':isShow===false}" (click)='app-testS</app-test>tyleBind()' >显示红色还是蓝色</p>
 
 19. 组件抽离
 
@@ -3126,3 +3146,48 @@ declarations 数组只能注入 管道，组件和指令
 			}
 		}
 	);	
+
+#. 获取url中查询参数
+
+	url: localhost:4200/app/credit/list?query=12&age=30
+
+	public route: ActivatedRoute;
+
+	const { query, age } = this.route.snapshot.queryParams
+
+#. get 关键字修饰的类
+
+	get canGoDetai(): boolean {
+		return true;
+	}
+
+	调用：
+
+	this.canGoDetai;
+
+	注意这时候的 canGoDetai 不是方法, 是一个成员属性，可以直接调用
+	
+
+#. *ngIf='false; else loading'
+
+	<div *ngIf='false; else loading'>
+		hello 
+	</div>
+
+	<ng-template #loading>
+		world
+	</ng-template>
+
+	最终显示效果为 world
+
+#. ng-container 
+
+	空白元素，不会渲染到DOM中
+
+	是一个分组元素
+
+	<app-page-title>
+		<ng-container *ngIf="canLoad; else loading">
+			<button>hello</button>
+		</ng-container>
+	</app-page-title>

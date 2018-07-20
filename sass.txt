@@ -1,4 +1,4 @@
-Sass 笔记：
+﻿Sass 笔记：
 
 1. 后代选择器
 	
@@ -148,3 +148,25 @@ Sass 笔记：
 	使用方式： 在需要的地方使用 @import "theme";
 
 	sass局部文件的文件名以下划线开头，这样在编译时就不会单独输出这个css文件，而只是把这个文件用作导入。 @import一个局部文件时，可以不写局部文件的_前缀和后缀名
+
+#. @extend  继承 
+	
+	.one {
+		width:100px;
+		height:100px;
+	}
+	
+	.two {
+		@extend .one; // 继承的样式
+		color: red;	// 独立的样式
+	}
+
+	编译后：
+
+	.one, .two {
+		width:100px;
+		height:100px;
+	}
+	.two{
+
+		
