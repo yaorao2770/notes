@@ -108,4 +108,24 @@
 
 	git reset HEAD test-git.txt
 
-11. 	
+11. 撤销 git commit
+
+	git add .
+
+	git ci -m '提交'
+
+	这时候撤销 commit：
+
+		git log  查看这次 commit 的上一次commit的id
+
+		git reset --soft 7b141f25e1f8ae8583e246b1b0e697cf3952bbcd
+
+		git st  发现上次提交的已经恢复到未暂存区了，
+
+		git reset HEAD test.txt
+		
+		git st
+
+		git ci -m '撤销commit成功'
+
+		git ps

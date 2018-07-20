@@ -3398,3 +3398,95 @@ declarations 数组只能注入 管道，组件和指令
 						]
 					}
 				];	
+
+
+#. 注解 or 装饰器
+
+	JAVA中叫注解，其实就是带着 @ 符号的类
+
+	e.g. 我们定义一个日志接口 logger，其 实现类有 Logger1, Logger2, Logger3.....
+
+	等一系列实现。
+
+	有了依赖注入，我们可以随时更改注入类，要是没有DI，那么我们要创建N多次实例
+
+	1. useClass 要注入的实际子类
+
+		providers:[
+			{ provide: UserService, useClass: UserServiceImpl }
+		]
+
+		当有人请求 UserService 时，返回 UserServiceImpl 
+
+		具体代码实现是 UserServiceImpl extends UserService
+
+			user.service.ts:
+
+				// 抽象基类, 不负责具体实现, 只定义了必须实现的方法
+				export abstract class UserService {
+					protected user: UserInfo | null = null;
+					protected userInfoSubject = new ReplaySubject<UserInfo | null>(1);
+
+					constructor() {}
+
+					get emitter(): Observable<UserInfo> {
+						return this.userInfoSubject.asObservable();
+					}
+
+					get currentUser(): UserInfo | null {
+						return this.user;
+					}
+
+					abstract getUserAndPrivilege(): void;
+					abstract logout(): void;
+				}
+
+			UserServiceImpl.ts:
+				
+				// extends 继承抽象基类
+				export class UserServiceImpl extends UserService {
+					constructor() {
+						super();
+					}
+
+					getUserAndPrivilege(): void { ... }
+
+					logout(): void { ... }
+
+				}
+
+	2. useExisting 设置提供商的别名
+
+		providers:[
+			{ provide: OldLogger, useClass: NewLogger }
+		]			
+
+		因为历史遗留原因，某个旧组件依赖 OldLogger 类, OldLogger和 NewLogger具有相同的接口。
+
+		并且不能升级这个旧组件去使用 NewLogger，这个时候就用到了别名提供商
+
+		上面意思是： OldLogger是 NewLogger的别名
+
+	3. useValue 值提供商
+
+		export const AppPathMap = {
+			institution: "app/institution",
+			credit: "app/credit"
+		};
+
+		providers:[
+			{ provide: APP_PATH, useValue: AppPathMap }
+		]	
+
+		当请求 APP_PATH 时，返回 AppPathMap
+				
+#. providers
+
+	providers: [Logger]			注册提供商的简写
+
+	等同于
+
+	providers: [{ provide: Logger, useClass: Logger}]	注册提供商的对象字面量写法
+
+	provide 属性保存的是令牌（token）
+
