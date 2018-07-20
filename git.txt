@@ -99,3 +99,13 @@
 	git clone
 
 9. gitignore 初次项目也是需要提交到远程的
+
+10. git add 
+
+	add之后的文件都放在了暂存区，
+
+	撤销 git add 的文件
+
+	git reset HEAD test-git.txt
+
+11. 	
