@@ -239,6 +239,8 @@ declarations 数组只能注入 管道，组件和指令
 		<a [routerLink]="['/']">主页</a>
 		<a [routerLink]="['directive']">关于</a>
 
+
+
 	2. 模板占位符
 		<router-outlet></router-outlet>
 
@@ -2324,7 +2326,7 @@ declarations 数组只能注入 管道，组件和指令
 
 71. routerLink的两种写法，带[]和不带
 
-	<a routerLink="/dashboard">Dashboard</a>
+	<a routerLink="/dashboard">Dashboard</a>  // 带[]说明值是一个变量
 
 	<a [routerLink]="['/heros']">heros</a>
 
@@ -3191,3 +3193,208 @@ declarations 数组只能注入 管道，组件和指令
 			<button>hello</button>
 		</ng-container>
 	</app-page-title>
+#. find 和 filter
+
+	var arr = [
+		{id:1, name:'apple'},
+		{id:2, name:'joni'},
+		{id:3, name:'banabna'},
+		{id:4, name:'pear'}
+	];
+
+	arr.find(el => el.id===2);	 // 直接返回符合条件的元素：{id:2, name:'joni'}
+
+	arr.filter(el => el.id===2); // 返回指永远是一个数组：[{id:2, name:'joni'}]
+
+#. resolve 预先获取数据
+
+	1. 新建resolve服务文件
+
+		hero-detail-resolve.service.ts
+
+			import { Injectable }             from '@angular/core';
+			import { Router, Resolve, RouterStateSnapshot,
+			         ActivatedRouteSnapshot } from '@angular/router';
+
+			import { Observable }             from 'rxjs';
+			import { map, take }              from 'rxjs/operators';
+
+			import { Hero, HeroService } from './hero.service';
+
+			@Injectable()
+			export class HeroDetailResolver implements Resolve<Hero> {
+
+				constructor(
+					public heroService: HeroService,
+					public router: Router,
+				) {}
+
+				resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot):Observable<Hero> | any{
+
+					let id = route.paramMap.get('id');
+
+					return this.heroService.getHero(id).pipe(
+						map(hero => {
+							if(hero) {
+								return hero;
+							}else{
+								this.router.navigate(['/heroes']);
+								return null;
+							}
+						})
+					);
+				}
+			}
+
+	2. hero.serive.ts
+
+		注意，如果是通过resolve预获取数据的话，那么详情接口一定要返回Observable<Hero>类型的数据
+
+		getHeroes() {
+			return Observable.of(HEROES);
+		}
+
+		getHero(id: number | string):Observable<Hero> {
+			return this.getHeroes().pipe(
+				map(heroes => heroes.find(hero => hero.id === +id))
+			);
+		}
+
+		注意，find() 和 filter() 方法的区别
+
+	3. 改写routing文件
+
+		hero-routing.module.ts
+
+			import { HeroDetailResolver } from './hero-detail-resolve.service';
+
+			const heroRoutes: Routes = [
+				{
+					path: ':id', 
+					component: HeroDetailComponent,
+					resolve: {hero: HeroDetailResolver}	 // 这里预获取数据
+				}
+			];
+
+			providers: [HeroDetailResolver]
+
+	4. hero-detail.component.ts 使用预获取到的数据
+
+		hero: Hero;
+
+		ngOnit(){
+			this.route.data.subscribe(	// 注意，resolve到的数据都存放在data中，所以这里我们去订阅的是data
+				(data: {hero: Hero}) => {
+					this.hero = data.hero;
+				}
+			);
+		}
+
+#. 绝对路径导航 & 相对路径导航
+
+	1. 绝对路径导航	
+
+		this.router.navigate(['/crisis-center', {id:this.crisis.id, foo: 'foo'}])
+
+	2. 相对路径导航 
+
+		this.router.navigate(
+			['../', {id:this.crisis.id}], 
+			{relativeTo: this.route}	// navigate的第二个参数
+		); 
+
+#. 详情路由 :id
+
+	const heroRoutes: Routes = [
+		{
+			path: '', 
+			component: HeroListComponent
+		},
+		{
+			path: ':id', 	// 实际就是： heroes/:id
+			component: HeroDetailComponent,
+			resolve: {hero: HeroDetailResolver}
+		}
+	];
+
+
+	那么，html使用的时候，
+
+	1. <a [routerLink]='['heroes', hero.id]'>{{hero.name}}</a>
+
+		实际的url: 
+
+			列表页: localhost:4200/heroes;id=2;foo=foo
+			详情页: localhost:4200/heroes/14
+
+	2. <a [routerLink]='[hero.id]'>{{hero.name}}</a>
+
+		实际的url: 
+
+			列表页: localhost:4200/heroes;id=2;foo=foo
+			详情页: localhost:4200/heroes;id=2;foo=foo/14
+
+#. canDeactivate 路由
+
+	1. 为单独的组件创建
+
+		import { Router, CanDeactivate } from '@angular/router';
+		import { CrisisDetailComponent } from './crisis-detail/crisis-detail.component';
+
+		export class CanDeactivateGuard implements CanDeactivate<CrisisDetailComponent> {
+
+			canDeactivate(component: CrisisDetailComponent){
+				if(component.crisis.name === component.editName){
+					return true;
+				}else{
+					return window.confirm('Discard changes?');
+				}
+			}
+		}
+
+	2. 创建通用的退出路由拦截，应用级别的
+
+		import { Injectable }    from '@angular/core';
+		import { CanDeactivate } from '@angular/router';
+		import { Observable }    from 'rxjs';
+
+		// 定义接口
+		export class CanComponentDeactivate {
+			canDeactivate: () => Observable<boolean> | Promise<boolean> | boolean;
+		}
+
+		@Injectable()
+		export class CanDeactivateGuard implements CanDeactivate<CanComponentDeactivate> {
+
+			canDeavtivate(component: CanComponentDeactivate) {
+
+				// 组件中是否有方法,有的话就调用该方法，没有则不做退出拦截
+				return component.canDeactivate ? component.canDeactivate() : true;
+			}
+		}
+
+		注入：
+
+			app.module.ts
+
+			providers:[CanDeactivateGuard]
+
+		使用：
+		
+			stock-routing.module.ts
+
+			该文件的providers中不必注入拦截服务了
+
+				const stockRoutes: Routes = [
+					{
+						path: '', 
+						component: stockComponent,
+						children: [
+							{
+								path: ':id',
+								component: stockDetailComponent,
+								canDeactivate: [CanDeactivateGuard]   // 这里使用
+							}
+						]
+					}
+				];	

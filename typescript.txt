@@ -724,6 +724,34 @@
 		    reset(): void;				// 方法
 		};
 
+		// 定义一个方法
+		export interface CanComponentDeactivate {
+			canDeactive: () => Observable<boolean> | boolean;
+		}
+
+		// 使用该接口
+		CanDeactivate<CanComponentDeactivate> 这里本来应该写具体的组件名称,如:
+		CanDeactivate<StockComponent>
+		export class guard implements CanDeactivate<CanComponentDeactivate> {
+
+			// component: CanComponentDeactivate 表示，组件中必须实现该接口定义的方法
+			canDeactivate(component: CanComponentDeactivate) {
+			    return component.canDeactivate ? component.canDeactivate() : true;
+			  }
+		}
+
+		// 实现该接口
+		stockDetailComponent.ts
+
+			canDeactive(): Observable<boolean> | boolean {
+				if(editName === this.stock.name){
+					return  true;
+				}else{
+					return window.comfirm('discard changes?');
+				}
+			}
+
+
 		function getCounter(): Counter {
 		    let counter = <Counter>function (start: number) {
 		    	console.log(111);
