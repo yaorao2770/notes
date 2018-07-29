@@ -1,4 +1,4 @@
-
+﻿
 1. Back in August 2012 I wrote a post on building a command line tool in NodeJs.
 	That post is now over two years old and plenty has changed, hence i thought it worth writing a new post building the same tool.showing how i`d do it now.
 
@@ -108,3 +108,13 @@
 #. disposable	一次性的，可任意处理的；免洗的。使用后随即抛掉的东西	
 
 #. mission 使命，天职
+
+#. alternative  可供替代的
+
+	alternative energy  替代能源
+
+	alternative approach	变换方法
+
+	they are hard to find in alternative offerings.
+
+#. let alone 更不用说 
