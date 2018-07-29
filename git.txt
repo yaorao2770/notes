@@ -129,3 +129,15 @@
 		git ci -m '撤销commit成功'
 
 		git ps
+
+
+12. 
+
+	git checkout dev
+
+	git checkout release/3.2.0		就是在本地切换到该分支了，然后 git pull拉去最新代码
+
+	git ch -b fix-bug		新建分支
+
+	git ps 
+

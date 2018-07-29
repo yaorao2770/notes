@@ -3490,3 +3490,39 @@ declarations 数组只能注入 管道，组件和指令
 
 	provide 属性保存的是令牌（token）
 
+#. interface 定义
+
+	var persons = {
+		man: [
+			{age: 12, name: "join"},
+			{age: 12, name: "join"},
+			{age: 12, name: "join"}
+		]
+	};
+
+	export interface Person {
+		man: Array<{ age: number}>
+	}
+
+
+#. subject 和 EventEmitter
+
+	刷新并不会重新出发 subscribe 订阅，
+
+	如下例子， 在home组件点击按钮，这个时候即使没有在hero组件的页面，也会触发heroComponent中的订阅，
+
+	这个时候跳转至hero组件页面刷新并不会触发订阅
+
+	subject 和 EventEmitter 的作用就是，谁订阅了这些主题和广播，就是在主题和广播发生改变时，实时接收到信息
+
+	home.component.ts
+
+		goDetail() {
+			this.peojectService.setMessage(123);	// subject
+		}
+
+	hero.component.ts
+
+		ngOninit()	{
+			this.peojectService.getMessage().subscribe( data => console.log(data));
+		}
