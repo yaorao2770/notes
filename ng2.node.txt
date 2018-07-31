@@ -3632,6 +3632,12 @@ declarations 数组只能注入 管道，组件和指令
 			...
 		</div>
 
+	4. ngTemplateOutlet 的value是 <ng-template #identityImgTempltp>
+
+		<ng-container *ngTemplateOutlet="identityImgTempl; 
+						context: {url: frontImgUrl, titleKey: 'credit.customers.detail.customer.identity.front'}"></ng-container>
+					
+
 #. ElmentRef、TemplateRef、ViewContainerRef、ngTemplateOutlet
 
 	1. ElmentRef 原生dom元素
@@ -3751,5 +3757,24 @@ declarations 数组只能注入 管道，组件和指令
 
 		比如, ~1.2.3会匹配所有1.2.x的包，但不包括1.3.0
 
+#. ngTemplateOutlet 指令
 
+	<ng-container *ngTemplateOutlet="tpl; context: {$implicit: 'world', localSK: 'yaorao2770'}"></ng-container>
+
+	<ng-template #tpl let-name>
+		<span>Hello {{name}}</span>				// hello world
+	</ng-template>
+
+	<ng-template #tpl let-person="localSK">
+		<span>Hello {{person}}</span>			// hello yaorao2770
+	</ng-template>
+
+
+	总结：
+
+		1. 若let语法未绑定任何属性名，则使用上下文对象中 $implicit 属性值
+
+		2. 若let绑定了对应的值，如 let-person="localSK", 则使用上下文对象中对应的 context.localSK
 			
+
+	详细了解：  https://segmentfault.com/a/1190000009530554

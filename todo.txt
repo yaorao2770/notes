@@ -1,0 +1,362 @@
+3. ѧϰsass
+
+	@mixin  @include  $primary  @extend
+
+	https://www.oschina.net/question/148057_2244210
+
+	@extend
+
+4. 国际化 中文网查看相关及例子
+
+	https://www.angular.cn/guide/i18n
+
+5. rxjs 操作符
+
+	take(1)
+
+	finalize(1)
+
+6. https://www.angular.cn/guide/structural-directives
+
+	TemplateRef 和 ViewContainerRef
+
+	首页用到了 自定义指令 
+
+7. abstractor 抽象类
+
+	https://segmentfault.com/a/1190000008947651?utm_source=tuicool&utm_medium=referral
+
+8. angular css 
+
+	host
+
+	什么意思
+
+9. 退回上一级菜单
+
+	goBack(): void {
+        if (!this.suppressHistoryBack) {
+            this.location.back();
+        }
+
+        this.back.next(this.route);
+    }
+
+	查看艾炼写的返回看板时的方法
+
+10. 
+
+	<div *ngIf='false; else loading'>
+	hello 
+	</div>
+
+	<ng-template #loading>
+	world
+	</ng-template>
+
+11. 动态设置网页的title
+
+	https://www.angular.cn/guide/set-document-title
+
+	需要注入 Title 服务
+
+	查看gaia项目中如何做的这一块
+
+12. https://stackblitz.com/angular/yogpmmelgln?file=src%2Fapp%2Funless.directive.ts	
+
+	自定义指令
+
+13. npm package.json
+
+	生成版本号的时候前面的前缀符号
+
+	^ ~
+
+14. @NgModule({}) 中的字段 entryComponents
+
+	angular 使用entryComponents来启用 '树震动'， 即只编译项目中实际使用的组件，而不是编译所有在
+
+	在ngModule中声名但从未使用的组件	
+
+
+	https://segmentfault.com/a/1190000012159329
+
+15. form 表单
+
+16. 模块
+
+	https://www.angular.cn/guide/providers
+
+17. 怎么生成component,不带前缀的 
+
+	--prefix=false 怎么不管用
+
+18. {{'credit.contracts.list.action.detail' | translate: {name: selectedContract?.title} }}
+
+	<gr-detail-button [routerLink]="['../', selectedContract?.id, 'detail']" [disabled]="!selectedContract"
+		*grPrivileges="'com.fincloud.privilege.contract.read'"
+		title="{{'credit.contracts.list.action.detail' | translate: {name: selectedContract?.title} }}" titlePosition="left"></gr-detail-button>	
+
+	数据格式如下时:
+
+		"credit.contracts.list.action.detail":"Detail -- {{name}}"
+
+21. grid 换成 table 
+
+	参考 initial-task-list.compoennt.html
+
+22. bootstrap css class	
+
+23. ng 的千位分隔符实现 查看现有的pipe
+
+23. gr-2x === font-size: 2em;
+
+24. 改写 alm 下拉菜单的请选择
+
+	alm用的好像是 下拉菜单 不是select
+
+	<select class="form-control" formControlName="productId">
+		<option value="null">请选择</option>
+		<option *ngFor="let product of products" [value]="product.id">{{product.name}}</option>
+	</select>
+
+25. 不要老是用 if else 写判断
+
+	if(a ==='1' || a==='2) {
+		return true;
+	}
+
+	另一种写法：
+
+	allowTriggerWithhold(termIndex: number): boolean {
+        const item = this.getRepaymentItem(termIndex);
+
+        if (!item) {
+            return false;
+        }
+
+        return [LoanRepaymentState.OVERDUE, LoanRepaymentState.CREATED].indexOf(item!.state.code) > -1;
+    }
+
+	即： return ["a", "b"].indexOf("a) > -1;	这样也可以判断
+
+26. ts 定义的格式
+
+	private map: {[termIndex: number]: RepaymentItem} = {};
+
+	意思是： key是number，value是 RepaymentItem
+
+	this.map = {
+		1: {.......},
+		2: {.......}
+	}
+
+27. 他们排序不是在数据库进行排序，而是在客户端
+
+	.map(list => {
+		list.items.sort((itemA, itemB) => itemA.termIndex - itemB.termIndex);
+		return list;
+	})
+
+28. asObservable 每次刷新的时候都不执行？ 为什么
+
+	erpayment-detail.component.ts
+
+29. 一个页面跳转到两一个页面（通过路由）
+
+	为什么使用subject传值，刷新的时候取不到呢
+
+1. /modules/api/constants 目录？
+
+    该目录下防止的是类文件， 配置的是的RequestParams接口的具体实现
+
+        有 uri, type, accept, method 等
+
+        export class ProteusApi {
+            static updateState = (state: TenantState, id: number): RequestParams => ({
+                uri: `${BASE}/platform/tenants/${id}/state`,
+                contentType: "application/vnd.fincloud.request.changeTenantState.v1+json",
+                body: state,
+                method: RequestMethod.Put
+            });
+
+            static class xxx = {
+
+            }
+        }
+
+        该类中放置的是static修改的子类， 这样的好处是，使用该类时，不需要再constructor构造函数内注入，直接import
+        就可以使用了, 
+
+        static修饰的成员，直接通过类名访问，无需实例化： ProteusApi.updateState()
+
+        使用：
+
+        getMaterials(state?: MaterialsProductsType): Observable<Material[]> {
+            return this.rest.queryRestApi(ProteusApi.updateState(state)).pipe(map(resp => resp.json() as Material[]));
+        }
+
+3.  @Component({
+        moduleId: module.id,                    // ?
+        selector: "home",
+        styleUrls: ["./home.component.scss"],
+        templateUrl: "home.component.html"
+    })
+
+#. 类型定义：
+
+	AccountType: { [key: string]: string } = {
+        RECEIVER_ACCOUNT: "RECEIVER_ACCOUNT",
+        PURCHASE_LOAN: "PURCHASE_LOAN",
+        CASH_LOAN: "CASH_LOAN"
+    };
+
+	定义对象类型应该像上面那样定义
+
+#. 	if 判断，没有用的判断
+
+	this.equalAmount = approvalAmount === principalAmount ? false : true;
+
+	改进：
+
+	approvalAmount === principalAmount 本身返回的就是boolean，所以不用再判断了
+	
+	this.equalAmount = approvalAmount === principalAmount;
+
+#. mt-3
+
+	什么意思，全局搜索没有搜到
+
+#. gr-prop-item-inline	
+
+	自定义指令
+
+	其中，@HostBinding("class.d-flex") readonly dFlex = true; 什么意思
+
+#. @Inject(APP_ROOT) public appRoot: string,
+
+	constructor(
+		private athena: AthenaService,
+		@Inject(APP_ROOT) public appRoot: string,
+		private gaiaService: GaiaService
+	) {}
+
+	为什么会打印出当前具体的path，原理是什么
+
+	applicant-info.component
+
+#. ngTemplateOutlet 的value是 <ng-template #identityImgTempltp>
+
+	看下怎么写的，什么意思
+
+#. 改写alm的nav 类型定义
+
+    tabs: Array<{ label: string; path: string }> = [];
+
+#. rxjs
+
+	customer-detail.component.ts
+
+	from(route.snapshot.routeConfig.children)
+	.pipe(
+		concatMap(one => {
+			if (one.data.feature) {
+				return featureService.getFeatureConfig(one.data.feature).pipe(map(spec => (spec.enable ? one : null)));
+			} else {
+				return of(one);
+			}
+		}),
+		filter(one => !!one),
+		map(one => ({ label: one.data["titleKey"], path: one.path })),
+		reduce((out, one) => out.concat(one), [])
+	)
+	.subscribe((tabs: Array<{ label: string; path: string }>) => (console.log(tabs), this.tabs = tabs));
+
+
+	1. from()
+
+	2. concatMap
+
+#. https://segmentfault.com/a/1190000009530554
+
+	TemplateRef   ViewContainerRef
+
+#. gitlab 中的pipeline 做什么用的
+
+	好像是可以查看编译结果是否成功？
+
+#. TODO
+
+	为什么不成功
+
+	shared-person-info.component.html
+
+	<ng-container *ngFor="let item of lists">
+	<ng-container *ngTemplateOutlet='personInfo; context: {$implicit: item}'></ng-container>
+	</ng-container>
+
+	<ng-template #personInfo let-data>
+	<dt>{{data.label}}</dt>
+	<ng-container [ngSwitch]="data.type">
+		<dd *ngSwitchCase="BOOLEAN">{{data.value ? '是' : '否'}}</dd>
+		<dd *ngSwitchCase='NUMBER'>{{data.value}}</dd>
+		<dd *ngSwitchCase='CURRENCY'>{{data.value}}</dd>
+		<dd *ngSwitchDefault>111</dd>
+	</ng-container>
+	</ng-template>
+
+	lists = [
+    {label: '电话', type: 'STRING', value: '15039217672'},
+    {label: '邮箱', type: 'STRING', value: '15039217672@163.com'},
+    {label: '住址', type: 'STRING', value: '河南省鹤壁市'},
+    {label: '单身', type: 'BOOLEAN', value: false},
+    {label: '年龄', type: 'NUMBER', value: 23},
+    {label: '收入', type: 'CURRENCY', value: '1000000'}
+  ]
+
+#. echarts
+
+	<div #credit class="w-100 stack-view" [class.active]="state === chartState.Credit"></div>
+
+	@ViewChild("credit") creditChart: ElementRef;
+
+	const chart = echarts.init(this.creditChart.nativeElement);
+	chart.setOption(option);
+
+#. i18n
+
+	HTML:  {{'credit.orders.detail.customer.creditHistory.order.overdue' | translate}}
+
+	TS:    
+
+		this.i18n
+            .get([
+                "credit.orders.detail.customer.creditHistory.order.xAxis",
+                "credit.orders.detail.customer.creditHistory.order.total",
+                "credit.orders.detail.customer.creditHistory.order.passed",
+                "credit.orders.detail.customer.creditHistory.order.rejected",
+                "credit.orders.detail.customer.creditHistory.order.overdue"
+            ])
+            .pipe(
+                map(locale => {
+                    console.log("locale---", locale);   
+					// {
+						"credit.orders.detail.customer.creditHistory.order.xAxis": "笔数"
+						key:value 的形式返回
+					}
+
+					locale["credit.orders.detail.customer.creditHistory.order.xAxis"]	// 笔数
+                })
+            )
+	 
+
+
+#. declare 关键词
+
+	https://segmentfault.com/q/1010000010214398
+
+#. TODO  紧急
+
+	shared-client-data.component.html
+
+	只有两个空格， 记得修改
