@@ -355,8 +355,114 @@
 
 	https://segmentfault.com/q/1010000010214398
 
-#. TODO  紧急
+#. git 命令
 
-	shared-client-data.component.html
+	https://segmentfault.com/a/1190000002479970
 
-	只有两个空格， 记得修改
+#. 最紧急
+
+	Bootstrap v4 css 学习
+
+#. ts 定义
+
+	Observable<Page<RepaymentUnpaid>>
+
+	export interface Page<T> {
+		content: T[];
+		totalElements: number;
+		size: number;
+		number: number;
+		totalPages: number;
+	}
+
+	export interface RepaymentUnpaid extends RepaymentQueryResult {
+		nextRepayAmount: number;
+		nextRepayDate: number;
+		nextTermIndex: number;
+	}
+
+#. http://momentjs.com/
+
+	应该是时间管理工具库？？？
+
+	js日期处理类库
+
+#. rxjs 
+
+	pluck
+
+	rhea.service.ts  queryEventList()
+
+#. 新的写法
+
+	xx.module.ts
+
+		export const PROVIDE_SERVICES: Provider[] = [
+			DemeterService,
+			MetisService,
+			PandoraService,
+			ApolloService
+		];
+
+		@NgModule({
+			imports: [
+				HttpModule
+			],
+			providers: [PROVIDE_SERVICES]
+		})
+		export class ApiModule {}
+
+	
+	总结：
+
+		可以直接在providers数组中写入服务，
+
+		也可以单独拎出来，注意，类型是： Provider[]
+
+#. https://www.cnrancher.com/		
+
+#. gitlab CI
+
+	.gitlab-ci.yml
+
+		是git项目的根目录下的一个文件，记录了一系列的阶段和执行规则。 gitlab-CI在push后会解析它，根据里面的内容调用
+
+		runner来运行。
+
+		Gitlab-CI不用安装，是gitlab自带的
+
+	https://blog.csdn.net/hxpjava1/article/details/78514999
+
+	https://blog.csdn.net/QQQQQQ654/article/details/78215099
+
+#. declare 关键字用在enum前面是什么意思
+
+	export declare enum ShortMessageStatus {
+		STATUS_NONE = "STATUS_NONE",
+		STATUS_COMPLETE = "STATUS_COMPLETE",
+		STATUS_PENDING = "STATUS_PENDING",
+		STATUS_FAILED = "STATUS_FAILED",
+	}
+
+#. form 表单横向
+
+	app.edit.customer.dialog.component
+
+#. 手风琴
+
+	自己先写一下，然后对照成版
+
+#. css
+
+	p-0 {
+		padding: 0!important;
+	}	
+
+	border-0 {
+		border: 0 !important;
+	}
+
+==================================
+#.	贷后抽检
+
+	路由参考  配置模块
