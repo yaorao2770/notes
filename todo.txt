@@ -158,14 +158,6 @@
 		return list;
 	})
 
-28. asObservable 每次刷新的时候都不执行？ 为什么
-
-	erpayment-detail.component.ts
-
-29. 一个页面跳转到两一个页面（通过路由）
-
-	为什么使用subject传值，刷新的时候取不到呢
-
 1. /modules/api/constants 目录？
 
     该目录下防止的是类文件， 配置的是的RequestParams接口的具体实现
@@ -222,10 +214,6 @@
 	approvalAmount === principalAmount 本身返回的就是boolean，所以不用再判断了
 	
 	this.equalAmount = approvalAmount === principalAmount;
-
-#. mt-3
-
-	什么意思，全局搜索没有搜到
 
 #. gr-prop-item-inline	
 
@@ -355,8 +343,3 @@
 
 	https://segmentfault.com/q/1010000010214398
 
-#. TODO  紧急
-
-	shared-client-data.component.html
-
-	只有两个空格， 记得修改
