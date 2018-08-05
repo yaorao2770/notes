@@ -338,15 +338,6 @@
             )
 	 
 
-
-#. declare 关键词
-
-	https://segmentfault.com/q/1010000010214398
-
-#. git 命令
-
-	https://segmentfault.com/a/1190000002479970
-
 #. ts 定义
 
 	Observable<Page<RepaymentUnpaid>>
@@ -376,32 +367,6 @@
 	pluck
 
 	rhea.service.ts  queryEventList()
-
-#. 新的写法
-
-	xx.module.ts
-
-		export const PROVIDE_SERVICES: Provider[] = [
-			DemeterService,
-			MetisService,
-			PandoraService,
-			ApolloService
-		];
-
-		@NgModule({
-			imports: [
-				HttpModule
-			],
-			providers: [PROVIDE_SERVICES]
-		})
-		export class ApiModule {}
-
-	
-	总结：
-
-		可以直接在providers数组中写入服务，
-
-		也可以单独拎出来，注意，类型是： Provider[]
 
 #. https://www.cnrancher.com/		
 

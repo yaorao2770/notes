@@ -3778,3 +3778,55 @@ declarations 数组只能注入 管道，组件和指令
 			
 
 	详细了解：  https://segmentfault.com/a/1190000009530554
+
+#. i18N
+
+	import { LOCAL_ID, Inject }	from '@angular/core';
+
+	constructor(
+		@Inject(LOCAL_ID) local: string;
+	) {
+
+		let nzLocal: any = null;
+
+		switch (local) {
+			case 'zh-CN':
+				nzLocal = zh_CN;
+				break;
+			case 'en-US':
+				nzLocal = en_US;
+				break;
+			default:
+				nzLocal = en_US;
+		}
+	}
+
+	其中， @Inject(LOCAL_ID) local: string; 这一句的意思是，
+
+	当前语言是通过 LOCAL_ID 获取的
+
+#. Provider[]
+
+	xx.module.ts
+
+		export const PROVIDE_SERVICES: Provider[] = [
+			DemeterService,
+			MetisService,
+			PandoraService,
+			ApolloService
+		];
+
+		@NgModule({
+			imports: [
+				HttpModule
+			],
+			providers: [PROVIDE_SERVICES]
+		})
+		export class ApiModule {}
+
+	
+	总结：
+
+		可以直接在providers数组中写入服务，
+
+		也可以单独拎出来，注意，类型是： Provider[]
