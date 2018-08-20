@@ -1,0 +1,310 @@
+#. .col
+	
+	不管什么尺寸的设备都会等分一行，即使屏幕只有100宽
+
+	<div class="row">
+       <div class="col">111</div>
+       <div class="col">111</div>
+       <div class="col">222</div>
+       <div class="col">222</div>
+    </div>
+
+#. .col-8   
+		
+	只要是 .col-xxx 开头的类，不管屏幕多小都会保持在一行上划分		
+
+	<div class="row">
+       <div class="col-8">111</div>
+       <div class="col-4">111</div>
+    </div>
+
+#.  .col-sm
+
+	只有屏幕： (min-width: 576px)时，才会使用col-sm类，这个时候该类的作用跟.col，
+
+	但是当屏幕小于576时，不会有任何样式，每个item就会单独成成一行
+
+	<div class="row">
+       <div class="col-sm">111</div>
+       <div class="col-sm">111</div>
+       <div class="col-sm">222</div>
+       <div class="col-sm">222</div>
+    </div>
+
+    屏幕大于576px时， 效果===.col类，平分一行
+	屏幕小于576px时，堆叠成四行
+
+#. .col-sm-8
+
+	<div class="row">
+       <div class="col-sm-8">111</div>
+       <div class="col-sm-4">111</div>
+    </div>
+
+    屏幕小于576px时，堆叠成两行
+
+#. col 和 w-100 配合使用
+
+	w-100可以起到换行的作用
+
+    <div class="row">
+       <div class="col">111</div>
+       <div class="col">111</div>
+       <div class="w-100"></div>
+       <div class="col">222</div>
+       <div class="col">222</div>
+    </div>
+
+#. flex
+
+	.align-items-start    
+	.align-items-center    
+	.align-items-end
+
+	.flex-row
+	.flex-row-reverse	
+	.flex-column
+	.flex-column-reverse	
+
+	.justify-content-start
+	.justify-content-end
+	.justify-content-center
+	.justify-content-between
+	.justify-content-around
+
+	.flex-nowrap
+	.flex-wrap
+	.flex-wrap-reverse
+
+	可以跟 .row 连着一起用，因为 .row中也有display:flex
+
+		.row {
+			display: flex;
+			flex-wrap: wrap;
+			margin-left: -15px;
+			margin-right: -15px;
+		}
+
+	   <div class="row test align-items-start">
+           <div class="col">1 of 3</div>
+           <div class="col">1 of 3</div>
+           <div class="col">1 of 3</div>
+       </div>
+
+#. mx-auto 水平居中
+
+	<div class='mx-auto' style='width: 100px'>111</div>
+	
+	x: 代表 x-left | x-right
+
+	margin-left: auto;       
+	margin-right: auto;   
+
+	ml-1 {
+		margin-left: ($spacer * .25);
+	}	
+
+#. ml-auto / mr-auto / mb-auto / mt-auto
+
+	<div class="d-flex">
+        <div class="p-2 mr-auto">1111111</div>
+        <div class="p-2">1111111</div>
+        <div class="p-2">1111111</div>
+    </div>
+
+    <div class="d-flex">
+        <div class="p-2">1111111</div>
+        <div class="p-2">1111111</div>
+        <div class="p-2 ml-auto">1111111</div>
+    </div>
+
+    <div class="d-flex flex-column" style="height: 200px">
+        <div class="p-2">1111111</div>
+        <div class="p-2">1111111</div>
+        <div class="p-2 mt-auto">1111111</div>
+    </div>
+
+    <div class="d-flex flex-column" style="height: 200px">
+        <div class="p-2  mb-auto">1111111</div>
+        <div class="p-2">1111111</div>
+        <div class="p-2">1111111</div>
+    </div>
+
+#. border
+
+	border-top			只有上边框
+
+	border-bottom
+
+	border-left
+
+	border-right
+
+	减法：
+
+		div.border.border-top-0		    上边框没有
+
+		div.border.border-bottom-0		下边框没有
+
+		div.border.border-left-0		左边框没有
+
+		div.border.border-right-0		右边框没有
+
+#. size
+
+	0: margin/padding setting 0
+
+	1: 0.25rem			4px
+
+	2: 0.5rem			8px
+
+	3: 1rem				16px
+
+	4: 1.5rem			24px
+
+	5: 3rem				48px
+
+		mb-1 {
+			margin-botton: 0.25rem;
+		}
+
+		mb-2 {
+			margin-botton: 0.5rem;
+		}
+
+		mb-3 {
+			margin-botton: 1rem;
+		}	
+
+#. 半径 border-radiu
+
+	.rounded { border-radius: 0.25rem; }	4px
+
+	.rounded-top { 
+	    border-top-left-radius: 0.25rem !important;
+	    border-top-right-radius: 0.25rem !important;
+	}
+
+	.rounded-right
+
+	.rounded-bottom
+
+	.rounded-left
+
+	.rounded-circle		圆
+
+	.rounded-0			没有圆角
+
+#. 颜色
+	
+	common:
+
+		xxx-primary
+		xxx-info
+		xxx-success
+		xxx-warning
+		xxx-secondary
+		xxx-light
+		xxx-danger
+		xxx-dark
+		xxx-muted		(仅限 text-muted)
+		xxx-white
+
+	背景颜色： .bg-xxx	
+
+	文本颜色： .text-xxx	
+
+		text-muted
+
+	边框颜色： .border-xxx	
+
+#. d-xxx 表示 display: xxxx
+
+	d-none	
+	d-inline	
+	d-flex	
+	d-block	
+	d-table	
+	d-table-cell
+	d-inline-block	
+	d-inline-flex
+
+	d-sm-none 表示在视图sm范围内不显示，小于sm时，显示	
+
+#. 实现 text-right 的效果
+
+	.justify-content-end
+
+	.flex-row-reverse
+
+		flex-direction: row-reverse
+
+#. float-left  float-right  float-none
+
+#.  .position-static		
+
+	.position-absolute
+
+	.position-relative
+
+	.position-fixed
+
+#. width
+
+	.w-25:	width: 25%;	
+
+	.w-50:	width: 50%;	
+
+	.w-75:	width: 75%;	
+
+	.w-100:	width: 100%;	
+
+#. height
+
+	.h-25:	height: 25%;	
+
+	.h-50:	height: 50%;	
+
+	.h-75:	height: 75%;	
+
+	.h-100:	height: 100%;
+
+#. mw-100  mh-100
+
+	max-width: 100%;
+
+	max-height: 100%;
+
+#. 文本
+
+	1） 大小写
+	
+		.text-lowercase
+
+		.text-uppercase
+
+		.text-capitalize
+
+		<p class="text-lowercase">APPLE</p>
+	    <p class="text-uppercase">apple</p>
+	    <p class="text-capitalize">apple</p>	
+
+	2） 省略号
+
+		.text-truncate
+
+		<div class="row">
+	        <div class="col-2 text-truncate">111111111111111111111111</div>
+	    </div>
+
+	    <span class="d-inline-block text-truncate" style="max-width: 100px;">111111111111111111111111</span>	    
+
+	3) 位置
+
+		.text-left	    
+
+		.text-center	    
+
+		.text-right	   
+
+	4) .text-nowrap		 

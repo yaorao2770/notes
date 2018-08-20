@@ -528,3 +528,44 @@ xix2034 18683354215
 	!!(null)    // false
 
 
+#. flex-grow 和 flex-shrink
+
+	是flex中两个重要的属性，
+
+	flex-grow: 0 | 1;
+
+	定义了item的width不能够把box填充满时，自动计算width填充满box
+
+	.box {
+		width: 1000px;
+	}
+
+	.item {
+		width: 200px;
+	}
+
+	div.box
+		div.item
+		div.item
+
+	这时，box还剩下600px没有填满，
+
+	.item {
+		width: 200px;
+		flex-grow: 1;	// 这时候虽然定义了item的width是200，但是实际是width:500px;
+	}
+
+	div.box
+		div.item
+		div.item
+		div.item
+		div.item
+		div.item
+		div.item
+
+	.item {
+		width: 200px;
+		flex-shrink: 1;	// 默认值，等比例缩小（=0，该item不缩小，）
+	}
+	
+
