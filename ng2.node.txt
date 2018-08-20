@@ -3778,3 +3778,17 @@ declarations 数组只能注入 管道，组件和指令
 			
 
 	详细了解：  https://segmentfault.com/a/1190000009530554
+
+#. 路由跳转
+
+	this.router
+		.navigate([], {	
+			relativeTo: this.route,
+			queryParams: {
+				query: JSON.stringify(formData),
+				page
+			}
+		})
+		.then();
+
+	总结： this.router.navigate([])	空数组表示，相对于当前路由，而且当前页面不会有明显刷新，只是queryParams发生了更新
