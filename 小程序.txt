@@ -568,4 +568,51 @@ xix2034 18683354215
 		flex-shrink: 1;	// 默认值，等比例缩小（=0，该item不缩小，）
 	}
 	
+#. Object.is()
+	
+	效果类似于 === 但是全等有一个缺点就是, NaN与自身不相等
 
+	Object.is({}, {})   	//  false
+	Object.is(NaN, NaN)   	//  true
+	Object.is(111, '111')   //  false
+
+	console.log(+0);    // 0
+    console.log(-0);    // -0
+    console.log(-0 === +0);     // true
+    console.log(Object.is(+0, -0));  // fasle
+	
+#. Object.assign(target, source)	
+
+	是浅拷贝，即拷贝的是对象的引用，改变source，target也会改变
+
+	Object.assign([1,2,3], [4,5]);	// [4, 5, 3]
+
+	把数组视为属性名为0, 1, 2的独享，因此原数组的0号属性4覆盖了目标数组的0号属性1
+
+	2. 可以简化原型方法
+
+		class Point {
+			constructor(x, y) {
+				// Object.assign(this, {x, y});
+			}
+		}
+
+		Object.assign(Point.prototype, {
+			run() { return "跑"; },
+			say() { return "说"; }
+		})
+
+		let p1 = new Point(12, 23);
+		console.log(p1);
+		console.log(p1.run());
+		console.log(p1.say());
+
+		总结: Object.assign就相当于下面一段代码
+
+			Point.prototype.run = function () {
+				return "跑";
+			};
+
+			Point.prototype.say = function () {
+				return "说";
+			};

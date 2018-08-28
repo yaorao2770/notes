@@ -1,0 +1,35 @@
+1. groupBy
+
+    根据指定条件对数据源进行分组, 并得到Observable group, 需要通过key来取相应分组，得到的分组可以再次被订阅
+
+    of (0, 1, 2, 4, 1000)
+        .pipe(
+            groupBy(item => {
+                return item % 2 === 0 ? "event" : "odd";
+            })
+        )
+        .subscribe(result => {
+            if (result.key === "odd") {
+                result.subscribe(last => console.log("odd--", last));
+            } else {
+                result.subscribe(last => console.log("event--", last));
+            }
+        });
+
+2. pluck
+
+    pluck能根据key值，提取Observable所产生的值（需要为一个对象）的value，我们能够传入多个key值，则会深层地获取value。
+
+    of ({name: "apple"})
+        .pipe(
+            pluck("name"),
+            tap(item => console.log(item))
+        )
+        .subscribe(result => {
+            console.log("pluck", result);  // apple
+        });
+
+    var clicks = Rx.Observable.fromEvent(document, 'click');
+    var tagNames = clicks.pluck('target', 'tagName');
+    tagNames.subscribe(x => console.log(x));
+    // 点击哪里，就输出哪的tagName --> 相当于输出$event.target.tagName        
