@@ -3679,6 +3679,10 @@ declarations 数组只能注入 管道，组件和指令
 
 	总结： 都需要用@ViewChild() 装饰器，并且在	ngAfterViewInit 钩子中实现具体逻辑
 
+	@ViewChild()  用在#号修饰的模板变量，不管是 父组件调用子组件的方法  还是ng-template  ng-container 元素上的模板变量，在类中获取时，
+
+	都要用该装饰器
+
 	4. ngTemplateOutlet 方便快捷的将template视图内容移到另一个位置
 
 		<p>第一个p</p>

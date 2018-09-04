@@ -401,6 +401,15 @@
 
 	自己先写一下，然后对照成版
 
-#.	贷后抽检
+#. mat dialog 里面也可以有input属性   ref.componentInstance
 
-	路由参考  配置模块
+	const ref = this.dialog.open(TrafficConfigDialogComponent, { width: "400px" });
+
+	const componentInstance = ref.componentInstance as {
+		trafficControlTypes: Array<EnumEx<TrafficControlType>>;
+		termTypeMap: { [code: string]: TermType };
+		trafficConfig: TrafficConfig;
+	};
+
+	componentInstance.trafficControlTypes = this.trafficControlTypes;
+	componentInstance.termTypeMap = this.termTypeMap;

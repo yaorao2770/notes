@@ -616,3 +616,9 @@ xix2034 18683354215
 			Point.prototype.say = function () {
 				return "说";
 			};
+
+#. 查看端口占用情况，及杀死进程
+
+	强制杀死进程:  taskkill /pid 2472 -t -f;
+
+	查看端口占用情况: netstat -nao | findstr "8080"
