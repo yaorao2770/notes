@@ -1336,6 +1336,10 @@ declarations 数组只能注入 管道，组件和指令
 
 			<button type="submit" (click)='save()' [disabled]='!myForm.valid'>注册</button>
 
+    	` 校验，必须是数字，并且大于0
+			repaymentAmountCtrl = new FormControl(null, [Validators.required, Validators.pattern(/^\d+/)]);
+		
+
 34. FormArray 是一个对象时
 
 	var address = {
