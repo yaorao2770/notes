@@ -125,4 +125,20 @@
 
 #. quota	额度
 
-	
+#. stdout 标准输出（设备）文件
+
+	standard output
+
+#. duplex	dju:pleks
+
+	有两部分的
+
+	stream 有四种流类型:
+
+		Readable	可读
+
+		writable	可写
+
+		duplex		可读可写
+
+		Transform	操作被写入数据，然后读出数据

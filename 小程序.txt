@@ -646,3 +646,284 @@ xix2034 18683354215
 				2 3
 				4 5
 				6 7
+
+#. reduce()			
+
+	arr.reduce(callback, initValue)
+
+	callBack(output, nextEl, idx, self)
+
+	前两个参数是必填字段
+
+	如: 
+		var arr2 = [15.5, 2.3, 1.1, 4.7];
+
+		arr2.reduce((output, nextEl) => output + Math.round(nextEl));	// 24.5 
+
+		arr2.reduce((output, nextEl) => output + Math.round(nextEl), 0);	// 25
+
+		如果没有初始值，则第一次loop的时候，output就是数组的第一个元素，
+
+#. 错误集锦
+
+	TypeError: this.validator is not a function
+
+	code:
+
+		var valueFromApi = [
+			{name: "apple", id: [12, 23, 34]},
+			{name: "join", id: [12]},
+			{name: "mike", id: [34]},
+			{name: "lily", id: [23, 34]}
+		];
+
+		fb.group(valueFromApi);
+
+		这个时候会报错，因为id是个数组，但是在initForm的时候，是不可能有form control的值时array的，
+
+		解决方法是:
+
+			fb.group({items: [[1, 2, 3, 4]]})
+
+		即，在数组外面再套一层数组
+
+		you have to wrap everything into an array, otherwise angular thinks that [1, 2, 3, 4] is a form control definition rather than a form control value
+
+#. 马甲包
+
+	马甲包和主产品包拥有同样的内容和功能，除了icon和应用名称不能完全一致，其他基本一致
+
+#. aync await
+
+	函数前面多了一个aync关键字。await关键字只能用在aync定义的函数内。
+
+	aync函数会隐式地返回一个promise，该promise的resolve值就是函数return的值
+
+	返回值是Promise
+
+	eg:
+	
+		const makeRequest = aync () => {
+			try {
+				const data = JSON.parse(await getJson);
+				console.log(data);
+			} catch (err) {
+				console.log(err);
+			}
+		}
+
+#. Generator 函数
+
+	Generator函数是一个状态机，封装了多个内部状态，
+
+	执行该函数，会返回一个遍历器对象，也就是说，Generator函数除了状态机，还是一个遍历器对象生成函数。
+
+	返回的遍历器对象，可疑一次遍历该函数内部的每一个状态。
+
+	` 特征：
+
+		function关键字与函数名之间有一个星号；
+
+		函数体内部使用 yield 表达式，定义不同的内部状态
+
+		function* testGenerator() {
+			yield "hello";
+			yield "world";
+			return "ending";
+		}
+
+		const result = testGenerator();
+		console.log(result);	// testGenerator{<suspended>}
+
+		const first = result.next();
+		const two = result.next();
+		const three = result.next();
+		const four = result.next();
+		
+		console.log("first", first);    // {value: "hello", end: false}
+		console.log("two", two);        // {value: "world", end: false}
+		console.log("three", three);    // {value: "ending", end: true}
+		console.log("four", four);      // {value: undefined, end: true}
+
+		解读：
+
+			上面代码定义了一个Generator函数，它内部有两个yield表达式（hello,world），即该函数有三个状态：hello,world和return语句。
+
+			Generator函数的调用访问与普通函数一样，但是，调用该函数后，该函数并不执行，返回的也不是函数运行结果，
+
+			而是一个纸箱内部状态的指针对象（也就是遍历器对象 Iterator Object）
+
+			下一步，必须调用遍历器对象的next方法,使得指针移向下一个状态,也就是说，每次调用next方法，内部指针就从函数头部或上一次停下来的地方开始执行，
+
+			直到遇到下一个yield表达式或return语句为止。换言之,Generator函数是分段执行的，yield表达式是暂停执行的标记,
+
+			而next方法可以恢复执行。
+
+	` yield 表达式
+
+		1. Generator函数可以不用yield表达式,这时就变成了一个单纯的暂缓执行函数
+
+				function* noYield() {
+					console.log("no yield");
+				}
+
+				setTimeout(() => {
+					noYield().next();
+				}, 100);
+
+		2. yield 表达式只能用在 Generator 函数内,用在其他地方都会报错
+
+			(function () {
+				yield 1;	// 语法错误
+			});
+
+			var arr = [1, [[2, 3], 4], [5, 6]];
+
+			var flat = function* (a) {
+				a.forEach(item => {	
+					if (typeof item !== 'number') {
+						yield* flat(item);
+					} else {
+						yield item;
+					}
+				});
+			};
+
+			for (var f of flat(arr)){
+				console.log(f);
+			}
+
+			报错, 因为forEach方法的参数是一个普通函数,但是在里面使用了yield表达式
+			解决方法就是, 改用for循环
+
+			var flat = function* (a) {
+				var length = a.length;
+				for (var i = 0; i < length; i++) {
+					var item = a[i];
+					if (typeof item !== 'number') {
+						yield* flat(item);
+					} else {
+						yield item;
+					}
+				}
+			};
+
+		3. yield 表达式如果用在另一个表达式之中, 必须放在圆括号内
+
+			function* demo() {
+				console.log("hello" + yield 12);
+				console.log("hello" + yield);
+			}
+
+			报错, 因为 yield在一个表达式中, 所以必须用圆括号包起来
+
+			注意, console.log("hello" + yield 12);  // undefined
+
+			因为, yield表达式本身没有返回值,或者说总是返回undefiend
+
+			function* demo() {
+				console.log("hello" + (yield 12));
+				console.log("hello" + (yield));
+			}
+
+		4. next() 方法的参数
+
+			next方法可以带一个参数,改参数就会被当做上一个yield表达式的返回值
+
+			function* input() {
+				const input = yield 23;
+				console.log(input);
+			}
+
+			const result = input();
+
+			input().next("传递一个参数");	// {value: 23, done: false}	传递一个参数
+
+			注意：
+
+				如果没有将函数调用赋值给一个变量,而是每次都直接调用 Generator 方法,最后的额输出结果是不一样的
+
+				1. 赋值给变量
+
+					const result = input();
+					console.log(result.next()); // 注意,第一次调用时,next方法都不用传递参数,即使传递也没用,可以理解为第一个next方法用来启动遍历器对象，所以不用带有参数。
+					console.log(result.next("传递一个参数"));
+
+				2. 不赋值给变量
+
+					console.log(result.next());
+					console.log(result.next("传递一个参数"));
+
+					input的值并不会输出为 "传递一个参数", 因为每次都调用 Generator 函数本身, 都相当于第一次调用,不管调用了多少次, 都只会输出第一次next的结果,指针并不会往下走
+
+		5. 向 Generator 内部输入值
+
+			function* demo(){
+				console.log(`start`);
+				console.log(`1. ${yield}`);
+				console.log(`2. ${yield}`);
+				return `ending`;
+			}
+
+			let result = demo();
+
+			console.log(result.next());		// start {value: undefined, end: false}
+			console.log(result.next('a'));	// 1. a  {value: undefined, end: false}
+			console.log(result.next('b'));	// 2. b  {value: 'ending', end: false} 
+			console.log(result.next());		// ending {value: undefined, end: false}
+
+		6. yield* 表达式
+
+			用来在一个 Generator 函数里面执行另一个 Generator 函数
+
+#. 面试题 关于Generator
+
+	考察知识点的熟悉，是不是有误区
+
+	let arr = [1, [[2, 3], 4], [5, 6]];
+
+	var flat = function* (arr) {
+		arr.forEach(item => {
+			if (typeof item === "number") {
+				yield* item;
+			} else {
+				yield item;
+			}
+		});
+	};
+
+	console.log(flat());
+
+	问, 输出结果是什么？
+
+	答, 语法错误,报错,因为forEach方法的参数是一个普通函数,但是在里面使用了 yield 表达式只能用在* 函数内部。
+
+	改进: 改用for循环
+
+		var flat = function* (arr) {
+			const len = arr.length;
+			for(var i=0; i<len; i++) {
+				var item = arr[i];
+				console.log("item", item);
+				if (typeof item !== "number") {
+					yield* flat(item);
+				} else {
+					yield item;
+				}
+			}
+		};
+
+
+#. 斐波那契数列
+
+	指的是这样一个数列: 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233，377……
+
+	这个数列从第三项开始, 每一项都等于前两项之和
+
+	递推公式: F(n) = F(n-1) + F(n-2)
+
+黄金比例:
+
+	0.618
+
+	又称黄金分割, 是指将整体一分为二,较大部分与整体部分的比值等于较小部分与较大部分的比值,其比值约为0.618

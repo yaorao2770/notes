@@ -8,6 +8,12 @@ where node 		得到安装路径
 
 去官网下载最新的zip压缩包，替换到之前的安装路径下的nodejs目录，整个替换
 
+自动刷新server文件, 而不用更改了每次都重启服务
+
+	npm install -g nodemon
+
+	使用: nodemon test.js
+
 
 如何让node代码跑起来：
 
@@ -81,3 +87,719 @@ where node 		得到安装路径
 	n stable
 
 	n v8
+
+#. 模块系统
+
+	为了让nodejs文件可以相互调用，nodejs提供了一个简单的模块系统。
+
+	模块是node应用程序的基本组成部分，文件和模块是一一对应的。换言之，一个node文件就是一个模块，
+
+	这个文件可能是js代码，json或者变异过的c/c++扩展。
+
+	main.js
+
+		var hello = require('./hello');		
+
+		hello.world();
+
+	hello.js
+
+		exports.world = function() {
+			console.log('hello world');
+		}
+
+	解析： 
+		1. require('./hello')	表示引入当前目录下的hello.js文件
+
+		2. reuqire 和 exports两个对象，其中exports是模块公开的接口，require用于从外部获取一个模块的接口，即所获取模块的exports对象
+
+		3. hello.js 中world是exports对象的成员函数
+
+#. exports 对象
+
+	1. exports.world = function() {...}
+
+		world是exports的成员函数
+
+	2. module.exports = Animal;
+
+		 function Animal() {
+			 var name;
+
+			 this.setName = function (newName) {
+				 name = newName;
+			 };
+
+			 this.sayHello = function() {
+				 console.log(`Hello ${name}`);
+			 }
+		 }
+
+		这种方式是， 将一个对象封装到模块中，reqire的时候直接获取到这个对象。
+
+		模块接口的唯一变化是使用 module.exports = Animal 代替了 exports.wrold = function() {...}， 在外部引用该模块时，其接口对象就是要输出的Animal对象本身，而不是原先的exports
+
+		` 第二种方式:
+
+			test.js
+
+				function Animal() {
+					var name;
+
+					this.setName = function (newName) {
+						name = newName;
+					};
+
+					this.sayHello = function() {
+						console.log(`Hello ${name}`);
+					}
+				}
+
+				exports.Animal = Animal;
+
+			output.js
+
+				var module = require('test').Animal;	// 注意后面有 .Animal
+				var animal = new module();
+				animal.run(100);
+				animal.getMeters();
+
+		` 第三种方式：
+
+			test.js
+
+				var meter;
+
+					exports.run = function(value) {
+						meter = value;
+					};
+
+					exports.getMeters = function () {
+						console.log(`Run ${meter}`);
+					};
+
+			output.js
+
+				var module = require('test');
+				module.run(100);
+				module.getMeters();
+
+#. 四类模块
+
+	node中存在4类模块（原生模块和3种文件模块）
+
+	优先级： 文件模块缓存 -> 原生模块 > 文件模块
+
+		reuqire("http")
+
+		尽管目录下存在 http/http.js  http.node  http.json, 但是这个语句都不会从这些文件中加载，而是从原生模块中加载
+
+		尽管原生模块与文件模块的优先级不同，但是都会优先从文件模块的缓存中加载已经存在的模块
+
+	缓存区： 原生模块也有一个缓存区，不管是什么类型的模块，都是优先从缓存区加载文件，如果缓存区没有被加载过，则调用原生模块的加载方式进行加载和执行
+
+#. x.node
+
+	LOAD_AS_FILE(X)
+
+	如果X.node 是一个文件，将X.node作为二进制插件载入并停止执行
+
+
+#. 原生模块
+
+	http
+	fs
+	os			提供了基本的系统操作函数
+	net			用于底层的网络通信,提供了服务端和客户端的操作
+	dns			用于解析域名
+	domain		简化异步代码的异常处理,可以捕捉处理try catch无法捕获的
+	path 		提供了处理和转换文件路径的工具
+
+#. require不会重复加载模块，无论调用多少次require，获得的模块都是同一个
+
+	var hello1 = require('./hello');
+	var hello2 = require('./hello');
+
+	hello1.setName("join");
+	hello2.setName("mike");
+
+	hello1.getName();	// mike 因为hello1 和 hello2指向的是同一个实例
+
+#. 包
+
+	nodejs的包是一个目录，其中包含一个json格式的包说明文件 package.json，严格按照以下规则：
+
+		package.json 必须在包的顶层目录下	
+
+		二进制文件应该在 bin 目录下
+
+		js代码应该在 lib 目录下
+
+		文档应该在 doc 目录下
+
+		单元测试应该在 test 目录下
+
+	一个包中，如果package.json 或 package.json中的main字段不存在，会尝试寻找index.js或index.json或index.node作为包的接口
+
+	somePackage/index.js
+
+		exports.hello = function () {
+			console.log('somePackage/index.js');
+		};
+
+	getPackage.js (与somePackage同级)
+
+		var somePackage = require('./somePackage');		// 直接reuqire一个目录
+
+		console.log(somePackage);	// {hello: [Function]}
+		
+		somePackage.hello();	// somePackage/index.js
+
+	总结：
+
+		1. 使用这种方法，可以把文件夹封装魏一个模块，即所谓的包。
+
+		2. 包通常是一些模块的集合，在模块的基础上提供了更高层的抽象，相当于提供了一些固定接口的函数库，通过定制 package.json, 我们可以创建更复杂，更完善，更符合规范的包用于关于发布		
+
+		3. 关于 包 的模块接口文件
+
+			· 如果该包下有 package.json 文件，并且该文件下有 main 字段，name包的模块接口文件就是该字段的value值指向的文件
+
+			· 如果该包下有 package.json 文件，但是该文件中没有 main 字段，那么查看该包下是否有 index.js / index.node / index.json ，
+
+#. __filename
+
+	表示当前正在执行的脚本的文件名，它将输出文件所在位置的绝对路径
+
+	如果在模块中，返回的值是模块文件的路径。
+
+	console.log(__filename); 	// E:\code\mine\nodejs\test.js
+
+#. __dirname
+
+	表示当前执行脚本所在的目录
+
+	console.log(__dirname); 	// E:\code\mine\nodejs
+
+#. setTimeout(cb, ms);
+
+	setTimeout(() => {
+		console.log("setTimeout after 1s");
+	}, 1000);
+
+#. 同步方法，没有callback
+
+	readFile(file, callback)  读取文件内容
+
+	Error：
+
+		var fs = require("fs);
+		fs.readFileSync("form.txt", (err, data) => {
+			if (err) return console.error(err);
+			console.log('同步读取文件', data);
+		});
+
+		这是错误的，因为xxxSync 方法没有回调函数，这样是不会执行的
+
+	Correct:
+
+		var data = fs.readFileSync("form.txt");
+		console.log('同步读取文件', data.toString());
+
+		记得是 data.toString(), 如果不转化为string，读取出来的是Buffer文件
+
+		<Buffer e8 8f 9c e9.....>
+
+#. fs.open(filename, flags, [mode], callback)		
+
+	flags:
+
+		r：	只读模式打开
+		r+：读写模式打开
+		w:	以写入模式打开，如果文件不存在则创建
+
+	callback:
+
+		打开文件后回调函数， fd为一个整数，表示打开文件返回的文件描述符， window中又称文件句柄
+
+	eg:
+
+		var fs = require("fs");
+		console.log("准备打开文件");
+		fs.open("input.txt", "r+", (err, fd) => {
+			if (err) return console.error(err);
+			console.log("文件打开成功", fd);
+		});
+
+		flags: 'w' 表示，如果当前目录下没有input.txt文件，那么创建该文件
+
+		fs.open(__dirname+'\input.txt', 'r+', callback)
+
+		__dirname+'\input.txt'是绝对路径，等同于 'input.txt' 相对路径，
+
+#. fs.stat(path, callback)		
+
+	callback:
+
+		err, stat, 其中stat是fs.stat对象的实例，即，fs.stat(path)执行后，会将stat类的实例返回给其回调函数。
+		可以通过stats类中的提供方法判断文件的相关属性
+
+	eg:
+
+		fs.stat('input.txt', (err, stat) => {
+			conosle.log(stat.isFile());			// true
+			conosle.log(stat.isDirectory());	// false
+		});
+
+#. writeFile(file, data, callback)
+
+	data:	将要写入的数据
+
+	callback(err)	只包含错误信息
+
+	eg:
+
+		var fs = require("fs");
+
+		var data = fs.readFileSync('input.txt');
+		console.log('文件改写前的内容是', data);
+		
+		fs.writeFile('input.txt', '我是卖报的小行家', err => {
+			if (err) return console.error('文件写入失败', err);
+
+			fs.readFile('input.txt', (err, data) => {
+				if (err) return console.error("读取文件失败", err);
+				console.log("文件内容是", data.toString());
+			});
+		});
+
+		如果 input.txt 文件存在，则写入的内容会覆盖旧的文件内容，
+
+		文件不存在，则会新建该文件并写入内容
+
+#. fs.read()
+
+	通过文件描述符fd读取文件内容
+
+	比readFile更底层一些
+
+#. fs.write()	
+
+	通过文件描述符fd写入文件内容
+
+	比writeFile更底层一些
+
+#. fs.fstat()
+
+	获取文件状态信息, 同stats()相似, 但是, fstat需要fd文件描述符
+
+	内核（Kernel）利用文件描述符（file descriptior）来访问文件，文件描述符是非负整数。
+
+	打开现存文件或新建文件时, 内核会返回一个文件描述符, 读写文件也需要fd来指定带读写的文件
+
+#. Buffer 缓冲区
+
+	js语言本身只有字符串数据类型，没有二进制数据类型。
+
+	但在处理像TCP流或文件流时，必须使用到二进制数据。
+
+	因此在node中，定义了一个Buffer类，该类用来创建一个专门存放二进制数据的缓存区。
+
+	在node中，Buffer类是随Node内核一起发布的核心库。Buffer库为Node带来了一种存储原始数据的方法，可以让node处理二进制数据，
+
+	每当需要在node中处理I/O操作中移动的数据时，就有可能使用Buffer库。
+
+	原始数据存储在Buffer类的实例中。一个Buffer类似于一个整数数组，但它对应于V8堆内存之外的一块原始内存。
+
+	
+#. rmdir 和 readdir
+
+	删除目录: fs.rmdir(path, (err) => {...})
+
+	读取目录: fs.readdir(path, (err, files) => {...})
+
+			 files为目录下的文件数组列表
+
+			 读取当前目录的path应该写  ./
+
+	eg：
+
+		console.log("准备删除 /tmp/test 目录"));
+
+		fs.rmdir("../tmp/test", (err) => {
+			if (err) return console.log("rmdir--error", err);
+
+			console.log("准备读取 /tmp 目录"));
+
+			fs.readdir("../tmp", (err, files) => {
+				if (err) return console.log("readdir--error", err);
+
+				files.forEach(file => console.log(file));
+			});
+		});
+
+---------------
+
+		console.log("准备创建目录 uniqule");
+		fs.mkdir("../uniqule", (err) => {
+			if (err) return console.log("mkdir--error", err);
+			console.log("目录创建成功");
+
+			fs.writeFile("../uniqule/index.js", "我是通过writeFile新建的文件, 内容是apple", (err) => {
+				if (err) return console.log("writeFile---error", err);
+
+				console.log("writeFile--success");
+				console.log("准备读取 /uniqule 目录");
+
+				fs.readdir("../uniqule", (err, files) => {
+					if (err) return console.log("readdir--error", err);
+
+					console.log("uniqule目录下的文件有", files);
+				});
+
+				fs.readFile("../uniqule/index.js", (err, data) => {
+					if (err) return console.log("readFile---error", err);
+
+					console.log("uniqule/index.js的内容是", data.toString());
+				});
+			});
+		});
+
+---------------
+
+		console.log("准备读取 /tmp 目录下的文件");
+
+		var test = function (path) {
+			fs.readdir(path, (err, files) => {
+				if (err) return console.log("readdir---error", err);
+			
+				console.log(`${path}目录下的文件有`, files);
+			
+				files.forEach(file => {
+					fs.stat(`${path}/${file}`, (err, stats) => {
+						if (stats.isDirectory()) {
+							test(`${path}/${file}`);
+						}
+					});
+				});
+			});
+		};
+
+		test("../tmp");		
+
+#. ftruncate(fd, length, (err))  截取文件内容
+
+	fd: 通过fs.open()方法返回的文件描述符
+
+	length:  文件内容截取的长度
+
+	eg:
+
+		var buf = new Buffer.alloc(1024);
+
+		fs.open("input.txt", "r+", (err, fd) => {
+			if (err) return console.log("open--error", err);
+
+			console.log("文件打开成功");
+			console.log("准备截取10字节的文件内容");
+
+			fs.ftruncate(fd, 10, (err) => {
+				if (err) return console.log("ftruncate--error", err);
+
+				console.log("截取成功");
+				console.log("读取文件");
+
+				fs.readFile("input.txt", (err, data) => {
+					if (err) return console.log("readFile--err", err);
+
+					console.log("文件内容是", data.toString());
+				});
+
+				fs.close(fd, err => {
+					if (err) return console.log("close---error", err);
+
+					console.log("文件关闭成功");
+				});
+			});
+		});
+
+#. exists(path, exists)
+
+	是否存在文件或目录
+
+	eg：
+
+		console.log("准备删除文件");
+
+		fs.unlink("input.txt", err => {
+			if (err)  return console.log("unlink--error", err);
+
+			console.log("删除文件成功");
+
+			fs.exists("input.txt", isExists => {
+				console.log("是否还存在该文件", isExists);
+			});
+		});
+
+#. 需要fd的文件系统接口有
+
+	Buffer.alloc(size[, fill[, encoding]])   
+	返回一个指定大小的Buffer实例，如果没有设置fill， 则默认填满0
+
+	var buf = new Buffer.alloc(1024);	// 创建一个长度为1024,且用0填充的buffer实例
+
+	fs.open(filename, mode, (err, fd) => {
+
+		fs.read(fd, buf, 0, buf.length, 0, (err, bytes) => {})
+
+		fs.write(fd, buf, offset, length, position, cb)
+
+		fs.fstat(fd, (err, stats) => {})
+
+		fs.close(fd, err => {})
+	});
+
+#. URL
+
+	const url = require("url);
+
+	const myUrl = new URL("https:www.baidu.com:443/foo/name=join&age=12#bar");
+
+	console.log(myUrl.port);		// 空字符串(默认端口将自动转换为空字符串)
+
+	console.log(myUrl.pathname);	// foo/name=join&age=12
+
+	console.log(myUrl.origin);		// https:www.baidu.com:443  protocol + host
+
+	console.log(myUrl.host);		// www.baidu.com:443 包含端口号
+
+	console.log(myUrl.hostname);	// www.baidu.com 不包含端口号
+
+	console.log(myUrl.href);		// https:www.baidu.com:443/foo/name=join&age=12#bar
+
+		获取href属性的值就相当于调用 url.toString()
+
+		myUrl.href = "ws:baidu.com:2323"; 重新设置href值就相当于调用 new URL(value)
+
+#. GET / POST
+
+
+	可以在url中手动输入url组成,
+
+	const http = require("http");
+	const url = require("url");
+	const util = require("util");
+
+	http.createServer((req, res) => {
+		res.writeHead(200, {"Content-Type": "text/plain"});
+
+		const params = url.parse(req.url, true);
+		res.write(`port: ${params.port}`);
+		res.write("\n");
+		res.write(`host: ${params.host}`);
+		res.write("\n");
+		res.write(`href: ${params.href}`);
+		res.write("\n");
+		res.write(`query--name: ${params.query.name}`);
+		res.write("\n");
+		res.write(`query--url: ${params.query.url}`);
+		res.end();
+	}).listen(3000);
+
+	2. 在页面上输出整个url对象
+
+		http.createServer(function(req, res){
+			res.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'});
+			res.end(util.inspect(url.parse(req.url, true)));
+		}).listen(3000);
+
+
+#. util模块
+
+	cosnt util = require("util");
+
+	1. isBooleanObject 只有 new Boolean() 实例才返回true
+
+		util.types.isBooleanObject(true);
+		util.types.isBooleanObject(false);
+		util.types.isBooleanObject(1234);
+		util.types.isBooleanObject(new Boolean(true));		// true
+		util.types.isBooleanObject(new Boolean(false));		// true
+		util.types.isBooleanObject(Boolean(false));
+
+	2. isDate
+
+		util.types.isDate(new Date());		// true
+		util.types.isDate(Date.now());		
+
+	3. isGeneratorFunction  和 isGeneratorObject
+
+		util.types.isGeneratorFunction(function* test() {});	// true
+
+		function* bar() {
+			console.log(111);
+		}
+
+		const barFn = bar();
+
+		util.types.isGeneratorObject(barFn);	// true
+
+	4. isRegExp
+
+		这个比较特殊, 大部分的isXXXObject() 都需要是new xxx()才会返回true,但是这个方法不需要,以下两种方式都会返回true
+
+		util.types.isRegExp(/123/);
+		util.types.isRegExp(new RegExp('abc'));
+
+#. querystring模块
+
+	总共有四个API
+
+	querystring.parse()  反序列化
+	querystring.stringify()  序列化
+	querystring.escape()  编码
+	querystring.unescape()  解码
+
+	eg: 
+
+		parse之前: name=join&url=baidu.com
+
+        body = querystring.parse(body);
+
+		parse之后: {name: join, url: baidu.com}
+
+#. 201 Created
+
+	状态码
+
+#. http模块
+
+	http.createServer( (req, res) => {});
+
+	requst: 是http.IncomingMessage的一个实例, 一个http request对象是可读流
+
+	response: 是http.ServerResponse的一个实例, http server对象是可写流
+
+	res.writeHead(200, {
+		"Content-Length": body.length
+	});
+
+	Content-Length是以字节（byte）计算,而不是以字符（character）计算
+
+	1. 
+		res.write(data.toString());
+		res.end();
+
+		等同于
+
+		res.end(data);
+
+	2. POST
+
+		消息体: 用户输入的body
+
+		http.ServerRequest并没有一个属性内容为请求体,原因是等待请求体传输可能是一件耗时的工作,
+
+		比如上传文件,而很多时候我们可能并不需要理会请求体的内容,恶意的POST请求会大大消耗服务器的资源,所以node
+
+		默认是不会解析请求体的,当你需要的时候,需要手动来做。
+
+		const http = require("http");
+		const querystring = require("querystring");
+
+		var postHTML = 
+			'<html><head><meta charset="utf-8"><title>菜鸟教程 Node.js 实例</title></head>' +
+			'<body>' +
+			'<form method="post">' +
+			'网站名： <input name="name"><br>' +
+			'网站 URL： <input name="url"><br>' +
+			'<input type="submit">' +
+			'</form>' +
+			'</body></html>';
+
+		http.createServer((req, res) = {
+			let body = [];
+			let body = '';
+
+			req.on("data", (chunk) => {
+				body.push(chunk);		// 1. body 是数组
+				body += chunk;			// 2. body 是字符串
+			});
+
+			req.on("end", () => {
+				body = querystring.parse(Buffer.concat(body).toString());
+				body = querystring.parse(body);
+
+				res.writeHead(200, {"Content-Type": "text/html; charset=utf-8"});
+
+				if (body.name && body.url) {
+					res.write(`username: ${body.name}`);
+					res.write("<br>");
+					res.write(`URL: ${body.url}`);
+				} else {
+					res.write(postHTML);
+				}
+
+				res.end();
+			});
+		}).listen(3000);
+
+	` body不是用户输入的，是读取文件, 从而输出到界面上
+
+		http.createServer((req, res) => {
+			let body = "";
+			req.on("data", (chunk) => {
+				body += chunk;
+			});
+
+			req.on("end", () => {
+				body = querystring.parse(data);
+				res.writeHead(201, {"Content-Type": "text/html; charset=utf-8"});
+
+				fs.readFile("../fsinput.txt", (err, data) => {
+					if (err) return console.log("readFile---error", err);
+					console.log("读取文件成功");
+					res.end(data);
+				});
+			});
+			
+		}).listen(3000);
+
+		console.log("服务器已启动");
+
+	3. response.write(value);
+
+		传输的数据必须是流或者字符串
+
+	4. http.Server对象和直接的 http.createServer是相等的
+
+		http.createServer((req, res) => {...});
+
+		相等于:
+
+		var server = new http.Server();
+		server.on("request", (req, res) => {...})
+
+		总结:
+
+			以上代码是通过直接创建一个http.Server对象,然后为其添加request事件监听,其实也就是说createServer方法其实本质上
+
+			也就是为http.Server对象添加了一个request事件监听
+
+#. http.IncomingMessage	
+
+	是HTTP请求的信息,一般是由http.Server的request事件发送,并作为第一个参数传递,包含三个事件:
+
+	1. data
+
+		当请求体数据到来时,该事件被触发,该事件提供一个参数chunk,表示接受的数据
+
+		如果该事件没有被监听,则请求体会被抛弃,该事件可能会被调用多次
+
+	2. end
+
+		当请求体数据传输完毕时,该事件会被触发,伺候不会再有数据
+
+	3. close
+
+		用户当前请求结束时,该事件被触发,不同于end,如果用户强制终止了传输,也是用close

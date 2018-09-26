@@ -413,3 +413,23 @@
 
 	componentInstance.trafficControlTypes = this.trafficControlTypes;
 	componentInstance.termTypeMap = this.termTypeMap;
+
+#. 自定义pipe
+
+	调用方法：
+
+	1. 在constructor中注入获取到实例
+
+		constructor(private termPipe: TermPipe) {
+			this.termPipe.transform(value);
+		}
+
+	2. 直接new TermPipe(), 不需要再constructor中实例化
+
+		term: TermPipe;
+
+		this.term = new TermPipe(i18n);
+
+
+
+		

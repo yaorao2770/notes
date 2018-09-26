@@ -3165,6 +3165,12 @@ declarations 数组只能注入 管道，组件和指令
 
 	const { query, age } = this.route.snapshot.queryParams
 
+#. 获取url本身路径中的参数
+
+	URL：http://localhost:4200/app/credit/main/institution/products/51/edit;merchant=89
+	const params = this.route.snapshot.paramMap;
+	const productId = +params.get("productId");	// 51
+
 #. get 关键字修饰的类
 
 	get canGoDetai(): boolean {
