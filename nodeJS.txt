@@ -214,6 +214,7 @@ where node 		得到安装路径
 	dns			用于解析域名
 	domain		简化异步代码的异常处理,可以捕捉处理try catch无法捕获的
 	path 		提供了处理和转换文件路径的工具
+	events		
 
 #. require不会重复加载模块，无论调用多少次require，获得的模块都是同一个
 
@@ -803,3 +804,53 @@ where node 		得到安装路径
 	3. close
 
 		用户当前请求结束时,该事件被触发,不同于end,如果用户强制终止了传输,也是用close
+
+#. path 模块
+
+	1. isAbsolute 判断是否是绝对路径
+
+		path.isAbsolute("E:\code\mine\nodejs\path.js");	// false linux和windows文件分隔符不同
+		path.isAbsolute("E:/code/mine/nodejs/path.js");	// true
+		path.isAbsolute("/path.js");					// true
+		path.isAbsolute("/url/");						// true
+
+	2. join	链接不同路径,主要是不同系统的文件分隔符不同,
+
+		path.join(__dirname, "nodejs", "url", "get.js");	// nodejs\url\get.js  linux下是\,win下是/
+
+	3. resolve 将路径转换为绝对路径
+
+		path.resolve("path.js");	// E:/code/mine/nodejs/path.js
+
+	4. relative(from, to)  转化为相对路径
+
+		path.relative("path.js", "url/get.js");	// ../url/get.js
+
+	5. dirname	获取路径中的目录名
+
+		path.dirname("url/get.js");	// url
+
+	6. basename 获取路径中的文件名,如果有第二个参数,说明输出的文件名中不包含后缀名
+
+		path.basename("url/get.js");		 // get.js
+		path.basename("url/get.js", ".js");	 // get
+
+	7. extname 	获取文件的后缀名
+
+		path.extname("url/get.js");	// .js
+
+	8. sep 属性, 返回当前系统的文件分隔符
+
+		path.sep	// win是/, linux是\
+
+#. events 模块
+
+	该模块只提供一个对象: events.EventEmitter
+
+	EventEmitter的核心就是事件触发与事件监听器功能的封装
+
+#. const { Service } = require("egg");
+
+	等同于
+
+	const server = require("egg).Server;

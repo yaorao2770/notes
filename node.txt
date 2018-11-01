@@ -992,7 +992,7 @@
 		ES5:
 
 			var Rectangle = function (id, x, y, width, height) {
-			    Shape.call(this, id, x, y);
+			  ssssdd  Shape.call(this, id, x, y);
 			    this.width  = width;
 			    this.height = height;
 			};
@@ -1206,7 +1206,7 @@
 
 		c. set.size
 
-			var set7 = new Set();
+			var set7 = new Set();		// 这里可以为空
 		    var aa = {name:'one'};
 		    var bb = {name:'two'};
 		    set7.add(aa).add(bb);	// 可以链式
@@ -1317,6 +1317,16 @@
 
 	变量提升问题，函数总是比变量先执行,所以在函数执行的时候，tmp是undefined
 
+	function fn1() {
+        console.log(aa);    // aa is not defined.
+        let aa = 123;
+
+		console.log(bb);	// undefined, var修饰的变量存在提升问题,统一提升为undefined
+		var bb = 123;
+    }
+
+    fn1();
+
 #. rest参数 和 spread
 
 	1. ES6引入了rest参数,形式为: ...变量名,其中rest参数搭配的变量是一个数组,可以使用数组的一切操作
@@ -1354,7 +1364,7 @@
 
 		解构：
 
-			es6允许按照一定模式，从数组和对象中提取值,对变量进行赋值,这杯称为解构(Destructuring)
+			es6允许按照一定模式，从数组和对象中提取值,对变量进行赋值,这被称为解构(Destructuring)
 
 			以前为变量赋值只能直接指定值：
 

@@ -141,6 +141,43 @@
 
 	假如你写了一个可被他人通过 @import 导入的sass库文件，你可能希望导入者可以定制修改sass库文件的某些值。使用!default标签可以实现这个目的，他很想css属性中！important标签的对立面。该标签含义是: 如果这个变量呗声明赋值了。那就用他声明的值，否则就用这个默认值。
 
+	common/_header.scss 文件:
+
+		$border-width: 5px !default;
+	
+	index.scss 文件: 
+
+		@import "common/header";
+
+		$border-width: 10px;
+
+		div {
+			border: $border-width solid red {
+				left: 0;
+				right: 0;
+			}
+		}
+
+		如果这个文件没有重新声明$border-width的值,那使用默认值5px
+
+	eg:
+
+		$content: "1111";
+		$content: "2222" !default;
+
+		#main {
+			content: $content;
+		}
+
+		====>
+
+		#main {
+			content: "1111"
+		}
+
+		这个时候没有优先顺序, 只要是!default之外又重新定义了该变量值,那么久使用该变量值
+
+
 7. 局部使用的sass文件
 
 	声明方式： _theme.scss
@@ -148,6 +185,127 @@
 	使用方式： 在需要的地方使用 @import "theme";
 
 	sass局部文件的文件名以下划线开头，这样在编译时就不会单独输出这个css文件，而只是把这个文件用作导入。 @import一个局部文件时，可以不写局部文件的_前缀和后缀名
+
+	导入多个sass文件
+
+	@import "common/header", "common/mixin"; 
+
+	可以如上,用逗号分隔,也可以:
+
+	@import "common/header";
+	@import "common/mixin";
+
+#. 注释
+
+	sass特有注释: 静默注释
+
+	$border: 1px solid red;  // 这是一个静默注释,不会解析到编译好的css文件中
+
+	$color: #fff !default;   /* 这是一个普通的css注释, 会解析到编译好的css文件中注释 */
+
+
+#. @mixin 混合器
+
+	混合器使用 @mixin 标识符定义,这个标识符给一大段样式赋予一个名字，这样你就可以轻易通过引用这个名字重用这段样式,
+
+	通过 @include 来使用这个混合器
+
+		1. 
+			@mixin rounded-corner {
+				-moz-border-radius: 5px;
+				-webkit-border-radius: 5px;
+				border-radius: 5px;
+			}
+
+			div {
+				border: 1px solid red;
+				@include rounded-corner;
+			}
+
+		2.
+			@mixin no-bullets {
+				list-style: none;
+				padding: 0;
+				li {
+					list-style-type: none;
+					list-style-image: none;
+					margin-left: 0;
+				}
+			}
+
+		3. 给混合器传参
+
+			@mixin link-colors($color, $hover, $visited) {
+				color: $color;
+				&:hover { color: $hover }
+				&:visited { color: $visited }
+			}
+
+			a.params {
+				@include link-colors(purple, #000, pink);
+			}	
+
+			当你@include混合器时,有时候会很难区分每个参数是什么意思,参数之间的顺序,sass允许通过语法
+
+			$name: value 的形式指定每个参数的值, 这种形式的传参,参数顺序就不必在乎了,只需要保证没有漏掉参数即可
+
+			@include link-colors (
+				$color: purple,
+				$hover: #000,
+				$visited: pink
+			);
+
+		4. 混合器的默认参数值
+
+			@mixin link-colors($color, $hover: $color, $visited: $color) {
+				color: $color;
+				&:hover { color: $hover }
+				&:visited { color: $visited }
+			}
+
+			a.params {
+				@include link-colors ($color: purple)
+			}
+
+			也就是说现在hover、visited、normal的颜色都是purple了
+
+		5. sass script
+
+			#mixin firefox-message($selector) {
+				body.firefox #{$selector} {
+					color: #fff;
+					border: 2px solid red;
+				}
+			}	
+
+			@include firefox-message(".box")
+
+			编译后:
+
+				body.firefox .box {
+					color: #fff;
+					border: 2px solid red;
+				}
+
+			总结:
+
+				#{$selector} 被替换成 传入的值
+
+		6. 插值语句  #{}
+
+			p {
+				$font-size: 12px;
+				$line-height: 30px;
+				font: #{$font-size}/#{$line-height};
+			}
+
+			====>
+
+			p {
+				font: 12px/30px;
+			}
+
+			这时候, / 不是表示的除法,即想用变量,又要确保/不是除法,就要使用插值表达式 #{}
 
 #. @extend  继承 
 	
@@ -161,12 +319,73 @@
 		color: red;	// 独立的样式
 	}
 
-	编译后：
+	<div class="two">我是卖报的小行家</div>
 
-	.one, .two {
-		width:100px;
-		height:100px;
+	使用完 @extend, div的class实际就是 <div class="one two"></div>
+
+	h1.one {
+		font-size: 10px;
 	}
-	.two{
+
+	同样会应用到 h1.two 上
+
+	.one span {
+		cursor: pointer;
+	}
+
+	同样会应用到 .two span 上
+
+#. !global
+
+	#container {
+		$width: 200px !global;
+		width: $width;
+		height: 200px;
+		background: red;
+	}
+
+	.small-box {
+		width: $width;
+		height: 200px;
+		background: pink;
+	}
+
+	一般来说, 在规则块内定义的变量在外面是取不到的, 但是使用了 !global 就可以拿到
+
+#. @for
+
+	格式: 
+		@for $val from 1 through 5	可使用数字1-5
+		@for $val from 1 to 5		可使用数字1-4
+
+	@for $size from 1 through 5 {
+		.gr-#{$size}x {
+			font-size: 1em + ($size - 1) * 1em;
+		}
+	}
+
+	使用方法:
+
+	<gr-svg-icon class="gr-2x"></gr-svg-icon>
+
+#. @each
+
+	格式:  @each $val in map-keys($map)
+
+	$colors: (
+		success: green,
+		info: purple,
+		danger: red
+	);
+
+	@each $name in map-keys($colors) {
+		.#{$name} {
+			color: map-get($colors, #{name})
+		}
+	}
+
+	<div class="success">success</div>
+    <div class="info">info</div>
+    <div class="danger">danger</div>
 
 		

@@ -3648,14 +3648,14 @@ declarations 数组只能注入 管道，组件和指令
 						context: {url: frontImgUrl, titleKey: 'credit.customers.detail.customer.identity.front'}"></ng-container>
 					
 
-#. ElmentRef、TemplateRef、ViewContainerRef、ngTemplateOutlet
+#. ElementRef、TemplateRef、ViewContainerRef、ngTemplateOutlet
 
-	1. ElmentRef 原生dom元素
+	1. ElementRef 原生dom元素
 
 		<span #tpl>我是一个span</span>
 
 		@ViewChild('tpl')
-		tpl: ElmentRef;
+		tpl: ElementRef;
 
 		ngAfterViewInit() {
 			console.log(this.tpl.nativeElement.textContent);
@@ -3857,3 +3857,126 @@ declarations 数组只能注入 管道，组件和指令
 		可以直接在providers数组中写入服务，
 
 		也可以单独拎出来，注意，类型是： Provider[]
+
+#. 使用blob和 URL.createObjectURL生成一个url
+
+	var blob = new Blob("保存为blob形式的数据");
+	
+	var url = new URL.createObjectURL(blob);
+
+	生成的这个url可以被img等标签使用
+
+	ng2中的应用: material-preview-content.component.ts
+
+	getOrderMaterialBlob(orderId: number, spec: { path: string }): Observable<Blob> {
+        return this.rest.queryRestApi(ApolloApi.getOrderMaterial(orderId, spec)).pipe(map(resp => resp.blob()));
+    }
+
+	static getOrderContract(orderId: number, spec: { path: string }): RequestParams {
+        return {
+            uri: `${BASE}/credit/${orderId}/material/download`,
+            responseType: ResponseContentType.Blob,
+            method: RequestMethod.Post,
+            body: spec
+        };
+    }
+
+	注意: Observable<Blob> 中的Blob就类似于Number, String, 不需要import引入
+
+	最后生成的url是: blob:http://localhost:4200/75c134f9-7647-47b4-a9d6-222068fa689a
+
+#. 组件间继承 extends
+
+	parent.component.ts
+
+		constructor(public sanitizer: DomSanitizer) {
+			this.goDetail(sanitizer, "parent");
+		}
+
+		ngOnInit() {
+		}
+
+		tap(value) {
+			console.log(value, 111);
+		}
+
+		goDetail(sanitizer, value) {
+			console.log('goDetail---', sanitizer);
+		}	
+
+	child.component.ts
+
+		ChildComponent extends ParentComponent implements OnInit {
+			constructor(public sanitizer: DomSanitizer) {
+				super(sanitizer);
+			}
+
+			ngOnit {
+				this.tap("child");
+				this.goDetail("child");
+			}
+		}
+
+	child.component.html
+
+		<button (click)="tap('child')">点击</button>
+
+	
+	总结: 
+	
+		1. constructor中方法修饰符必须是public
+
+		2. 子类的constructor中必须写 super(x, x, x)
+
+		3. 子类可以使用基类中定义的所有方法
+
+#. 当前页面内锚点跳转
+
+	tapStep(idx: number, id: string): void {
+        this.currentStepIndex = idx;
+        const element = document.getElementById(id);
+        if (element) { element.scrollIntoView(); }
+    }
+
+#. ng generate library api 
+
+	https://github.com/angular/angular-cli/wiki/stories-create-library
+
+	1. 会在src同级目录生成一个 products/api
+
+	2. 需要修改的地方
+
+		ng build api --prod 后，会默认生成dist/api/*,
+
+		如果我们想生成.lib/api/*，需要修改tsconfig.json中的paths字段:
+
+			"paths": {
+				"api": [
+					".lib/api"
+				],
+				"api/*": [
+					".lib/api/*"
+				]
+			}
+
+		与此同时, products/api下的 ng-package.json 和 ng-package.prod.json 也需要修改:
+
+			{
+				"dest": "../../.lib/api",
+			}
+
+#. package.json
+
+	"scripts": {
+		"ng": "ng",
+		"api": "ng build api --prod",
+		"start": "npm run api && ng build --output-path ./dist-app --watch",
+		"build": "ng build",
+		"test": "ng test",
+		"lint": "ng lint",
+		"e2e": "ng e2e"
+	},
+
+	ng build --output-path ./dist-app --watch
+
+	会实时的将文件打包,即源码文件修改了什么,dist打出的包中也会跟着修改

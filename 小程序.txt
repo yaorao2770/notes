@@ -927,3 +927,50 @@ xix2034 18683354215
 	0.618
 
 	又称黄金分割, 是指将整体一分为二,较大部分与整体部分的比值等于较小部分与较大部分的比值,其比值约为0.618
+	
+
+#. base64
+
+	末尾有两个==就是base64编码过的
+
+#. 复制功能
+
+	1. To copy Text from Textbox 
+	copyInputMessage(inputElement){
+		inputElement.select();
+		document.execCommand('copy');
+		inputElement.setSelectionRange(0, 0);
+	}
+
+	2. To copy any Text 
+	copyText(val: string){
+	let selBox = document.createElement('textarea');
+		selBox.style.position = 'fixed';
+		selBox.style.left = '0';
+		selBox.style.top = '0';
+		selBox.style.opacity = '0';
+		selBox.value = val;
+		document.body.appendChild(selBox);
+		selBox.focus();
+		selBox.select();
+		document.execCommand('copy');
+		document.body.removeChild(selBox);
+	}
+
+	HTML:
+
+		<div>
+		<h2>Copy to Clipboard</h2>
+		<p>Example 1</p>
+		<input type="text" value="Enter text to be copied" #userinput>
+		<button (click)="copyInputMessage(userinput)" value="click to copy" >Copy from Textbox</button>
+		</div>
+		<br/>
+		<p>Example 2</p>
+		<div>
+		<button (click)="copyText('Copying any text passed here')" value="click to copy" >Copy any Text</button>
+		</div>
+
+	总结:
+
+		input标签如果是disabled的，这时候复制不了任何内容，即复制的是空的，但是readOnly属性是可以复制成功的！		
