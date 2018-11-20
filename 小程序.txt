@@ -619,9 +619,9 @@ xix2034 18683354215
 
 #. 查看端口占用情况，及杀死进程
 
-	强制杀死进程:  taskkill /pid 2472 -t -f;
+	查看端口占用情况: netstat -nao | findstr "9229"
 
-	查看端口占用情况: netstat -nao | findstr "8080"
+	强制杀死进程:  taskkill /pid 1284 -t -f;
 
 #. ngFor 在每一行遍历出两个不同的值
 

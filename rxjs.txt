@@ -33,3 +33,148 @@
     var tagNames = clicks.pluck('target', 'tagName');
     tagNames.subscribe(x => console.log(x));
     // 点击哪里，就输出哪的tagName --> 相当于输出$event.target.tagName        
+
+#. distinct 去重
+
+    1. 过滤掉输入的相同的值
+
+        <input type="text" #test>
+
+        @ViewChild("test") ref: ElementRef;     // angular的写法
+
+        fromEvent(this.ref.nativeElement, "keypress")
+            .pipe(
+                map((event: KeyboardEvent) => event.key),
+                distinct()
+            )
+            .subscribe(val => console.log(val))
+
+        <input type="text" id="test">
+
+        const test = document.getElementById("test");
+
+        fromEvent(test, "clicl")....        // 普通写法
+
+    2. 
+
+        of(1, 2, 1, 3, 3, 4, 5, 6)
+            .distinct()
+            .subscribe(val => console.log(val)) // 1, 2, 3, 4, 5, 6
+
+    3.  distinct可以带参数
+
+        fromEvent(this.ref.nativeElement, "keypress")
+                .pipe(
+                    distinct((event: KeyboardEvent) => event.key),
+                    pluck("target", "value")
+                )
+                .subscribe(val => console.log("event", val));
+
+    4. 数组去重
+
+        const obj = [
+            {name: 'join', age: 12},
+            {name: 'apple', age: 23},
+            {name: 'join', age: 34}
+        ];
+
+        from(obj)
+            .pipe(
+                distinct(val => val.name)
+            )
+            .subscribe(val => console.log(val));     
+
+#. from                       
+
+    const obj = [
+        {name: 'join', age: 12},
+        {name: 'apple', age: 23},
+        {name: 'join', age: 34}
+    ];
+
+    from(obj)
+        .pipe(
+            tap(val => val)         // 遍历每一项 {name: 'join', age: 12}, {name: 'apple', age: 23}, {name: 'join', age: 34}
+        )
+        .subscribe(val => console.log(val))
+
+    of(obj)
+        .pipe(
+            tap(val => val)         // 不会遍历每一项,输出的还是原来的数组, 可以用 of(...obj)
+        )
+        .subscribe(val => console.log(val))
+
+    2. from发射出去的每一个值都是一个observable
+
+        const str = JSON.stringify([{id: 1}, {id: 1}, {id: 2}, {id: 1}]);
+
+        of(str)
+            .pipe(
+                map(val => JSON.parse(val)),
+                switchMap(val => from(val)),
+                distinct(val => val.id)
+            )
+            .subscribe()
+
+#. elementAt(3) 从0开始
+
+    of('A', 'B', 'B', 'A', 'B', 'A', 'D')
+        .pipe(
+            elementAt(3)    // 从下标0开始
+        )
+        .subscribe(val => console.log("elementAt---", val));
+
+#. first、last、skip、take、takeLast
+
+    1. skip(5) 跳过前5个值
+
+        of('A', 'B', 'B', 'A', 'B', 'A', 'D')
+            .pipe(
+                skip(5)
+            )
+            .subscribe(val => console.log(val));    // A D 
+
+    2. take(5) 取前5个值
+
+        of('A', 'B', 'C', 'D', 'E', 'F', 'G')
+            .pipe(
+                take(5)
+            )
+            .subscribe(val => console.log(Val)); // 'A', 'B', 'C', 'D', 'E'
+
+    3. takeLast(3) 从后向前数3个
+
+        of('A', 'B', 'C', 'D', 'E', 'F', 'G')
+            .pipe(
+                takeLast(2)
+            )
+            .subscribe(val => console.log(val));    // 'F', 'G'
+
+
+#. forkJoin
+
+    const obj1$ = Rx.Observable
+                    .interval(1000)        
+                    .map(val => `obj1: ${val}`)
+                    .take(3);
+
+    const obj2$ = Rx.Observable
+                    .interval(1000)        
+                    .map(val => `obj2: ${val}`)
+                    .take(2);
+
+    Rx.Observable
+        .forkJoin(obj1$, obj2$)
+        .subscribe(data => console.log("forkJoin", data));   // [obj1: 2, obj2: 1]             
+
+    Rx.Observable
+        .zip(obj1$, obj2$)
+        .subscribe(data => console.log("forkJoin", data));   // [obj1: 0, obj2: 0], [obj1: 1, obj2: 1]  
+
+    总结:
+
+        zip:  每个传入zip的流都发射完一次数据后,然后合并发射,然后再进行下一次的合并发射,直到其中一个流发出结束信号(即执行了complete方法),整个合并的流到此结束.
+        
+        forkJoin: 合并的流,会在每个子流都发出结束信号（即执行了complete方法）时发射一次也是唯一一次的数据
+
+                    可以理解为, 至发射每个子流的最后一个数据

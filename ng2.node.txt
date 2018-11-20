@@ -1339,6 +1339,8 @@ declarations 数组只能注入 管道，组件和指令
     	` 校验，必须是数字，并且大于0
 			repaymentAmountCtrl = new FormControl(null, [Validators.required, Validators.pattern(/^\d+/)]);
 		
+		` 为control设置validator
+			control.get("account").setValidators([Validators.required, LengthValidator.maxLenvalidator(20);
 
 34. FormArray 是一个对象时
 
@@ -3980,3 +3982,156 @@ declarations 数组只能注入 管道，组件和指令
 	ng build --output-path ./dist-app --watch
 
 	会实时的将文件打包,即源码文件修改了什么,dist打出的包中也会跟着修改
+
+#.  装饰器
+
+	1. 类装饰器
+	
+		@Component	@NgModule()	 @Pipe   @Injectable（一般用来装饰service）
+
+	2. 属性装饰器
+
+		@Input  @Output  @ContentChild  @ContentChildren  @ViewChild  @ViewChildren
+
+	3. 方法装饰器
+
+		@HostListener
+
+	4. 参数装饰器（只能用在构造函数中）
+
+		@Inject  @self  @skipSelf  @Host  @Optional
+
+#. HostListener装饰器
+
+	为宿主元素添加事件监听
+
+	一般用在指令上比较多，因为不知道该指令会用在哪个元素上，所以没有办法直接在这个元素上面添加事件,但是使用该装饰器就可以不用知道
+
+	宿主元素是谁，都可以为其添加事件
+
+	<p myHightLight>hahahahahha</p>
+
+	p就是宿主元素.
+
+	@HostListener('click')
+	onClick() {
+		...
+	}
+
+	@HostListener('click', ['$event'])
+	onClick(event: any) {
+		...
+	}
+
+	@HostListener("change", ["$event.target.files"])
+    onFileChange(files: FileList): void {
+        if (files.length > 0) {
+            this.isSafe = true;
+            const extensions = this.accept ? this.accept.split(",").reduce((out, ext) => ({ ...out, [ext]: true }), {}) : [];
+
+            if (this.accept) {
+                for (let idx = 0; idx < files.length; ++idx) {
+                    this.isSafe = this.isSafe && this.isValidFile(files.item(idx), extensions);
+                    this.validate.next(this.isSafe);
+                }
+            }
+        }
+    }
+
+#. Inject()装饰器
+
+	用来在类的构造函数中描述非Type类型的参数对象	
+
+	config.ts
+
+		import { InjectionToken } from "@angular/core";
+
+		export const CONFIG = new InjectionToken<number>("defaultPropertyGridOpts);
+
+
+	app.module.ts
+
+		// @InjectToken 需要在app.module中注入才能使用
+		providers: [
+			{ provide: CONFIG, useValue: 4 }
+		]
+
+	app.component.html
+
+		<h1 #greet>Hello world</h1>
+
+	app.component.ts
+
+		@ViewChild('greet')
+		private greetDiv: ElementRef;
+
+		// 这个指示器在这里可用可不用，也可以直接在h1标签上添加click方法
+		@HostListener('click', ['$event'])
+		onClick($event) {
+			console.log($event);
+		}
+
+		constructor(@Inject(CONFIG) private config: number) {
+			console.log(config);	// 4
+		}
+
+#. @Self()  @Host()		
+
+	parent.component.ts
+
+		@Component({
+			providers: [MessageService]		// 这里注入后,就不用在module中注入了
+		})
+
+		constructor(@Self() private messageService: MessageService) {
+			.....
+		}
+
+	parent.component.html
+
+		<app-child></app-child>
+
+	child.component.ts
+
+		@Component({
+			// 这里不用注入 MessageService 服务,如果该组件想用该服务，使用@Host装饰器去父组件获取这个服务
+		})
+
+		constructor(@Host() private messageService: MessageService) {
+			.....
+		}
+
+	总结:  基本上是父子组件这样使用 @Self  @Host 装饰器,还有一种情况是通过 <ng-content> 投影进来的组件也算当前组件的子组件
+
+#. @ContentChildren
+
+	parent.component.html
+
+		<ng-content></ng-content>
+
+	parent.component.ts
+
+		@ContentChildren(childComponent, {read: ElementRef}) // 这里得到的是dom元素
+		childs: QueryList<ElementRef>;		// 得到的是一个集合
+
+		constructor(private render: Renderer2) {}
+
+		ngAfterContentInit() {
+			this.childCmps.forEach(ref => this.addClass(ref));
+		}
+
+		private addClass(ref: ElementRef): void {
+			// 往宿主元素上添加 class, 即 <app-child class="red bg"></app-child>
+			this.render.addClass(ref.nativeElement, 'red');
+			this.render.addClass(ref.nativeElement, 'bg');
+		}
+
+	app.component.html
+
+		<app-parent>
+			<app-child></app-child>
+			<app-child></app-child>
+		</app-parent>
+
+	总结:  	@ContentChildren(childComponent) // 这里得到的是ts组件
+			childs: QueryList<childComponent>	// 注意QueryList的类型是不一样的

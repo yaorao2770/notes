@@ -430,6 +430,26 @@
 
 		this.term = new TermPipe(i18n);
 
+#. ...操作符的使用
+
+	patchForm(form: ProductBaseForm): void {
+        this.baseInfoForm.patchValue({
+            ...form,
+            ...{ type: form.type.code, allowedCustomerType: form.allowedCustomerType.code, state: form.state.code }
+        });
+    }
+
+	总结:  第二个 ...{ type:xxx, allowedCustomerType:xxx, state:xxx } 会覆盖第一个...form中相同的字段
+
+    getTypes(): void {
+        zip(this.getProductTypes$(), this.getProductAllowedCustomerTypes$(), this.getProductStates$()).subscribe(zipper => {
+            [this.productTypes, this.productAllowedCustomerTypes, this.productStates] = zipper;
+        });
+    }
+
+	总结:  [a, b, c] = zipper; 更简洁
+
+
 
 
 		

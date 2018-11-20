@@ -1,0 +1,161 @@
+
+#. 模块
+
+	import 取代 require
+
+	export 取代 module.exports（module.exports是CommonJs的写法，ES6的写法是export）
+
+#. 模块的整体加载：
+
+    除了制定加载某个输出值，还可以使用整体加载，即用星号（*）指定一个对象，所有输出值都加载在这个对象上面
+
+    circle.js
+
+        export function area(radius) {
+            return Math.PI * radius * radius;
+        }
+
+        export function circumference(radius) {
+            return 2 * Math.PI * radius;
+        }
+
+    main.js（第一种加载方式）
+
+        import { area, circumference } from "./circle";
+
+        conosle.log("圆面积", area(4));
+        conosle.log("圆周长", circumference(4));
+
+    main.js（第二种加载方式,即整体加载）
+
+        import * as circle from "./circle";
+
+        conosle.log("圆面积", circle.area(4));
+        conosle.log("圆周长", circle.circumference(4));
+
+#. export default输出的值,import时候不需要用{}括起来
+
+    使用import命令的时候，用户需要知道所要加载的变量名或函数名，否则无法加载.
+
+    但是用户肯定希望快速上手，未必愿意阅读文档，去了解模块有哪些属性和方法
+
+    为了给用户提供方便，让他们不用阅读文档就能加载模块，就要用到export default命令，为模块指定默认输出
+
+    test.ts
+
+        export default function () {
+            console.log("foo);
+        }
+
+    index.ts
+
+        import customValue from "./test"; // 这时import命令后面，不使用大括号。
+        customValue();
+
+#.  export function demo() {
+        console.log("HCQ2CYY");
+    };
+
+    import { demo } from "./main";  // import的时候有括号，说明不是export.default输出的值
+
+    import demo from "./main";     // import的时候没有大括号，肯定是export.default输出的值
+
+#. loadsh
+
+    import _ from "loadsh";     // 说明是export default模块
+
+#. 同时import默认值和其他值
+
+    import _, { area, test } from "./main";
+
+#. commonJS 
+
+    是服务器端模块的规范,Nodejs使用该规范。
+
+    commonJS定义,一个单独的文件就是一个模块。每一个模块都是一个单独的作用域,在该模块内部定义的变量,
+    无法被其他模块读取,除非定义为global对象属性。
+
+    通过 require 来加载模块
+
+    通过 exports 和 module.exports 来暴露模块中内容
+
+    这两个的区别是: 大部分下是相等的,
+
+    exports.foo = function () {return 111};
+    exports.bar = function () {return 222};
+
+    也可以写成:
+
+    module.exports.foo = function () {return 111};
+    module.exports.bar = function () {return 222};
+
+    但是如果我们要输出的是一个函数或数组,那么只能用module.exports赋值
+
+    export.modules = function () {return 333};
+
+    给 exports 赋值是无效的,因为赋值后, module.exports仍然是空对象{}
+
+
+    hello.js
+
+        var module = {
+            id: "hello",
+            exports: {}
+        };
+
+        var load = function (module) {
+            function greet(name) {
+                console.log("hello");
+            }
+
+            module.exports = greet;
+            return module.exports;
+        }
+
+#. ES6 的module
+
+    一个模块就是一个独立的文件。该文件内部的所有变量,外部无法获取。
+
+    export 命令用于规定模块的对外接口。
+
+    export default 命令一个模块只能有一个,默认导出,import的时候没有大括号
+
+    import 命令用于输入其他模块提供的功能
+
+#. testES6Export.js
+
+    //导出变量
+    export const a = '100';  
+
+    //导出方法
+    export const dogSay = function(){ 
+        console.log('wang wang');
+    }
+
+    //导出方法第二种
+    function catSay(){
+        console.log('miao miao'); 
+    }
+    export { catSay };
+
+    //export default导出
+    const m = 100;
+    export default m; 
+    //export defult const m = 100;// 这里不能写这种格式。
+
+#. index.js
+
+    import { dogSay, catSay }  from './testES6Export';
+
+    import m from './testES6Export';
+
+    或者: import m, { dogSay, catSay } from './testES6Export';
+
+    或者整体导出: import * as testModule from './testES6Export';
+
+                 testModule.dogSay();
+                 testModule.catSay();
+
+                 console.log(testModule.m); // undefined,因为as导出仅仅是把零散的export聚集在一起作为一个对象,不包括export default导出的变量
+
+                 conosle.log(testModule.default);   // 100, export.default的导出实际就是导出default变量的值

@@ -142,3 +142,9 @@
 	git ps 
 
 	暂存区： git add 后的文件，都加入了暂存区
+
+#. 修改完域密码后，每次git pull/push都要重新输入账号密码
+
+	git config --global credential.helper store
+
+	输完一次账号密码后，下次就不需要了
