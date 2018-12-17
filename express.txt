@@ -1,0 +1,153 @@
+#. express使用
+
+    npm i --save express
+
+    npm list express            查看当前安装的express版本
+
+
+    const express = require("express");
+    const app = express();
+
+    app.get("/", (req, res) =>{     
+
+        res.json(
+            { name: "apple", age： 12}          // res.json()返回给客户端json数据
+        );      
+
+        res.json("hello world");
+
+        res.send("hello world");                // res.send() 传送http响应
+    });
+
+    var server = app.listen(8081, () =>{
+        const host = server.address().address;
+        const port = server.address().port;
+        console.log(`应用监听在http://${host}${port}`);
+    });
+
+#. 另外需要安装的重要模块
+
+    npm i --save cookie-parser  body-parser  multer
+
+    body-parser: nodejs中间件,用于处理JSON,Raw,Text和URL编码的数据
+
+    cookie-parser: 这是一个解析Cookie的工具.通过req.cookies可以去到传过来的cookie,并把它们转成对象
+
+    multer:  nodejs中间件,用于处理 enctype="multipart/form-data"(设置表单的MIME编码)的表单数据
+
+#.  请求方法
+
+    app.get()
+    app.post()
+    app.put()
+    app.delete()
+    ....
+
+#. request
+
+    URL: http://localhost:8080/aa?name=apple 
+
+    req.query();    // { name: "apple" }
+
+#.  路由
+
+    格式: app.get(path)  注意这个path一定要带/，不然匹配不到
+
+    1. normal
+
+        app.get("/", (res, req) => {
+            res.send("主页请求");           // 注意这里是 send()而不是end(), end是node原生的发送http响应的方法
+        });
+
+        app.get("/personal", (res, req) => {
+            res.send("个人信息请求");
+        });
+
+    2. route path 有参数
+
+        1) localhost:8081/users/123/books/456
+
+            app.get("/users/:userId/books/:bookId", (req, res) => {
+                res.send(req.params);   {userId: 123, bookId: 456}
+            });
+
+        2) localhost:8081/flights/aaa-bbb
+
+            app.get("/flights/from-:to", (req, res) => {
+                res.send(req.params);   {from: "aaa", to: "bbb"}
+            });
+
+        2) localhost:8081/dot/shanghai.china
+
+            app.get("/dot/from.:to", (req, res) => {
+                res.send(req.params);   {from: "shanghai", to: "china"}
+            });
+
+    3. 正则匹配
+
+        1) /ab*cd
+
+            OK:      abbbbcd,  ab111cd,  abcd
+
+            Error:   ab111d, abcd1122
+
+            app.get("/ab*cd", (res, req) => {
+                res.send("正则匹配path");
+            });
+
+        2) /ab?cd（acd, abcd）
+
+        3) /ab+cd（abcd, abbbcd, abbbbcd）
+
+        4) /.*fly$/（butterfly, dragonfly, but not butterflyman）
+            
+            注意, 这里是正则, 不用引号
+            app.get(/.*fly$/, (req, res) => {
+                console.log('正则匹配二');
+                res.send("/.*fly$/");
+            });
+
+    4. 同一个path的不同请求
+
+        app.route("/books)
+            .get((req, res) => {
+                res.send("book GET");
+            })
+            .post((req, res) => {
+                res.send("book post");
+            })
+            .delete((req, res) => {
+                res.send("book delete");
+            })
+
+#. express.static()
+
+    内置的中间件来设置静态文件（图片、css、js等）
+
+    app.use(express.static("assets"))
+
+    怎么访问静态文件呢？
+
+        http:localhost:8081/kala.jpg
+
+#. Response.status()
+
+    1. status(): res.status(400).send("NOT FOUND");
+
+    2. send():
+
+        res.send({name: "狗狗之家"});   // 可以直接发送对象,效果等同于 res.json()
+        res.json({name: "狗狗之家"});
+
+        res.send(`<h1>我是标题，哈哈哈哈</h1>`);
+
+    3. download(path)  path必须是绝对路径
+
+        __dirname: E:\code\mine\nodejs\U-Pan  表示在浏览器访问的那个路径所在的绝对路径
+
+        app.get("/download", (req, res) => {
+            res.download(`${__dirname}/demo.txt`);
+        });
+
+
+

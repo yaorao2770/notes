@@ -609,6 +609,10 @@ where node 		得到安装路径
 
 	2. 在页面上输出整个url对象
 
+		如果response返回的数据是中文的话，要做编码设置，否则乱码
+
+		res.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'});
+
 		http.createServer(function(req, res){
 			res.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'});
 			res.end(util.inspect(url.parse(req.url, true)));
@@ -677,6 +681,8 @@ where node 		得到安装路径
 
 	http.createServer( (req, res) => {});
 
+	注意： 注意参数位置,第一个是 request, response
+
 	requst: 是http.IncomingMessage的一个实例, 一个http request对象是可读流
 
 	response: 是http.ServerResponse的一个实例, http server对象是可写流
@@ -687,13 +693,69 @@ where node 		得到安装路径
 
 	Content-Length是以字节（byte）计算,而不是以字符（character）计算
 
+	格式:
+
+		1. 
+			const http = require("http");
+			const server = http.createServer();
+			server.on("request", (req, res) => {
+				res.statusCode = 200;
+				const method = req.method;		// 请求方法 POST  GET  DELETE ...
+				res.end("I`m data");
+			}).listen(8080);
+
+		2. 
+			const http = require("http");
+			http.createServer((req, res) => {
+				res.statusCode = 200;
+				res.write("123");
+				console.log("url:", req.url);	// 如果是通过localhost:8080访问的话,就输出/,如果是http://localhost:8080/shanghai?location=china,输出/shanghai?location=china
+				res.end();
+			}).listen(8080);
+
+		3. createServer中的request参数
+
+			request.method   获取请求方法
+
+			request.headers  获取请求头
+
+			request.url  	 获取请求URL（queryString可以解析url中的query查询参数部分）
+
+			request.on("data", data => {...})  监听post的body数据传输
+
+			request.on("end", data => {...})  post的body数据传输结束
+
+		4. 	createServer中的response参数
+
+			response.write(string);
+
+			response.end(string);
+
+			response.statusCode = 200;
+
+			response.writeHead(200, {"Content-Type": "text/html; charset=utf-8"});
+
+		5.
+
+			const contentType = request.headers["content-type"];
+
+			if (contentType !== "application/json") {
+				res.statusCode = 400;
+				result = "error";
+				res.end("error");
+			}	
+
 	1. 
 		res.write(data.toString());
-		res.end();
+		res.end();		// 传送http响应
 
 		等同于
 
 		res.end(data);
+
+		不管是write还是end中传输数据,都必须是string类型的
+
+		write和end都是直接像浏览器界面输出了数据？？？？？怎么在client调用node的接口
 
 	2. POST
 
@@ -772,7 +834,22 @@ where node 		得到安装路径
 
 		传输的数据必须是流或者字符串
 
-	4. http.Server对象和直接的 http.createServer是相等的
+	4. API
+
+		http.createServer((req, res) =>{
+			const url = req.url;
+			let result;
+			if (reqUrl.search("personal-info") > -1) {
+				result = "personal-info request API";
+			} else if (reqUrl.search("material") > -1) {
+				result = "material API";
+			} else {
+				result = "nothing!";
+			}
+			res.end(result);
+		}).listen(8080);	
+
+	5. http.Server对象和直接的 http.createServer是相等的
 
 		http.createServer((req, res) => {...});
 
@@ -854,3 +931,35 @@ where node 		得到安装路径
 	等同于
 
 	const server = require("egg).Server;
+
+#. 常用端口
+
+	ssh			22
+	http		80
+	https		443
+	mongodb		27017
+
+#. Content-Type: application/octet-stream
+
+	以流的形式下载文件, 这样可以实现任意格式的文件下载
+
+	如果想指定文件名的话，配合 Content-Disposition 使用
+
+	Content-Type: application/octet-stream
+
+	Content-Disposition: attachment;filename=test.pdf
+
+#. Content-Disposition
+
+	当用户想把请求所得的内容存为一个文件的时候提供一个默认的文件名
+
+#. res.send(new Buffer("<p>p element</p>"));
+
+	当发送的是Buffer类型的数据时， Response header default is Content-Type: application/octet-stream
+
+	除非你自定义:
+
+	res.set("Content-Type", text/html");
+	res.send(new Buffer("<p>p element</p>"));
+
+

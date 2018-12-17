@@ -178,3 +178,33 @@
         forkJoin: 合并的流,会在每个子流都发出结束信号（即执行了complete方法）时发射一次也是唯一一次的数据
 
                     可以理解为, 至发射每个子流的最后一个数据
+
+#. zip的子流报错后, 不中断zip的剩余子流的执行
+
+    各个子流中使用catchError操作符
+
+    zip(a, b)
+        .pipe(finalize(() => this.loading = false))
+        .subscribe();
+
+    getContractBlob(contractId: number): Observable<string> {
+        return this.apollo
+                    .getOrderContractBlob(this.order.id, contractId)
+                    .pipe(
+                        map(blob => new Blob([blob], { type: "application/pdf" })),
+                        map(blob => {
+                            const contractUrl = URL.createObjectURL(blob);
+                            this.objectUrls.push(contractUrl);
+                            return contractUrl;
+                        }),
+                        catchError((err) => {
+                            return of(null);
+                        })
+                    );
+    }                    
+
+#. delay
+
+    关于时间的操作符
+
+    延迟 xxx 时间后再进行其他操作

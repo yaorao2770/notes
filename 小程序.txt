@@ -621,7 +621,7 @@ xix2034 18683354215
 
 	查看端口占用情况: netstat -nao | findstr "9229"
 
-	强制杀死进程:  taskkill /pid 1284 -t -f;
+	强制杀死进程:  taskkill /pid 9644 -t -f;
 
 #. ngFor 在每一行遍历出两个不同的值
 
@@ -651,18 +651,18 @@ xix2034 18683354215
 
 	arr.reduce(callback, initValue)
 
-	callBack(output, nextEl, idx, self)
+	callBack(prev, cur, idx, self)
 
 	前两个参数是必填字段
 
 	如: 
 		var arr2 = [15.5, 2.3, 1.1, 4.7];
 
-		arr2.reduce((output, nextEl) => output + Math.round(nextEl));	// 24.5 
+		arr2.reduce((prev, nextEl) => prev + Math.round(nextEl));	// 24.5 
 
-		arr2.reduce((output, nextEl) => output + Math.round(nextEl), 0);	// 25
+		arr2.reduce((prev, nextEl) => prev + Math.round(nextEl), 0);	// 25
 
-		如果没有初始值，则第一次loop的时候，output就是数组的第一个元素，
+		如果没有初始值，则第一次loop的时候，prev就是数组的第一个元素，
 
 #. 错误集锦
 

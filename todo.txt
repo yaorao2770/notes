@@ -449,7 +449,81 @@
 
 	总结:  [a, b, c] = zipper; 更简洁
 
+#. 	@Pipe({
+		name: "paymentState",
+		pure: false
+	})
 
+	如果该管道具有内部状态（也就是说,其结果会依赖内部状态，我不仅仅依赖参数），就要把pure设置为false。
+
+	这种情况下,该管道会在每个变更检测周期中都被调用一次  即使其参数没有发生任何变化
+
+	下面的例子就是依赖内部状态:
+
+		export class PaymentStatePipe implements PipeTransform {
+
+			private state: string;
+
+			constructor(private i18n: TranslateService) {}
+
+			transform(value: LoanPaymentState): string {
+				let key: string;
+
+				switch (value) {
+					case LoanPaymentState.CANCELLED:
+						key = "credit.loan.paymentState.CANCELLED";
+						break;
+					case LoanPaymentState.NOT_EXECUTED:
+						key = "credit.loan.paymentState.NOT_EXECUTED";
+						break;
+				}
+
+				this.i18n.get(key).subscribe(message => (this.state = message));
+
+				return this.state;
+			}
+		}
+
+
+#. 将 search form 中的字段存在url中,刷新后重新patch回form中
+
+		ngOnInit() {
+
+			this.initForm();
+
+			this.getPageParamsFromRoute();
+
+			if (this.querySpec) {
+				this.getListDatas(this.currentPage - 1, this.querySpec);
+				this.searchForm.patchValue(this.querySpec);
+			} else {
+				this.updateRouteAndGetData();	
+			}
+		}
+
+		getPageParamsFromRoute(): void {
+			const { query, page } = this.route.snapshot.queryParams;
+			this.querySpec = query ? (JSON.parse(query) as QueryParamsEx) : null;
+			this.currentPage = page > 0 ? +page : 1;
+		}
+
+		/**
+		*	这个接口也可用于 查询按钮 的方法
+		*/
+		updateRouteAndGetData(page: number = 0): void {
+			const formData = this.searchForm.value;
+			this.router
+				.navigate([], {
+					relativeTo: this.route,
+					queryParams: {
+						query: JSON.stringify(formData),
+						page
+					}
+				})
+				.then();
+
+			this.getListDatas(page, formData);
+		}
 
 
 		

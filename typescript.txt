@@ -1503,3 +1503,64 @@
 	使用：
 
 		handleError: handlerError;
+
+20. TS 转 JS		
+
+	class Person {
+		name: string;
+
+		constructor(age: number, sex: string) {
+			this.name = name;
+		}
+
+		say() {							// 这个方法属于原型方法
+			return 123;
+		}
+
+		demo = function (a, b) {		// 这个方法属于构造函数里面的方法
+			return 345;
+		}
+	}
+
+	JS ====> 
+
+	var Person = /** @class */ (function() {
+		function Person(name, age) {
+			this.name = name;
+	
+			this.demo = function (a, b) {
+				return 345;
+			}
+		}
+
+		Person.prototype.greet = function () {
+			return "Hello, " + this.greeting;
+		};
+
+		return Person;
+	}());
+
+	var person = new Greeter(12, "man");
+
+	person.demo(1, 2);
+
+#. 类型定义
+
+	1. 对象
+
+		const person = {
+			detail: [
+				{ name: 'apple', sex: 'man' },
+				{ name: 'apple', sex: 'man' },
+				{ name: 'apple', sex: 'man' }
+			],
+			language: [
+				{ name: 'chinese' },
+				{ name: 'english' },
+				{ name: 'fresh' }
+			]
+		};
+
+		person: {
+			[key: string]: Array<{ name: string; sex: string; }>
+		}

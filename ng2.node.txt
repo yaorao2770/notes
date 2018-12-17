@@ -4135,3 +4135,46 @@ declarations 数组只能注入 管道，组件和指令
 
 	总结:  	@ContentChildren(childComponent) // 这里得到的是ts组件
 			childs: QueryList<childComponent>	// 注意QueryList的类型是不一样的
+
+
+	3. ng-content内有不同的组件
+
+		<app-parent>
+			<app-child #child></app-child>
+			<app-about #about></app-about>
+			<app-home #home></app-home>
+		</app-parent>
+
+		ParentComponent:
+
+			@ContentChildren("child, about, home")	
+			private items: QueryList<any>;					// 可以获取到三个组件（缺点是必须有模板引用变量）
+
+			ngAfterContentInit() {
+				console.log('items', this.items);
+			}	
+
+	4. 获取ng-content内的嵌套组件
+
+		<app-shared-order-detail>
+			<app-row>
+				<app-item>
+					<app-parent></app-parent>
+				</app-item>
+				<app-item>
+					<app-about></app-about>
+				</app-item>
+			</app-row>
+			<app-item>
+				<app-applicant-info></app-applicant-info>
+			</app-item>
+			<app-item>
+				<app-app-name-child></app-app-name-child>
+			</app-item>
+		</app-shared-order-detail>		
+
+		SharedOrderDetailComponent:
+
+			@ContentChildren(ItemComponent, { descendants: true })		// 读取的是ts组件
+			@ContentChildren(ItemComponent, { descendants: true, read: ElementRef })  // 读取的是DOM模板
+			itemLists: QueryList<ItemComponent>;		// 这里获取app-item有几个
