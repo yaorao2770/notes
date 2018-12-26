@@ -1,4 +1,4 @@
-xix2034 18683354215
+﻿xix2034 18683354215
 
 
 #. 小程序适合哪些
@@ -621,7 +621,7 @@ xix2034 18683354215
 
 	查看端口占用情况: netstat -nao | findstr "9229"
 
-	强制杀死进程:  taskkill /pid 9644 -t -f;
+	强制杀死进程:  taskkill /pid 5844 -t -f;
 
 #. ngFor 在每一行遍历出两个不同的值
 
@@ -974,3 +974,177 @@ xix2034 18683354215
 	总结:
 
 		input标签如果是disabled的，这时候复制不了任何内容，即复制的是空的，但是readOnly属性是可以复制成功的！		
+
+#. map的新用法
+
+	const phones = [
+		{ label: 'mobile', value: '111111', duration: '22' },
+		{ label: 'mobile', value: '22222', duration: '33' },
+		{ label: 'mobile', value: '333333333', duration: '44' },
+		{ label: 'mobile', value: '4444444444', duration: '55' },
+		{ label: 'mobile', value: '555555555', duration: '66' }
+	];
+
+	普通用法:	
+	
+		1. 形参一般写为 el
+		
+			phones.map( el => console.log(el.label));
+
+		2. return 返回值问题
+
+			phones.map( el => {
+				return {
+					phone: el.value,
+					phoneLabel: el.label,
+					name: 'apple',
+					origin: 'hahaha'
+				};
+			});
+
+	新用法:		
+	
+		1. 形参写为 
+		
+			phones.map( ({ label, value }) => console.log(label));
+
+			PS: reduce的实参也有一个新写法
+
+				获取总共的通话时长
+
+				一般写法: phones.reduce( (prev, cur) => prev + +cur.duration, 0);
+
+				新写法:   phones.reduce( (prev, { duration }) => prev + +duration, 0);
+
+
+		2. return 返回值问题
+
+			phones.map( el =>
+				({
+					phone: el.value,
+					phoneLabel: el.label,
+					name: 'apple',
+					origin: 'hahaha'
+				})
+			});
+
+#. 获取数组元素
+
+	const arr = [
+        {
+            phone: 15039217672,
+            phoneLabel: "mobile",
+            name: "apple",
+            origin: "self"
+        }
+    ];
+
+	const [first] = arr;
+
+	// first就是数组元素，即对象
+
+	// 正常的写法是:  const first = arr[0];
+
+#. 处理数据结构
+
+	1. 怎么将二维数组变成一维数组
+
+		const result = [
+			[
+				{
+					"phone": null,
+					"phoneLabel": null,
+					"name": "gi"
+				}
+			],
+			[
+				{
+					"phone": "22225855",
+					"phoneLabel": "mobile",
+					"name": "wsx"
+				}
+			],
+			[
+				{
+					"phone": "22225855",
+					"phoneLabel": "mobile",
+					"name": "edc"
+				}
+			]
+		];
+
+		使用concat就可以
+
+		result.reduce( (prev, cur) => prev.concat(cur), []);
+
+	2. 怎么统计重复的电话号码
+
+		const arr = [
+			{
+				date: '2018-05-23T08:38:58',
+				duration: '0',
+				number: '13566589999',
+				name: 'hello\'m monil',
+				type: '去电'
+			},
+			{
+				date: '2018-05-23T08:38:53',
+				duration: '0',
+				number: '13912345678',
+				name: 'Ronnie  Ren Ronnie Ren',
+				type: '去电'
+			},
+			{
+				date: '2018-05-23T08:38:51',
+				duration: '0',
+				number: '13912345678',
+				name: 'Ronnie  Ren Ronnie Ren',
+				type: '去电'
+			}
+		];
+
+		我们期望的数据结构是下面这样,这样就可以把重复的电话放在一起
+
+			{
+				15039217672: [
+					{ name: "yang", type: "去电", number: 15039217672 },
+					{ name: "yang", type: "去电", number: 15039217672 },
+					{ name: "yang", type: "去电", number: 15039217672 }
+				],
+				13723276068: [
+					...
+				]
+			}
+
+		实现:
+
+			arr.reduce( (prev, cur) => {
+				const phoneNumber = cur.number;
+				if (!prev[phoneNumber]) {
+					prev[phoneNumber] = [cur];
+				} else {
+					prev[phoneNumber].push(cur);
+				}
+			}, {});
+
+
+	3. 怎么将一种数据结构变成另一种数据结构
+
+		const origin = [
+			{ name: "yang", phone: "15039217672", count: 2 },
+			{ name: "yang", phone: "13723276068", count: 2 },
+			{ name: "yang", phone: "15839270616", count: 2 }
+		];
+
+		const targetStructure = {
+			15039217672: { name: "yang", phone: "15039217672", count: 2 },
+			13723276068: { name: "yang", phone: "13723276068", count: 2 },
+			15839270616: { name: "yang", phone: "15839270616", count: 2 }
+		}
+
+		实现:
+
+			origin.reduce( (prev, cur) => Object.assign( prev, { [cur.phone]: cur }), {});
+
+
+

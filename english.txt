@@ -142,3 +142,9 @@
 		duplex		可读可写
 
 		Transform	操作被写入数据，然后读出数据
+
+#. named after...
+
+	以...命名
+
+	named after Dexter 

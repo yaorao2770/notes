@@ -12,7 +12,17 @@ where node 		得到安装路径
 
 	npm install -g nodemon
 
+	或 npm install -g supervisor
+
 	使用: nodemon test.js
+
+	supervisor myapp
+
+	总结: 为什么用node xxx之后，再次修改文件，必须重启才能看到最新结果
+
+	因为node加载过一次文件后就将其缓存在内存中,以后再读取这个文件直接从内存中读取,所有以后再修改文件node都不会加载了,这样的设计提高了性能,但降低了开发效率
+
+	nodejs 热部署工具
 
 
 如何让node代码跑起来：
@@ -961,5 +971,318 @@ where node 		得到安装路径
 
 	res.set("Content-Type", text/html");
 	res.send(new Buffer("<p>p element</p>"));
+
+#. Stream 模块
+
+	const readStream  = fs.createReadStream("./demo.txt");
+	const writeStream = fs.createWriteStream("./input.txt");
+
+	流是一个抽象接口，被node中的很多对象所实现。比如对一个HTTP服务器的请求是一个流，stdout也是一个流。
+
+	流是可读，可写或兼具两者的。
+
+	当内存中无法一次装下需要出来的数据时，或者一边读取一边处理更加高效时，我们就需要用到数据流。
+
+	流的传输过程默认是以 buffer 的形式传输的，除非你给他设置其他编码形式。
+
+	使用中的陷阱（node http处理大文件的方法）:
+
+		normal：
+
+			const rs  = fs.createReadStream("./demo.txt");
+			rs.on("data", chunk => {
+				res.write(chunk);
+			});
+			rs.on("end", chunk => {
+				res.end();
+			});
+
+		优化:
+
+			rs.pipe(res);
+
+			因为pipe方法每次写数据的时候，都会判断是否谢成功。如果写失败，会等待可写流触发 drain 事件,
+
+			表示可写流可以继续写数据了,然后pipe才回继续写数据.
+
+			也就是说，normal的写法中我们没有判断 res.write(chunk) 是否执行成功,就继续写，这样如果文件比较大，
+
+			而可写流的写速度比较慢的话，会导致大量的buff缓存在内存中,就会导致内存撑爆的情况。
+
+		总结：
+			
+			在使用流的过程中,一定要注意可读流和可写流和写之间的平衡,负责会导致内存泄漏
+
+			stream类的 pause() 和 resume() 两个方法, 这样的话我们也可以自己控制写的平衡
+
+		为什么会内存泄漏:
+
+			如果chunk被缓存以后，发现缓冲区超过预先设置的值，就会返回false。而且按照文档来说，write永远不会丢掉数据
+
+			只会不断的往缓冲区里写数据，无论缓冲区是否超过设定的值，所以才会造成内存的问题。
+
+		优化（不适用pipe方法）:
+
+			var http = require("http");
+			var fs = require("fs");
+			var filename = "file.iso";
+
+			var serv = http.createServer(function (req, res) {
+				var stat = fs.statSync(filename);
+				res.writeHeader(200, {"Content-Length": stat.size});
+				var fReadStream = fs.createReadStream(filename);
+				fReadStream.on('data', function (chunk) {
+					if(!res.write(chunk)){//判断写缓冲区是否写满(node的官方文档有对write方法返回值的说明)
+						fReadStream.pause();//如果写缓冲区不可用，暂停读取数据
+					}
+				});
+				fReadStream.on('end', function () {
+					res.end();
+				});
+				res.on("drain", function () {//写缓冲区可用，会触发"drain"事件
+					fReadStream.resume();//重新启动读取数据
+				});
+			});
+
+			serv.listen(8888);
+
+#. createReadStream
+
+	实例方法:	open  data  end  error close pause resume
+
+    设置编码有两种方式： 
+
+        1. fs.createReadStream(path, [options]) options是一个对象
+
+        2. rs.setEncoding("UTF8");        
+
+    const rs = fs.createReadStream("./demo.txt", { encoding: "utf8" });
+    let data = "";
+
+    rs.on("open", fd => {
+		console.log("文件已打开:", fd);
+	});
+
+	rs.on("data", chunk => {
+		data += chunk;
+		console.log("读取数据:", chunk);
+	});
+
+	rs.on("error", err => {
+		console.log("读取失败", err);
+	});
+
+	rs.on("end", () => {
+		console.log("数据读取结束", data);
+	});
+
+	rs.on("close", () => {
+		console.log("文件已关闭");
+	});
+
+	Another：
+
+		rs.pipe(process.stdout); 直接在终端（即cmd中打印出file信息）
+
+		或
+
+		rs.pipe(process.stdout);
+
+		rs.on("end", () => {
+			process.stdout.write("]");
+		});
+
+		process.stdout.write("文件读取成功，内容是[");
+
+#. fs.createWriteStream	
+
+	实例方法: finish  data  error  end  write drain
+
+	readStream.on("data", chunk => {
+		if (!ws.write(chunk)) {		// 当待处理队列大于 highWaterMark 时返回false
+			rs.pause();		// 暂停数据读取
+		}
+	})
+
+	ws.on("drain", () => {
+		console.log("可写流处理完了积压数据会触发drain方法");
+		readStream.resume();	// 恢复数据读取
+	});
+
+#. process.stdout 和 process.stdin	
+
+	1. 每进入一个逻辑（if-else）都会从头开始执行一遍代码，因为会不断监听 process.stdin.on("data")
+
+	2. process.stdout.write 和 console.log 有什么不同.
+
+		console.log = function (d) {
+			process.stdout.write(d + '\n');
+		};
+
+		简而言之，就是console.log每次打印后面都会自动换行,而 process.stdout 则不会换行
+
+	3. demo
+
+		process.stdout.write("请输入用户名：");
+		let username = "";
+
+		let users = {
+			"admin":"123",
+			"user1":"321",
+			"user2":"213"
+		};
+
+		process.stdin.on("data", input => {
+			input = input.toString().trim();
+			if (!username) {
+				if (Object.keys(users).indexOf(input) === -1) {
+					process.stdout.write("用户名不存在\n");
+					process.stdout.write("请输入用户名：");
+					username = "";
+				} else {
+					process.stdout.write("请输入密码:");
+					username = input;
+				}
+			} else {
+				if (input === users[username]) {
+					console.log("登录成功");
+				} else {
+					process.stdout.write("请输入密码:");
+				}
+			}
+		});
+
+#. __dirname 和 __filename 和 process.cwd() 的不同
+
+	__dirname, 返回所在js文件的目录, 绝对路径
+
+	__filename, 返回所在js文件的完整路径, 绝对路径
+
+	process.cwd(), 返回执行node命令时的目录
+
+	例子:
+
+		工程目录:
+
+			nodejs
+				u-Pan
+					upload
+						home.js
+					about.js
+					page.js
+
+		终端执行:  E:\code\mine\nodejs\U-Pan 下执行 node upload/home.js
+
+		home.js
+
+			console.log(__dirname);    	// E:\code\mine\nodejs\U-Pan\upload
+			console.log(__filename);  	// E:\code\mine\nodejs\U-Pan\upload\home.js
+			console.log(process.cwd()); // E:\code\mine\nodejs\U-Pan （就是终端执行的path）
+
+		about.js
+
+			console.log(__dirname);    	// E:\code\mine\nodejs\U-Pan
+			console.log(__filename);  	// E:\code\mine\nodejs\U-Pan\about.js
+			console.log(process.cwd()); // E:\code\mine\nodejs\U-Pan
+
+#. 压缩格式
+
+	打包和压缩的是两个概念
+
+		tar包, 就只是将多个文件打包成一个总文件，多个文件的文件大小并没有改变
+
+		所以也经常配合其他的压缩工具一起使用,即 .tar.gz （tar是打包工具,把很多文件打包成一个文件, gz是压缩格式）
+
+		rar，是打包及压缩
+
+	.tar
+
+	.rar
+
+	.zip
+
+	.gz		使用gzip压缩的文件
+
+#. 压缩文件
+
+	· 常见的 transform stream 包括 zlib, crypto(加密解密) 
+
+	· 压缩跟解压不限于文件操作，也可以是数据压缩，http请求的压缩
+
+	· 有两种常见的http压缩：deflate 和 gzip 
+
+	1. 文件的gzip压缩
+
+		const fs = require("fs");
+		const zlib = require("zlib");	// zlib模块提供了用gzip和Deflate、Inflate实现的压缩功能
+		const gzip = zlib.createGzip();
+
+		const rs = fs.createReadStream("demo.txt");
+		const ws = fs.createWriteStream("output.txt.gz");
+
+		rs.pipe(gzip).pipe(ws);
+
+		解压：
+
+			var fs = require('fs');
+			var zlib = require('zlib');
+
+			var gunzip = zlib.createGunzip();
+
+			var inFile = fs.createReadStream('./extra/fileForCompress.txt.gz');
+			var outFile = fs.createWriteStream('./extra/fileForCompress1.txt');
+
+			inFile.pipe(gunzip).pipe(outFile);
+
+
+	2. 返回给客户端的是gzip
+		
+		const zlib = require('zlib');
+		const http = require('http');
+		const fs = require('fs');
+
+		//client request example
+		const request = http.get( { host: 'example.com', 
+									path: '/',
+									port: 80,
+									headers: { 'Accept-Encoding': 'gzip,deflate' } } );
+		request.on('response', (response) => {
+			var output = fs.createWriteStream('example.html');
+			var contentEncoding = response.headers['content-encoding'];
+			console.log('response.headers[\'content-encoding\']: ' + contentEncoding);
+			switch(contentEncoding) {
+				case 'gzip':
+					response.pipe(zlib.createGunzip()).pipe(output);
+					break;
+				case 'deflate':
+					response.pipe(zlib.createInflate(zlib.createInflate())).pipe(output);
+					break;
+				default:
+					response.pipe(output);
+					break;
+			}
+		});
+
+		//server example
+		http.createServer((request, response) => {
+			var rawStream = fs.createReadStream('example.html');
+			var acceptEncoding = request.headers['accept-encoding'];
+			console.log('response.headers[\'accept-encoding\']: ' + acceptEncoding);
+			if(!acceptEncoding) {
+				acceptEncoding = '';
+			}
+			if(acceptEncoding.match(/\bgzip\b/)) {
+				response.writeHead(200, {'content-encoding': 'gzip'});
+				rawStream.pipe(zlib.createGzip()).pipe(response);
+			} else if(acceptEncoding.match(/\bdeflate\b/)) {
+				response.writeHead(200, {'content-encoding': 'deflate'});
+				rawStream.pipe(zlib.createDeflate).pipe(response);
+			} else {
+				response.writeHead(200, {});
+				rawStream.pipe(response);
+			}
+		}).listen(8080);		
+
+
 
 

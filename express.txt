@@ -1,3 +1,13 @@
+express demo:   https://www.cnblogs.com/aaron-pan/p/9765707.html
+
+建议先学Express。KOA是必须玩的，只是不急而已。
+
+为什么koa必须玩呢?
+
+因为这是潮流，es6标准啊，社区也活跃。另外还可以看一下这个：https://thinkjs.org/，有中文文档，更好学。
+
+
+
 #. express使用
 
     npm i --save express
@@ -17,6 +27,9 @@
         res.json("hello world");
 
         res.send("hello world");                // res.send() 传送http响应
+                                                // send方法会根据内容自动帮我们是设置 Content-type头部和200状态码
+                                                // res.status(400).send("i don`t have a cule!");
+                                                // res.set("Cotnent-Type", "text/html");
     });
 
     var server = app.listen(8081, () =>{
@@ -130,6 +143,12 @@
 
         http:localhost:8081/kala.jpg
 
+    总结： express.static(path) 这个path有两种写法
+
+        1. express.static(`${__dirname}/assets`);
+
+        2. express.static(path.join(__dirname, "assets"));
+
 #. Response.status()
 
     1. status(): res.status(400).send("NOT FOUND");
@@ -149,5 +168,138 @@
             res.download(`${__dirname}/demo.txt`);
         });
 
+#. 路由
 
+    app.js
 
+        const express = require("express");
+        const app = express();
+        const birds = require("./router/birds");
+
+        app.listen(8081);
+
+        app.use("/birds", birds);   // 匹配的路径有: /birds 和 /birds/new_birds
+
+        app.use("/", birds);        // 匹配的路径有: / 和 /new_birds
+
+    birds.js
+
+        const express = require("express");
+        const router = express.Router();
+
+        router.get("/", (req, res) => {
+            res.send("birds page");
+        });
+
+        router.post("/new_birds", (req, res) => {
+            res.send("new_birds page");
+        });
+
+        module.exports = router;
+
+        总结:
+
+            const router = express.Router();
+
+            router具有的方法跟app差不多，具体如下
+
+            1. router.all("*", requireAuthentication, loadUser);   等同于下面两行
+
+                router.all('*', requireAuthentication)
+                router.all('*', loadUser);
+
+            2. router.get()
+               router.post()    等
+
+            3. router.param()   对路由参数进行提前处理
+
+            
+
+#. app.all()
+
+    all() 相当于 get/post/delete等所有的http请求方法
+
+    app.all("/about", (req, res, next) => {
+        res.send("about page");
+        next();
+    });
+
+    不管是什么请求方法，都会执行
+
+    另一种用法:
+
+    app.all("*", (req, res, next) => {
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Headers", "X-Requested-With");  
+        res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");  
+        res.header("X-Powered-By",' 3.2.1')  
+        res.header("Content-Type", "application/json;charset=utf-8");
+
+        next();
+    });
+
+    为所有请求设置头部信息
+        
+#. router.param(name, callback)
+
+    const router = express.Router();
+
+    router.param("userId", (req, res, next, val) => {
+        if (+val === 666) {
+            next();
+        } else {
+            res.sendStatus(404);
+        }
+    });
+
+    router.get("/users/:userId", (req, res) => {
+        res.send("路由参数检验通过");
+    });
+
+    最后在地址栏内输入:  localhost:8081/user/666
+
+    总结:
+
+        router.param 会优于 router.get 执行
+
+#. app.param()        
+
+    app.param("id", (req, res, next, val) => {
+        if (+val === 666) {
+            next();
+        } else {
+            // next("something wrong.")
+            res.sendStatus(404);
+        }
+    });
+
+    app.get("/user/:id", (req, res) => {
+        res.send("参数通过检验");
+    });
+
+#. TODO-CY
+
+    app作为参数传到 router的函数里
+
+    module.exports = function(app){
+        var router = express.Router();
+        router.get('/aa', function (req, res, next) {
+            res.send('aaaaa');
+        });
+    }
+
+#. express 创建server的两种方式
+
+    1. const app = express();
+
+       http.createServer(app).listen(8081);
+
+    2. app.listen(8081);
+
+#. app.locals 和 res.locals
+
+    都可以用于渲染模板的两个对象
+
+    app.locals 上通常挂在常量信息（如博客名、描述、作者信息等）    
+
+    res.locals 上通常挂载变量信息,即每次请求的值可能不一样
