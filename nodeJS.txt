@@ -1283,6 +1283,78 @@ where node 		得到安装路径
 			}
 		}).listen(8080);		
 
+#. 在git.bash中查看环境变量
+
+	process 表示当前node进程
+
+	env
+		该命令可以将当前操作系统中所有的环境变量都列出
+
+	node文件中执行 console.log(process.env)	的得到的结果跟直接在终端输入 env 是一样的结果
+
+	1. window中的环境变量（cmd终端）
+
+		a. set	查询所有的环境变量
+
+		b. set HELLO=hello	设置环境变量
+
+			echo %HELLO%	查看环境变量
+
+	2. linux中的环境变量
+
+		#. 生命周期:
+
+			永久的: 需要修改配置文件, 变量永久生效
+
+			临时的:	使用export命令行声明即可,变量在关闭shell时失效
+
+		#. 设置变量的三种方法:
+
+			在etc/profile文件中增加变量，该变量将会对linux下所有用户有效，并且是"永久的"
+				cd ~
+				vi /etc/profile
+
+			 在用户目录下的.bash_profile文件中增加变量【对单一用户生效（永久的）】
+
+		a. set	查看所有的环境变量（所有本地定义的shell变量）
+
+			env 只查看用户级别的环境变量
+
+		b. 	export HELLO=hello 设置环境变量
+
+			echo $HELLO 		查看环境变量
+
+		c.	HELLO="HEIHEIHEI"	修改已存在的环境变量
+
+			echo $HELLO
+
+		d. 查看指定的环境变量是否生效（存在即生效）
+
+			env | grep HELLO
+
+			HELLO=HEIHEIHEI	（证明环境变量HELLO已存在）
+
+		e. 删除环境变量
+
+			unset HELLO
+
+			env | grep HELLO
+
+		f. 设置制度环境变量
+
+			export MY=yangyang
+
+			echo $MY
+
+			readonly MY
+
+			unset MY		// bash: unset: MY: cannot unset: readonly variable
+
+			MY=cy 			// bash: MY: readonly variable
+
+
+
+
 
 
 
