@@ -17,3 +17,7 @@ maven 安装以及环境变量配置
 
 
 3. 安装完mvn之后，不用安装 jetty， 在git项目运行的时候 mvn clean jetty:run 服务器就启动了
+
+4. mvn -v
+
+	mvn tomcat7:run
