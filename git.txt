@@ -148,3 +148,7 @@
 	git config --global credential.helper store
 
 	输完一次账号密码后，下次就不需要了
+
+#. 修改本地分支名
+
+	$ git branch -m test new

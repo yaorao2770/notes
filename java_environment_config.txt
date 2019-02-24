@@ -1,4 +1,4 @@
-java 环境配置
+﻿java 环境配置
 
 1. 查看java 版本
 
@@ -20,13 +20,13 @@ java 环境配置
 
 	b) 点击 Path ,编辑，在最后面添加  
 
-		;%MAVEN_HOME%\bin
+		;%MAVEN_HOME%\bin;%JAVA_HOME%\bin
 
 	c) 新建用户变量 （查看是否有class_path,无则新建）
 
 	 	CLASS_PATH
 
-	 	.;%JAVA_HOME%\lib;%JAVA_HOME%\lib\tools.jar
+	 	.;%JAVA_HOME%\lib;%JAVA_HOME%\lib\tools.jar （注意前面的点号和分号都是有的）
 
 	一系列保存。
 

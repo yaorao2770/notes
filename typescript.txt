@@ -88,7 +88,7 @@
 
 	 	   	interface DefineObject{
 				price:number; 		--- 描述的是对象属性，即下面test1的形参book是一个对象类型，且必须包含price
-				press?:string;		--- ? 表示可选属性，不是必须有的属性 book:{price:23} 和 															book:{price:23,press:'商务印书馆'}都是正确的
+				press?:string;		--- ? 表示可选属性，不是必须有的属性 book:{price:23} 和 book:{price:23,press:'商务印书馆'}都是正确的
 
 				run();
 			};
@@ -1564,3 +1564,132 @@
 		person: {
 			[key: string]: Array<{ name: string; sex: string; }>
 		}
+
+#. 应用场景
+
+	enum CellStatus {
+		SUCCESS = 1,
+		DISABLED,
+		WARNING,
+		DANGER,
+		INFO
+	}
+
+	component.ts:
+
+		readonly states = {
+			[CellStatus.SUCCESS]: {
+				message: "正常",
+				fontClass: "text-success",
+				icon: "success"
+			},
+			[CellStatus.DISABLED]: {
+				message: "冻结",
+				fontClass: "text-muted",
+				icon: "disabled"
+			},
+			[CellStatus.WARNING]: {
+				message: "警告",
+				fontClass: "text-warning",
+				icon: "warn"
+			},
+			[CellStatus.DANGER]: {
+				message: "危险",
+				fontClass: "text-danger",
+				icon: "danger"
+			},
+			[CellStatus.INFO]: {
+				message: "通知",
+				fontClass: "text-info",
+				icon: "info"
+			}
+		};
+
+		const cellTempl = {
+			status: null,
+			message: orderStatus.message
+		};
+
+		switch (orderStatus.code) {
+			case "CANCELLED":
+				cellTempl.status = CellStatus.DISABLED;
+				break;
+			case "NONE":
+				cellTempl.status = CellStatus.DISABLED;
+				break;
+			case "FAILURE":
+				cellTempl.status = CellStatus.DANGER;
+				break;
+			case "OVERDUE":
+				cellTempl.status = CellStatus.DANGER;
+				break;
+			case "COMPLETED":
+				cellTempl.status = CellStatus.SUCCESS;
+				break;
+			case "EARLY_PAID_OFF":
+				cellTempl.status = CellStatus.SUCCESS;
+				break;
+			default:
+				cellTempl.status = CellStatus.INFO;
+		}
+		console.log("cellTempl-----------", cellTempl);
+
+		this.templateValue =  this.states[cellTempl.status];
+
+	HTML:
+
+		<div class="{{templateValue.fontClass}} text-left"><gr-svg-icon [name]="templateValue.icon" class="mr-1" style="font-size: 1em"></gr-svg-icon>{{templateValue.message}}</div>
+
+#. T 泛型
+
+	export interface Page<T> {
+		content: T[];
+		totalElements: number;
+		size: number;
+		number: number;
+		totalPages: number；
+	}
+
+	这是所有API返回的结构，只是content的返回结构不一样,所以这里的T相当于一个占位符,具体使用该interface的时候
+
+	传进来的是什么结构，那么content就是什么结构
+
+	使用:
+
+	getTransactions(id: number, page: { page: number; size: number }): Observable<Page<RealAccountPayment>> {
+        return this.rest.queryRestApi(MetisApi.getTransactions(id, page)).pipe(map(resp => resp.json()));
+    }
+
+#. 对象怎么定义 typing 
+
+	interface TermType {
+		code: TermTypeCode, 
+		message: string
+	}
+
+	termTypeMap: { [code: string]: TermType };
+
+	this.termTypeMap = {
+		YEAR: { code: "YEAR", message: "年" },
+		DAY: { code: "DAY", message: "日" },
+		WEEK: { code: "WEEK", message: "周" },
+		MONTH: { code: "MONTH", message: "月" }
+	};
+
+#. typescript中的 索引签名（或 索引器）
+
+	可索引的类型:
+
+		能够 '通过索引得到的类型', 比如: a[10] 或 obj['name']。
+
+		可索引类型具有一个索引签名,它描述了对象索引的类型，还有响应的索引返回值类型。
+
+		interface StringArray {
+			[index: number]: string;		// 其实就是key: value
+		}
+
+		let arr: StringArray = ["apple", "join"];
+		console.log(arr[0]);
+
+
+

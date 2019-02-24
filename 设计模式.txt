@@ -1,0 +1,69 @@
+#. 适配器模式（转换插座）
+
+    该模式应该算是除了但单例模式意外最简单的一个模式，没有多余的类，这个模式只有一个职责，就是
+    转换你的接口参数、统一化接口调用函数、统一参数格式
+
+    和代理模式有什么不一样？
+
+    在实际开发中，使用到的一些第三方的API，但是不同第三方的API有可能功能相同，但是名字、参数都不统一，那么就可以用适配器模式来进行转化。
+
+    比如一个"评论模块"的API：
+
+    github提供的是: Github.comment()
+    豆瓣提供的是: douban.commentary()
+
+    在项目初期，定下了使用github的API，但是如果后期有需求变更，又要求使用 豆瓣 提供的API,那么我们就可以使用适配器给自己留一条后路
+
+    const _github = {
+        comment() {
+            Github.comment();
+        }
+    };   
+    const _douban = {
+        comment() {
+            douban.commentary();
+        }
+    }; 
+    const command = (comment) => {
+        comment.comment();
+    };
+    command(_github);   // 使用github的API
+
+    2. 适配器模式之数据格式转换
+
+        开发需要的格式:
+        [
+            {"year":12,"gender":"male","name":"sam"},
+            {"year":22,"gender":"female","name":"jimmy"}
+        ]
+
+        接口返回的格式:
+        {
+            sam: {
+                year: 12,
+                gender: "male"
+            },
+            jimmy:{
+                year:22,
+                gender:"female"
+            }
+        }
+
+        就可以用适配器转换一下:
+
+        var json = {
+            sam: {
+                year: 12,
+                gender: "male"
+            },
+            jimmy:{
+                year:22,
+                gender:"female"
+            }
+        };
+        const result = Object.keys(json).reduce( (prev, cur, idx) => {
+            json[cur]["name"] = cur;
+            prev[idx] = json[cur];
+            return prev;
+        }, []);
+        console.log(result);

@@ -14,6 +14,8 @@ express demo:   https://www.cnblogs.com/aaron-pan/p/9765707.html
 
     npm list express            查看当前安装的express版本
 
+    express -e                  生成完整的web结构, view=ejs 模板使用ejs语法
+
 
     const express = require("express");
     const app = express();
@@ -142,6 +144,8 @@ express demo:   https://www.cnblogs.com/aaron-pan/p/9765707.html
     怎么访问静态文件呢？
 
         http:localhost:8081/kala.jpg
+
+    app.use("/resource", express.static("assets"));     // 访问的url应该是: localhost:8081/resource/kala.jpg
 
     总结： express.static(path) 这个path有两种写法
 
@@ -303,3 +307,134 @@ express demo:   https://www.cnblogs.com/aaron-pan/p/9765707.html
     app.locals 上通常挂在常量信息（如博客名、描述、作者信息等）    
 
     res.locals 上通常挂载变量信息,即每次请求的值可能不一样
+
+#. 静态资源，如样式表应用到ejs模板
+
+    app.js
+
+        app.use("/resource", express.static(path.join(__dirname, "assets")));
+
+    views/index.ejs
+
+        <link rel="stylesheet" href="style.css">    // 这里的path不用再带 resource 前缀了
+
+        <img src="animal.jpg" width="200">
+
+#. ejs 模板引擎（pug也是模板引擎）
+
+    app.js
+
+        const indexRouter = require("./routers/index");
+        const usersRouter = require("./routers/users");
+
+        app.set("views",path.join(__dirname, "views"));     // 去哪里读取模板文件
+        app.set("views engine", "ejs");                     // 设置模板引擎
+
+        app.use("/", indexRouter);
+        app.use("/users", usersRouter);
+
+        app.listen(8081);
+
+    routers/index.js
+
+        const router = express.Router();
+        
+        router.get("/", (req, res) => {
+            res.locals = {
+                name: "hello world",
+                sex: "man"
+            };
+            res.render("index");    // render
+        });
+
+        module.exports = router;
+
+    views/index.ejs
+
+        <h1>ejs模板</h1>
+        <p>这是很简单一个小流程</p>
+        <p>姓名: <span><%= name%></span></p>
+        <p>性别: <span><%= sex%></span></p>
+        <p>内容: <span><%= content%></span></p>
+
+        <hr>
+        <h3>下面是include进来的页面</h3>
+        <% include test/aa.ejs %>
+
+        <hr>
+        <h3>image</h3>
+        <img src="animal.jpg" width="200">
+
+        <% if (name) { %>
+            <%= name%>
+        <% } %>
+
+    总结:
+
+        res.locals是一个对象，包含用于渲染视图需要用到的变量,如 res.locals.name=join, 对应视图文件中的 {{name}}
+
+        res.render(view, [locals, cb])
+
+            这里的view就是ejs模板文件,一般放在 /views 下面，这里可以直接写ejs文件名，而不用管具体path
+
+        也可以这样写:  res.render("index", {name: "join", sex: "man"});
+
+#. res.type(type)
+
+    setting response Content-Type
+
+    res.type("html");                   // text/html
+    res.type("json");                   // application/json
+    res.type("application/json");       // application/json
+    res.type("png");                    // image/png
+
+    应用场景:
+
+        express 给客户端默认响应的内容是 HTML,  虽然大多数没什么问题，但有时候可能需要返回的纯文本、json等格式,此时可以
+
+        通过res.type设置
+
+#. body-parser
+
+    是一个http请求体解析的中间件，使用这个模块可以解析JSON、row、文本、URL-encoded格式的请求体。
+
+    1. nodejs原生的body是一个流,需要自己拼接:
+
+        post请求的数据会被写入缓冲区中，需要通过request的data事件和end事件来进行数据拼接处理
+
+        const http = require("http");
+
+        http.createServer((req, res) => {
+            const method = req.method;
+            const header = req.headers["content-type"];
+            let body = "";
+            console.log("method----", method);
+            console.log("header----", header);
+
+            if (method.toLowerCase() === "post") {
+                req.on("data", (chunk) => {
+                    body += chunk;
+                });
+                req.on("end", () => {
+                    const json = header.indexOf("application/json");
+                    const formData = header.indexOf("form-data");
+                    const url = header.indexOf("x-www-form-urlencoded");
+                    res.end(body);
+                })
+            }
+        }).listen(8082);
+
+    2. 在express使用该中间件
+
+        const bodyParser = require("body-parser");
+
+        app.use(bodyParser.json());     // 只解析json的输入
+
+        app.post("/", (req, res) => {
+            const { name, age } = req.body; // 使用该中间件后，可以直接在req.body中获取client输入的数据
+            res.json(req.body);
+        });
+
+
+
+

@@ -1,0 +1,385 @@
+#. reduce()			
+
+	arr.reduce(callback, initValue)
+
+	callBack(prev, cur, idx, self)
+
+	前两个参数是必填字段
+
+	如: 
+		var arr2 = [15.5, 2.3, 1.1, 4.7];
+
+		arr2.reduce((prev, nextEl) => prev + Math.round(nextEl));	// 24.5 
+
+		arr2.reduce((prev, nextEl) => prev + Math.round(nextEl), 0);	// 25
+
+		如果没有初始值，则第一次loop的时候，prev就是数组的第一个元素，
+
+#. 最基本的数字累加功能
+
+    const items = [10, 120, 1000];
+
+    const result = items.reduce( (prev, cur) => (prev + cur));
+
+    变形: 要求最后输出结果是 { sum: 1130 } 而不是单纯的 1130
+
+        const result = items.reduce( (prev, cur) => {
+            prev.sum = prev.sum + cur;
+            return prev;
+        }, { sum: 0 });
+
+    总结: reduce函数的返回结果类型和传入的初始值相同。变形后的result可以看出，最后的输出结果就是 {sum: 1130}
+
+#. 多维叠加（方法二、三不是很懂！！！）
+
+    const items = [1, 2, 3, 4];
+
+    要求最后得到这样的数据结构: { sum: 10, multiple: 24 }
+
+    方法一:     
+
+        const result = items.reduce( (prev, cur) => {
+            prev.sum = prev.sum + cur;
+            prev.multiple = prev.multiple * cur;
+            return prev;
+        }, { sum: 0, multiple: items[0] });
+
+    方法二:
+
+        const reducer = {
+            sumCalculation: (state, item) => {
+                return state.sum = state.sum + item;
+            },
+            multipleCalculation: (state, item) => {
+                return state.multiple = state.multiple * item;
+            }
+        };
+
+        const result = items.reduce( (prev, cur) => {
+            Object.keys(calculationModel).reduce( (innerPrev, innerCur, idx) => {
+                calculationModel[innerCur](prev, cur);
+                return prev;
+            }, {}); 
+            return prev;
+        }, { sum: 0, multiple: items[0]});
+
+    方法三:
+
+        const reducer = {
+            sumCalculate: (state, item) => {
+                return state.sum  = state.sum + item;
+            },
+            multipleCalculate: (state, item) => {
+                return state.multiple  = state.multiple * item;
+            },
+        };
+
+        const manageReducer = (reducer) => {
+            return (prev, cur) => {
+                return Object.keys(reducer).reduce( (innerPrev, innerCur, idx) => {
+                    reducer[innerCur](prev, cur);
+                    return prev;
+                }, {});
+            };
+        }
+
+        const initalValue = { sum: 0, multiple: items[0] };
+
+        const result = items.reduce( manageReducer(reducer), initalValue); 
+
+#. 快速获取最大值
+
+    const items = [10000, 120, 1000, 200000, 12];
+
+    const result = items.reduce( (prev, cur) => Math.max(prev, cur));
+
+    总结:  其实可以直接用max()方法求得最大值,但是这里用reduce方法也展示了另一种用法
+
+    拆分: 
+
+        const result = items.reduce( (prev, cur) => {
+            console.log("prev------", prev);    // prev一定是every loop处理后的结果, 10000  10000  200000  200000
+            console.log("cur------", cur);      // cur一定是数组中的每个元素    10000, 120, 1000, 200000, 12
+            return Math.max(prev, cur);         // loop 1: Math.max(10000, 120)     (next loop prev is 10000)
+                                                // loop 2: Math.max(10000, 1000)    (next loop prev is 10000)
+                                                // loop 3: Math.max(10000, 200000)  (next loop prev is 200000)
+                                                // loop 4: Math.max(200000, 12)     (next loop prev is 200000)
+        });
+
+#. Math.max(x....)
+
+    x   0或多个值。在ECMAScript v3之前，该方法只有两个参数
+
+    Math.max(items);    // 200000
+
+#. 已知的数据结构
+
+    var json = {
+        sam: {
+            year: 12,
+            gender: "male"
+        },
+        jimmy:{
+            year:22,
+            gender:"female"
+        }
+    };
+
+    期待的数据结构：
+
+        var json = [
+            {"year":12,"gender":"male","name":"sam"},
+            {"year":22,"gender":"female","name":"jimmy"}
+        ];
+
+    算法:
+
+        const result = Object.keys(json).reduce( (prev, cur, idx) => {
+            json[cur]["name"] = cur;
+            prev[idx] = json[cur];
+            return prev;
+        }, []);
+
+#. 形参写为 
+		
+    phones.map( ({ label, value }) => console.log(label));
+
+    PS: reduce的实参也有一个新写法
+
+        获取总共的通话时长
+
+        一般写法: phones.reduce( (prev, cur) => prev + +cur.duration, 0);
+
+        新写法:   phones.reduce( (prev, { duration }) => prev + +duration, 0);
+
+#. 怎么将二维数组变成一维数组
+
+    const result = [
+        [
+            {
+                "phone": null,
+                "phoneLabel": null,
+                "name": "gi"
+            }
+        ],
+        [
+            {
+                "phone": "22225855",
+                "phoneLabel": "mobile",
+                "name": "wsx"
+            }
+        ],
+        [
+            {
+                "phone": "22225855",
+                "phoneLabel": "mobile",
+                "name": "edc"
+            }
+        ]
+    ];
+
+
+
+
+
+    使用concat就可以
+
+    result.reduce( (prev, cur) => prev.concat(cur), []);
+
+#. 怎么统计重复的电话号码
+
+    const arr = [
+        {
+            date: '2018-05-23T08:38:58',
+            duration: '0',
+            number: '13566589999',
+            name: 'hello\'m monil',
+            type: '去电'
+        },
+        {
+            date: '2018-05-23T08:38:53',
+            duration: '0',
+            number: '13912345678',
+            name: 'Ronnie  Ren Ronnie Ren',
+            type: '去电'
+        },
+        {
+            date: '2018-05-23T08:38:51',
+            duration: '0',
+            number: '13912345678',
+            name: 'Ronnie  Ren Ronnie Ren',
+            type: '去电'
+        }
+    ];
+
+    我们期望的数据结构是下面这样,这样就可以把重复的电话放在一起
+
+        {
+            15039217672: [
+                { name: "yang", type: "去电", number: 15039217672 },
+                { name: "yang", type: "去电", number: 15039217672 },
+                { name: "yang", type: "去电", number: 15039217672 }
+            ],
+            13723276068: [
+                ...
+            ]
+        }
+
+    实现:
+
+        arr.reduce( (prev, cur) => {
+            const phoneNumber = cur.number;
+            if (!prev[phoneNumber]) {
+                prev[phoneNumber] = [cur];
+            } else {
+                prev[phoneNumber].push(cur);
+            }
+            return prev;
+        }, {});
+
+
+#. 怎么将一种数据结构变成另一种数据结构
+
+    const origin = [
+        { name: "yang", phone: "15039217672", count: 2 },
+        { name: "yang", phone: "13723276068", count: 2 },
+        { name: "yang", phone: "15839270616", count: 2 }
+    ];
+
+    const targetStructure = {
+        15039217672: { name: "yang", phone: "15039217672", count: 2 },
+        13723276068: { name: "yang", phone: "13723276068", count: 2 },
+        15839270616: { name: "yang", phone: "15839270616", count: 2 }
+    }
+
+    实现:
+
+        const result = arr.reduce( (prev, cur) => {
+            prev[cur.phone] = cur;
+            return prev;
+        }, {});
+
+        另一种方式的实现: origin.reduce( (prev, cur) => Object.assign( prev, { [cur.phone]: cur }), {});
+
+#（*）. 在特定条件退出reduce函数,并返回之前的累加和
+
+    const items = [1, 2, 3, 4];
+
+    const result = items.reduce( (prev, cur, idx) => {
+        if (idx >= 3) {
+            return prev;        // 执行完这个return就不会再执行下面的那个return了
+        }
+        return prev + cur;
+    });
+
+    总结:
+
+        function test() {
+            if (true) {
+                return 1;
+            }
+            return 2;
+        }
+
+        test(); // 1 尽管第一个return是在if条件句中包裹着,但是如果执行了第一个if语句，那么就只会执行第一个return,而不是执行第二个return了
+
+#. 数组重复元素的计数
+
+    const items = [1, 2, 2, 2, 3, 4, 4, 5, 5];
+    const countNums = items.reduce( (prev, cur) => {
+        if (prev[cur]) {
+            prev[cur] = prev[cur] + 1;
+        } else {
+            prev[cur] = 1;
+        }
+        return prev;
+    }, {});
+
+    if-else可以有更优化写法:
+
+        const countNums = items.reduce( (prev, cur) => {
+            prev[cur] = (prev[cur] || 0) + 1;
+            return prev;
+        }, {});
+
+#. reduce + call
+
+    [].reduce.call("cbaacfdeaebb", (prev, cur) => {
+        prev[cur] = (prev[cur] || 0) + 1;
+        return prev;
+    }, {});
+
+    console.log(result);    // {"c":2,"b":3,"a":3,"f":1,"d":1,"e":2}
+
+#. 应用场景
+
+    const obj = {
+        env: "dev",
+        proxy: false,
+        subdomainOffset: 2
+    };
+
+    写一个方法,test(obj, ["env", "proxy"]),要求最后的结果是:
+
+        const obj = {
+            env: "dev",
+            proxy: false,
+        };
+
+    function test(obj, keys) {
+        obj = obj || {};        // 不知道这个边界设置是应对哪种情况
+        return keys.reduce( (prev, cur, idx) => {
+            if (obj[cur] !== null) {
+                prev[cur] = obj[cur];
+            }
+            return prev;
+        }, {});
+    }
+
+#. 实际业务场景
+
+    后台返回接口:
+
+        const arr = [
+            {
+                "day": "周一",
+                "uv": 6300
+            },
+            {
+                "day": "周二",
+                "uv": 7100
+            }, {
+                "day": "周三",
+                "uv": 4300
+            }, {
+                "day": "周四",
+                "uv": 3300
+            }, {
+                "day": "周五",
+                "uv": 8300
+            }, {
+                "day": "周六",
+                "uv": 9300
+            }, {
+                "day": "周日",
+                "uv": 11300
+            }
+        ];
+
+    Echarts需要的格式是:
+
+        ["周二", "周二", "周三"， "周四"， "周五"， "周六"， "周日"] //x轴的数据
+
+        [6300. 7100, 4300, 3300, 8300, 9300, 11300] //坐标点的数据
+
+    适配器:
+
+        const [days, uvs] = arr.reduce( (prev, cur, idx) => {
+            prev[0][idx] = cur.day;
+            prev[1][idx] = cur.uv;
+            return prev;
+        }, [[], []]);
+        console.log(days, uvs);
+
+
+

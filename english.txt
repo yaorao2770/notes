@@ -109,21 +109,40 @@
 
 #. mission 使命，天职
 
-#. alternative  可供替代的
+#. alternative
 
-	alternative energy  替代能源
+	alternative energy 
 
-	alternative approach	变换方法
+	alternative approach
 
 	they are hard to find in alternative offerings.
 
-#. let alone 更不用说 
+	We had no alternative but to fire Join.		(fire 多义词)
+
+	You can be paid in cash weekly or by cheque monthly; those are the two alternative.
+
+#. let alone
+
+	He didn`t allow himself to show his statisfaction, of course, let alone to speak of it. 
+
+	We fear no death, let alone difficulties.
+
+	He did not have enough money to have the tire patched up, let alone buy a new one.
+	
+	tire 多义词
+
+	tired
 
 #. applicant 申请人，请求者，求职人
 
 	申请人信息： applicant info
 
-#. quota	额度
+#. quota
+
+	he was 76 votes short of the quota.	（规定票数，最低票数）
+
+	I`m going home now. I`ve done my quota of work for the day.
+
 
 #. stdout 标准输出（设备）文件
 
@@ -145,6 +164,60 @@
 
 #. named after...
 
-	以...命名
+	the machine is named after its inventor.
 
-	named after Dexter 
+	in my youth my ambition had been to be an invntor.
+	
+
+#. A class is a blueprint from which we can create objects that share the same configuration - properties and methods
+
+ The decision to use a class or an interface truly depends on our use case: type-checking only, implementation details (typically via creating a new instance), or even both! 
+
+ type-checking  
+
+ We can use classes for type-checking and the underlying implementation - whereas we cannot with an interface.
+
+#. TypeScript boosts JavaScript classes with extra power such as type-checking and static properties.
+
+	boost
+
+	it wants the government to take action to boost the economy.
+
+	a great welcome boost
+
+#. This also means that whenever we transpile our code to whatever target JavaScript of our choice, the transpiler will keep all of our class code present in the transpiled file. Hence, classes are present throughout all the phases of our code.
+
+#. we are using a handy TypeScript shorthand to define class properties from the arguments of the constructor 
+
+	a handy  little tool
+
+	have you got a pen handy?
+
+	our house is verty handy for the station
+
+	shorthand
+
+	i took down his comments in shorthand.
+
+#. Aside from the Pizza name before the pizza object that shows that the object is in fact an instance of the Pizza class,
+
+	aside from   
+
+	the food is vervy good, aisde from ( except for ) the patotas were a little salty.
+
+
+#. Both approaches yield an object with the same structure
+
+	yield    
+
+#. Hence, classes are present throughout all the phases of our code.
+
+	throughout 
+
+	因此，在代码的所有阶段都存在类	
+
+#. pool
+
+	freshwater pool
+
+	thread pool

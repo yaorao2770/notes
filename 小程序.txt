@@ -621,7 +621,7 @@
 
 	查看端口占用情况: netstat -nao | findstr "9229"
 
-	强制杀死进程:  taskkill /pid 5844 -t -f;
+	强制杀死进程:  taskkill /pid 9240 -t -f
 
 #. ngFor 在每一行遍历出两个不同的值
 
@@ -646,23 +646,6 @@
 				2 3
 				4 5
 				6 7
-
-#. reduce()			
-
-	arr.reduce(callback, initValue)
-
-	callBack(prev, cur, idx, self)
-
-	前两个参数是必填字段
-
-	如: 
-		var arr2 = [15.5, 2.3, 1.1, 4.7];
-
-		arr2.reduce((prev, nextEl) => prev + Math.round(nextEl));	// 24.5 
-
-		arr2.reduce((prev, nextEl) => prev + Math.round(nextEl), 0);	// 25
-
-		如果没有初始值，则第一次loop的时候，prev就是数组的第一个元素，
 
 #. 错误集锦
 
@@ -1016,7 +999,6 @@
 
 				新写法:   phones.reduce( (prev, { duration }) => prev + +duration, 0);
 
-
 		2. return 返回值问题
 
 			phones.map( el =>
@@ -1028,6 +1010,36 @@
 				})
 			});
 
+		3. 多个return问题
+
+            function test() {
+                if (true) {
+                    return 1;
+                }
+                return 2;
+            }
+            test();     // 1
+
+        4. 优化写法（实现重复元素的计数）
+
+            const items = [1, 2, 2, 2, 3, 4, 4, 5, 5];
+
+            const countNums = items.reduce( (prev, cur) => {
+                if (prev[cur]) {
+                    prev[cur] = prev[cur] + 1;
+                } else {
+                    prev[cur] = 1;
+                }
+                return prev;
+            }, {});
+
+            if-else可以有更优化写法:
+
+                const countNums = items.reduce( (prev, cur) => {
+                    prev[cur] = (prev[cur] || 0) + 1;
+                    return prev;
+                }, {});
+        
 #. 获取数组元素
 
 	const arr = [
@@ -1044,107 +1056,119 @@
 	// first就是数组元素，即对象
 
 	// 正常的写法是:  const first = arr[0];
+	
+#. 将 BLOB 数据转化成 TEXT
 
-#. 处理数据结构
+	API 返回的数据类型不是看这个类型像什么来判断的，比如netword中返回一个string, eg. 8f313846-e611-4d13-995b-5c31872f2d82d
 
-	1. 怎么将二维数组变成一维数组
+	在RXJS中一直订阅不到,虽然返回看起来像string, 但这是认知上的错误, 返回类型应该看 response Headers中的content-type
 
-		const result = [
-			[
-				{
-					"phone": null,
-					"phoneLabel": null,
-					"name": "gi"
-				}
-			],
-			[
-				{
-					"phone": "22225855",
-					"phoneLabel": "mobile",
-					"name": "wsx"
-				}
-			],
-			[
-				{
-					"phone": "22225855",
-					"phoneLabel": "mobile",
-					"name": "edc"
-				}
-			]
-		];
+	2. 我们一般用API返回的blob数据都是转化成URL用，现在要直接获取到这个blob内容
 
-		使用concat就可以
+	Response Headers：
 
-		result.reduce( (prev, cur) => prev.concat(cur), []);
+		HTTP/1.1 200 OK
+		Accept-Ranges: bytes
+		set-cookie: JSESSIONID=AA9200590E32538BAB02844A5C3D27AD; Path=/cybertron; HttpOnly
+		x-application-context: cybertron:9056
+		content-type: multipart/form-data;charset=UTF-8								// 应该看这里, 这就说明api返回的是BLOB类型
+		content-length: 36
+		date: Mon, 28 Jan 2019 02:56:23 GMT
+		connection: close
 
-	2. 怎么统计重复的电话号码
+	Request Headers:
 
-		const arr = [
-			{
-				date: '2018-05-23T08:38:58',
-				duration: '0',
-				number: '13566589999',
-				name: 'hello\'m monil',
-				type: '去电'
-			},
-			{
-				date: '2018-05-23T08:38:53',
-				duration: '0',
-				number: '13912345678',
-				name: 'Ronnie  Ren Ronnie Ren',
-				type: '去电'
-			},
-			{
-				date: '2018-05-23T08:38:51',
-				duration: '0',
-				number: '13912345678',
-				name: 'Ronnie  Ren Ronnie Ren',
-				type: '去电'
-			}
-		];
+		POST /cybertron-api/blobData/upload HTTP/1.1
+		Host: localhost:4200
+		Connection: keep-alive
+		Content-Length: 778021
+		Pragma: no-cache
+		Cache-Control: no-cache
+		Accept: application/json, */*
+		Origin: http://localhost:4200
+		Accept-Language: zh-CN
+		User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36
+		Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryadvRiENVgHtPn7aX
+		Referer: http://localhost:4200/data/source/list
+		Accept-Encoding: gzip, deflate, br
 
-		我们期望的数据结构是下面这样,这样就可以把重复的电话放在一起
+	总结:
 
-			{
-				15039217672: [
-					{ name: "yang", type: "去电", number: 15039217672 },
-					{ name: "yang", type: "去电", number: 15039217672 },
-					{ name: "yang", type: "去电", number: 15039217672 }
-				],
-				13723276068: [
-					...
-				]
+		cybertron-api.constant.ts
+
+			static uploadBlobData(file: File): RequestParams {
+				return {
+					uri: `${BASE}/blobData/upload`,
+					method: RequestMethod.Post,
+					contentType: "File",							// 设置 requestHeaders中的content-type
+					responseType: ResponseContentType.Blob,			// 设置 responseHeaders中的content-type
+					body: { file }
+				};
 			}
 
-		实现:
+		cybertron.service.ts
 
-			arr.reduce( (prev, cur) => {
-				const phoneNumber = cur.number;
-				if (!prev[phoneNumber]) {
-					prev[phoneNumber] = [cur];
-				} else {
-					prev[phoneNumber].push(cur);
+			uploadBlobData(file: File): Observable<Blob> {
+				return this.rest.queryRestApi(CybertronApi.uploadBlobData(file)).pipe(map(resp => resp.blob()));
+			}
+
+		test.component.ts
+
+			onFileChange(files: FileList): void {
+				const file = files && files.item(0);
+
+				if (file) {
+					this.cybertronService
+						.uploadBlobData(file)
+						.subscribe(src => {
+
+							const reader = new FileReader();
+							reader.readAsText(src);		// Start reading the blob as text.
+
+							reader.addEventListener('loadend', (e) => {
+								console.log(reader.result);			// 这里已经将 blob 转化成 text 了
+							});
+						});
 				}
-			}, {});
+			}
+
+		HTML：
+
+			<input #fileInput type="file" style="display: none" (change)="onFileChange(col.dictFieldNameWithRole, fileInput.files)" accept=".png,.jpg,.jpeg">
+			<mat-form-field class="w-100">
+				<input matInput nz-tooltip (click)="fileInput.click()" [nzTitle]="col.dictFieldNameWithRole" [placeholder]="col.dictFieldDescription || col.name" [formControlName]="col.dictFieldNameWithRole">
+			</mat-form-field>
 
 
-	3. 怎么将一种数据结构变成另一种数据结构
+#. JS中的二进制数据
 
-		const origin = [
-			{ name: "yang", phone: "15039217672", count: 2 },
-			{ name: "yang", phone: "13723276068", count: 2 },
-			{ name: "yang", phone: "15839270616", count: 2 }
-		];
+	常见的在网页中获取二进制数据有三种: File、Blob、XMLHttpRequest2
 
-		const targetStructure = {
-			15039217672: { name: "yang", phone: "15039217672", count: 2 },
-			13723276068: { name: "yang", phone: "13723276068", count: 2 },
-			15839270616: { name: "yang", phone: "15839270616", count: 2 }
+#. Blob对象
+
+	Blob与ArrayBuffer的区别就是除了原始字节外，blob还提供了mine type作为元数据
+
+#. FileReader对象
+
+	该对象就是专门操作二进制数据的，主要用于将文件内容读入内存，通过一系列一部接口，可以在主线程中访问本地文件。
+
+	fileReader将Blob读取为更为实用的数据类型去使用
+
+	参数src是File对象或Blob对象
+
+		reader.readAsText(src); 	// 结果用字符串表示
+
+		reader.readAsDataURL(src);	// 结果用url(即 Bse64格式的字符串data:url)
+
+		reader.readAsArrayBuffer(src);	// 结果用ArrayBuffer对象表示
+
+	格式:
+
+		var reader = new FileReader();
+		reader.readAsDataURL(file);
+		reader.onload = function(){
+			console.log(reader.result);		//读取完毕后输出结果
 		}
-
-		实现:
-
-			origin.reduce( (prev, cur) => Object.assign( prev, { [cur.phone]: cur }), {});
 
 
 

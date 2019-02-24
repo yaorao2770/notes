@@ -52,6 +52,46 @@ where node 		得到安装路径
 
 	执行 name 字段的值，即可将代码跑起来
 
+#. 什么时候使用 npm install --save（或者 --save-dev）    
+
+    -save: 安装的模板记录到 package.json 的 dependencies 字段中。
+
+    -save-dev: 安装的模板记录到 package.json 的 devDependencies 字段中。
+
+    dependencies:   运行时的依赖，发布后，即生产环境下还需要用到的模块
+
+    devDependencies:    开发时的依赖，里面的模块是开发时用的，发布时用不到它。比如测试类的模块都在这个节点中(mocha、chai、sinon、zombie、supertest等)
+
+                        拿GAIA来说，
+
+                        {
+                            "less": "^2.7.0",
+                            "node-sass": "4.9.2",       // 像sass,最后都是要转换成css的，生产环境中其实并没有sass的存在，所以放在devDependencies节点中（即npm install node-sass --save-dev）
+                            "numeral": "^2.0.6",
+                            "pre-commit": "^1.2.2",     // 提交代码时的格式检查工具, 生产环境也不需要
+                            "protractor": "~5.1.0",
+                            "scss-bundle": "^2.4.0",
+                            "ts-node": "~3.2.0",
+                            "tsickle": ">=0.25.5",
+                            "tslib": "^1.7.1",
+                            "tslint": "~5.7.0",
+                            "typescript": "2.7.2"
+                        } 
+
+
+#. Eror-first callback
+
+    错误优先的回调写法，需要注意2条规则:
+
+        1. 回调函数的第一个参数一定是error对象,如果error发生了，他会作为第一个err参数返回，如果没有。一般做法是返回null
+
+    Node中API的写法大部分是 Error-first callback,如下:
+
+    fs.readFile('input.txt', (err, res) => {
+        ....
+    });
+
+    (err, res) => { ... } 这种写法就是 Error-first callback,
 
 1. path模块
 
@@ -131,7 +171,7 @@ where node 		得到安装路径
 
 		world是exports的成员函数
 
-	2. module.exports = Animal;
+	2. module.exports = Animal; 
 
 		 function Animal() {
 			 var name;
@@ -145,7 +185,38 @@ where node 		得到安装路径
 			 }
 		 }
 
-		这种方式是， 将一个对象封装到模块中，reqire的时候直接获取到这个对象。
+		2. 这种方式等同于上面的写法
+			module.exports = function(name) {
+				this.name = name;
+		 	}
+
+		3. 不可以直接导出一个类的同时导出其他的变量或者方法
+
+			services/user.server.js
+
+				const x = 5; 
+
+				module.exports = Person;
+
+				module.exports.x = x;
+
+				module.exports.getAllUsers = function() {
+					return [1,2,3];
+				};
+
+			使用:
+
+			const userService = require("./services/user.server");
+
+			userService.x;	// undefined
+
+			userService.getAllUsers();	// xxxx
+
+			const person = new userService("join");
+
+
+
+		这种方式是， 将一个对象封装到模块中，reqire的时候直接获取到这个对象。（即导出的是一个类，所以require后必须实例化才能用）
 
 		模块接口的唯一变化是使用 module.exports = Animal 代替了 exports.wrold = function() {...}， 在外部引用该模块时，其接口对象就是要输出的Animal对象本身，而不是原先的exports
 
@@ -677,11 +748,25 @@ where node 		得到安装路径
 
 	eg: 
 
-		parse之前: name=join&url=baidu.com
+		parse之前: ?name=join&url=baidu.com&url=123
 
         body = querystring.parse(body);
 
-		parse之后: {name: join, url: baidu.com}
+		parse之后: {"?name": join, url: ["baidu.com", "123"]}
+
+			注意, 如果前面有?号,那么parse后的结果这个?号并不会去掉
+
+		2. escape 
+
+			encodeURIComponent("测试");
+
+			qs.escape("测试");		// 这两个方法编码的效果是一样的
+
+		3. unescape
+
+			decodeURIComponent("%E6%B5%8B%E8%AF%95");
+
+			qs.unescape("%E6%B5%8B%E8%AF%95");
 
 #. 201 Created
 
@@ -768,6 +853,8 @@ where node 		得到安装路径
 		write和end都是直接像浏览器界面输出了数据？？？？？怎么在client调用node的接口
 
 	2. POST
+
+		post请求的数据会被写入缓冲区中,需要通过request的data事件和end事件来进行数据拼接处理
 
 		消息体: 用户输入的body
 
@@ -999,7 +1086,7 @@ where node 		得到安装路径
 
 		优化:
 
-			rs.pipe(res);
+			rs.pipe(res);  // 使用pipe可以解决读写不平衡问题
 
 			因为pipe方法每次写数据的时候，都会判断是否谢成功。如果写失败，会等待可写流触发 drain 事件,
 
@@ -1011,7 +1098,7 @@ where node 		得到安装路径
 
 		总结：
 			
-			在使用流的过程中,一定要注意可读流和可写流和写之间的平衡,负责会导致内存泄漏
+			在使用流的过程中,一定要注意可读流和可写流和写之间的平衡,否则会导致内存泄漏
 
 			stream类的 pause() 和 resume() 两个方法, 这样的话我们也可以自己控制写的平衡
 
@@ -1020,6 +1107,10 @@ where node 		得到安装路径
 			如果chunk被缓存以后，发现缓冲区超过预先设置的值，就会返回false。而且按照文档来说，write永远不会丢掉数据
 
 			只会不断的往缓冲区里写数据，无论缓冲区是否超过设定的值，所以才会造成内存的问题。
+
+		什么时候使用流:
+
+			当内存中无法一次装下需要处理的数据时，或者一边读取一遍处理更加高效时，我们就要用到数据流
 
 		优化（不适用pipe方法）:
 
@@ -1098,9 +1189,9 @@ where node 		得到安装路径
 
 	实例方法: finish  data  error  end  write drain
 
-	readStream.on("data", chunk => {
-		if (!ws.write(chunk)) {		// 当待处理队列大于 highWaterMark 时返回false
-			rs.pause();		// 暂停数据读取
+	readStream.on("data", chunk => {		
+		if (!ws.write(chunk)) {		// 当待处理队列大于 highWaterMark 时返回false, 如果写入速度跟不上读取速度的话，只写数据流内部的缓存会爆仓
+			rs.pause();				// 暂停数据读取
 		}
 	})
 
@@ -1108,6 +1199,15 @@ where node 		得到安装路径
 		console.log("可写流处理完了积压数据会触发drain方法");
 		readStream.resume();	// 恢复数据读取
 	});
+
+	2. 简单使用方法
+
+		writeStream.write("啦啦啦啦啦啦");
+
+		Or:
+
+		readStream.pipe(writeStream);	// 将rs文件的内容写入到ws的目标文件中
+
 
 #. process.stdout 和 process.stdin	
 
@@ -1352,9 +1452,150 @@ where node 		得到安装路径
 
 			MY=cy 			// bash: MY: readonly variable
 
+#. 获取当前文件的上级目录路径
 
+	目录结构如下:
 
+		E:
+			code
+				mine
+					nodejs	
+						review_stream.js
+				notes
+					nodeJS.txt
 
+	review_stream.js
 
+		去读取 nodeJS.txt 文件内容
 
+		const path = require("path");
 
+		const filePath = path.resolve(__dirname, "..", "..", "notes", "nodeJS.txt");	//  E:\code\notes\nodeJS.txt
+
+#. NODE中命令行模式和nod交互模式的区分
+
+	node交互模式就是:
+
+		在终端输入node， 然后进入交互模式
+
+	node index.js	就是命令行模式
+
+#. 数据传递和背压反馈
+
+	主要用于描述 可读流和可写流 之间的读取。
+
+#.查看目录是否存在,不存在就新建该目录
+
+	const logDirectory = path.join(__dirname, "log);
+
+	fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory);
+
+	
+#. url模块
+
+	const url= require("url");
+
+	方法:  
+
+		1. url.parse(string, boolean, boolean)
+
+			第二个参数:  返回的url对象中， query是一个对象(默认返回string)
+
+			第三个参数:  slashDenoteHost, 主要用在相对协议url上, 如果为true, 表示//与之后的第一个/之间的字符串会被解析成host
+
+				如: "//static.lagou.com/i/image/M00/01/80/CgqKkVZuPraAN3O6AACFeBgN7dY620.jpg"
+
+				url.parse(url, true);	// URL对象中的host属性是null
+
+				url.parse(url, true, true)	// URL对象中的host属性是 'static.lagou.com'
+
+		2. url.format(urlObject);
+
+			const urlObj = {
+				"protocol": "http:",
+				"slashes": true,
+				"auth": "user:pass",
+				"host": "host.com:8080",
+				"port": "8080",
+				"hostname": "host.com",
+				"hash": "#hash",
+				"search": "?query=string",
+				"query": "query=string",
+				"pathname": "/p/a/t/h",
+				"path": "/p/a/t/h?query=string",
+				"href": "http://user:pass@host.com:8080/p/a/t/h?query=string#hash"
+			};
+
+			url.format(urlObj);	// "http://user:pass@host.com:8080/p/a/t/h?query=string#hash";
+
+		eg:  const url = "http://user:pass@host.com:8080/p/a/t/h?query=string#hash";
+
+			a. url.parse(url);
+
+				返回值是一个URL对象:
+				{
+					"protocol": "http:",
+					"slashes": true,
+					"auth": "user:pass",
+					"host": "host.com:8080",
+					"port": "8080",
+					"hostname": "host.com",
+					"hash": "#hash",
+					"search": "?query=string",
+					"query": "query=string",
+					"pathname": "/p/a/t/h",
+					"path": "/p/a/t/h?query=string",
+					"href": "http://user:pass@host.com:8080/p/a/t/h?query=string#hash"
+				}
+
+			b. url.parse(url, true);
+
+				{
+					...
+					query: {query: string},		// 当第二个参数为true时,返回的url对象中的query字段以对象的形式返回
+					...
+				}
+
+				效果类似于；
+
+					const qs = require("querystring");
+					
+					const { query } = url.parse(myUrl);	
+					qs.parse(query);
+
+#. 原生的nodejs中，如果获取 req.query
+
+	http.createServer((req, res) => {
+		const method = req.method;
+		if (method.toLowercase() === "get") {
+			console.log(req.query);		// 错误, 因为node中没有原生的req.query
+
+			const { query } = url.parse(req.url, true);
+			conosle.log(query);			// url.parse(urlString, boolean) 输出一个url对象, 其中包含query属性,默认是string（如 ?name=join），当第二个参数为true时,query属性输出格式为对象（{name: join}）
+
+			const { name, age } = query;
+			res.write(`I am ${name}, this year is ${age} old.`);
+			res.end();		// write方法之后必须写end方法才能将数据发送到client端
+		}
+	}).listen(8082);
+
+#. WHATWG URL
+
+	const { URL } = require("url");
+	const myUrl = new URL("http://user:pass@host.com:8080/p/a/t/h?query=string#hash");
+
+	console.log("hash----------", myUrl.hash);
+	console.log("host----------", myUrl.host);
+	console.log("hostname----------", myUrl.hostname);
+	console.log("href----------", myUrl.href);
+	console.log("origin----------", myUrl.origin);
+	console.log("username----------", myUrl.username);
+	console.log("password----------", myUrl.password);
+	console.log("port----------", myUrl.port);
+	console.log("search----------", myUrl.search);		// ?query=string  其实就是query
+
+#####   线程相关
+
+    JS 语言的一大特点就是单线程，也就是说，同一个时间只能做一件事
+
+    单线程就意味着，所有任务需要排队，前一个任务结束，才回执行后一个任务。如果前一个任务耗时很长，后一个任务就不得不一直等着。
