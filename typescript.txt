@@ -9,6 +9,10 @@
 
 ============  TypeScript  ============
 
+如何生成 tsconfig.json 文件：
+
+	在目录下执行 tsc --init
+
 配置编辑器编译ts文件
 
 	tsconfig.json
@@ -30,6 +34,51 @@
 				"node_modules"
 			]
 		}
+
+#. tsconfig.json 参数解析
+
+	1. baseUrl
+
+		* 默认值 "./" ，设置该属性来告诉编译器到那里去查找模块。所有非相对模块导入都会被当做相对于 baseUrl 去查找
+
+		* baseUrl 这个参数只会影响到 非相对模块的导入,不会影响相对模块的导入
+
+		impot { Color } form "api";						// 非相对模块
+
+		impot { Color } form "./const/color.enum";		// 相对模块
+
+		api library
+
+		projects/api/	这里面是library,放置的是 api 的ts源码
+
+		.lib/			跟projects同级目录，放置的编译后的 api library的js代码
+
+		src 			跟projects、.lib同级目录，放置的ng源码
+
+		tsconfig.json 中的 baseUrl: "src"	那么如果想在component中引用api library,如下
+
+			impot { Color } form "api";
+
+			那么解析上面导入语句的时候，会相对于 baseUrl设置的 "src"路径查找 api 模块,因为 .lib是跟src同级，所以要 ../.lib/api 去查找
+
+	2. paths
+
+		模块名到基于 baseUrl 的路径映射的列表
+
+		{
+			"compilerOptions": {
+					"baseUrl": ".", 			// This must be specified if "paths" is.
+					"baseUrl": "src", 			// 如果这里是src，那么path就要 ../xxxx
+					"paths": {
+					"jquery": ["node_modules/jquery/dist/jquery"] 	// 此处映射是相对于"baseUrl"
+					"jquery": ["../node_modules/jquery/dist/jquery"]
+				}
+			}
+		}
+
+#. tsc --traceResolution
+
+	追踪模块解析
 
 
 1. 基本数据类型：string number boolean array enum any viod
@@ -1691,5 +1740,10 @@
 		let arr: StringArray = ["apple", "join"];
 		console.log(arr[0]);
 
+#. 类型合并
+
+	function merge<T, U>(x: T, y: U) {
+		return {...x, ...y};		// return的类型是 T & U
+	}
 
 

@@ -339,7 +339,7 @@ where node 		得到安装路径
 
 	总结：
 
-		1. 使用这种方法，可以把文件夹封装魏一个模块，即所谓的包。
+		1. 使用这种方法，可以把文件夹封装为一个模块，即所谓的包。
 
 		2. 包通常是一些模块的集合，在模块的基础上提供了更高层的抽象，相当于提供了一些固定接口的函数库，通过定制 package.json, 我们可以创建更复杂，更完善，更符合规范的包用于关于发布		
 
@@ -348,6 +348,43 @@ where node 		得到安装路径
 			· 如果该包下有 package.json 文件，并且该文件下有 main 字段，name包的模块接口文件就是该字段的value值指向的文件
 
 			· 如果该包下有 package.json 文件，但是该文件中没有 main 字段，那么查看该包下是否有 index.js / index.node / index.json ，
+
+	node如何解析模块:
+
+		/root/src/moduleA.js:
+
+			var x = require("./moduleB");
+
+		调用require后,发生了什么？（应该从 require的是绝对路径还是相对路径分析，有不同的行为）
+
+			1. 检查 /root/src/moduleB.js 文件是否存在,不存在进行下一步
+
+			2. 检查 /root/src/moduleB 目录是否包含一个 package.json 文件, 并且json文件中指定了 main 属性,
+
+			   如 "main": "lib/mainModule.js" , 那么node会引用 /root/src/moduleB/lib/mainModule.js, 不存在进行下一步
+
+			3. 检查 /root/src/moduleB 目录是否包含 index.js index.node文件，这个文件会被隐式的当做那个文件夹下的 "main" 模块
+
+		
+		require的是绝对路径, var x = require("moduleB");
+
+			非相对模块名的解析是个完全不同的过程。node会在 node_modules 里查找你的模块。node_modules可能与当前文件在同一级目录下，
+
+			或者在上层目录中。node会向上级目录遍历，查找每个 node_modules 直到找到要加载的模块
+
+			1. /root/src/node_modules/moduleB.js
+			2. /root/src/node_modules/moduleB/package.json(如果指定了 "main" 字段)
+			3. /root/src/node_modules/moduleB/index.js
+
+			4. /root/node_modules/moduleB.js
+			5. /root/node_modules/moduleB/package.json(如果指定了 "main" 字段)
+			6. /root/node_modules/moduleB/index.js
+
+			7. /node_modules/moduleB.js
+			8. /node_modules/moduleB/package.json(如果指定了 "main" 字段)
+			9. /node_modules/moduleB/index.js
+
+
 
 #. __filename
 

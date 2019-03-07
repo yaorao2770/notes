@@ -621,7 +621,7 @@
 
 	查看端口占用情况: netstat -nao | findstr "9229"
 
-	强制杀死进程:  taskkill /pid 9240 -t -f
+	强制杀死进程:  taskkill /pid 3428 -t -f
 
 #. ngFor 在每一行遍历出两个不同的值
 
@@ -1039,6 +1039,55 @@
                     prev[cur] = (prev[cur] || 0) + 1;
                     return prev;
                 }, {});
+
+        5. 对象的写法
+
+            Normal:
+
+                const obj = {
+                    say: function() {
+                        return "say";
+                    }
+                };
+
+            Special:
+
+                const obj = {
+                    say() {
+                        return "say";
+                    }
+                }
+
+        6. key-value重复的，在对象中可以只写一个
+
+            const age = 10;
+
+            const person = {
+                name: "join",
+                age,                    // 普通写法是 age:age,重复的key-value,只用写一个
+                run() { return }
+            };
+
+            function getPoint() {
+                const x = 10;
+                const y = "apple";
+                return {x, y};
+            }
+            getPoint();     // {x: 10, y: "apple"}
+
+        7. 对象的key
+
+            const age = "age";
+
+            const obj = {
+                name: "join",
+                [age]: 12,
+                ["aa bb"]: 10
+            };
+
+            obj[age];   // 12
+            obj["aa bb"];   // 10
+
         
 #. 获取数组元素
 

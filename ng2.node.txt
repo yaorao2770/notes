@@ -13,9 +13,9 @@
 
 	ng serve --open
 
-	ng g component directive --spec=false	创建组件
+	ng g c directive --spec=false	创建组件
 
-		ng g component sellerList 最后会生成 seller-list.component.xxx
+		ng g c sellerList 最后会生成 seller-list.component.xxx
 
 		会用中划线分开命名
 
@@ -62,6 +62,64 @@
 		生成的文件中可以删除CommonModule引用及@NgModule中的东西
 
 =========== angular2 ===========
+
+create a new ng2 project：
+
+1. ng new gaia-copy --style=scss
+
+    使用sass,并且组织css结构
+
+    src/
+        css/
+            _variables.scss  定义scss需要用到的变量,变量全部集中在这一个文件中,在需要用到变量的地方引入 @import "../../css/variables";(目前好像只能是相对路径,所以层级多的时候要有很多../)
+
+    注意: 在 angular.json的styles节点中,请一定要确保自己定义的scss（通常是 style.scss）总是放在最后一个位置，确保优先级可以覆盖库的样式
+
+          为什么这样?当你想修改库的一些内置样式时,发现并没有生效,检查后才发现styles节点中该库的css和自己的css顺序问题导致的,所以总是确保style.css在styles及诶单的最后一个位置，总是不会出错
+
+2. cd gaia-copy
+
+   ng add ng-zorro-antd
+
+
+
+============ Error
+
+1. ng serve报错
+
+    ERROR in node_modules/rxjs/internal/types.d.ts(81,44): error TS1005: ';' expected
+    node_modules/rxjs/internal/types.d.ts(81,74): error TS1005: ';' expected.
+    node_modules/rxjs/internal/types.d.ts(81,77): error TS1109: Expression expected.
+
+    按照上面的 步骤1,2完成后,然后ng server,报错，报错信息如上,解决办法如下:
+
+        package.json
+
+            "rxjs": "^6.0.0"    TO   "rxjs": "6.0.0"
+
+            "typescript": "~2.7.2"  TO  "typescript": "2.7.2"
+
+        即,把版本号前缀去掉,锁定版本就行了,在package.json中修改完版本号之后（即使只是把前缀去掉）,记得执行 npm update
+
+        TIPS:   虽然修改包的版本可以用命令行,但是可以用更便捷的方式修改
+
+                直接在package.json中修改版本号,然后 npm update即可
+
+2. 引入ant库之后的icon报错
+
+    ant-design-icons-angular.js:18 [@ant-design/icons-angular]: the icon user-o does not exist in your a
+
+    LINK： https://segmentfault.com/a/1190000016815055?utm_source=tag-newest（参考解决）
+
+    angular.json的assets节点新增下面语句：
+
+        "assets": [
+            {
+                "glob": "**/*",
+                "input": "./node_modules/@ant-design/icons-angular/src/inline-svg/",
+                "output": "/assets/"
+            }
+        ]
 
 app.module.ts
 
@@ -238,8 +296,6 @@ declarations 数组只能注入 管道，组件和指令
 	1. 模板跳转
 		<a [routerLink]="['/']">主页</a>
 		<a [routerLink]="['directive']">关于</a>
-
-
 
 	2. 模板占位符
 		<router-outlet></router-outlet>
@@ -3433,9 +3489,7 @@ declarations 数组只能注入 管道，组件和指令
 
 	JAVA中叫注解，其实就是带着 @ 符号的类
 
-	e.g. 我们定义一个日志接口 logger，其 实现类有 Logger1, Logger2, Logger3.....
-
-	等一系列实现。
+	e.g. 我们定义一个日志接口 logger，其实现类有 Logger1, Logger2, Logger3.....等一系列实现。
 
 	有了依赖注入，我们可以随时更改注入类，要是没有DI，那么我们要创建N多次实例
 
@@ -3487,7 +3541,7 @@ declarations 数组只能注入 管道，组件和指令
 	2. useExisting 设置提供商的别名
 
 		providers:[
-			{ provide: OldLogger, useClass: NewLogger }
+			{ provide: OldLogger, useExisting: NewLogger }
 		]			
 
 		因为历史遗留原因，某个旧组件依赖 OldLogger 类, OldLogger和 NewLogger具有相同的接口。
@@ -3942,9 +3996,11 @@ declarations 数组只能注入 管道，组件和指令
 
 #. ng generate library api 
 
+	在根目录下面,因为生成的 projects 目录跟src同级
+
 	https://github.com/angular/angular-cli/wiki/stories-create-library
 
-	1. 会在src同级目录生成一个 products/api
+	1. 会在src同级目录生成一个 projects/api
 
 	2. 需要修改的地方
 
@@ -3961,11 +4017,28 @@ declarations 数组只能注入 管道，组件和指令
 				]
 			}
 
-		与此同时, products/api下的 ng-package.json 和 ng-package.prod.json 也需要修改:
+		与此同时, projects/api下的 ng-package.json 和 ng-package.prod.json 也需要修改:
 
 			{
 				"dest": "../../.lib/api",
 			}
+
+	build时遇到的error：
+
+		1. sass编译的错误:
+
+				a non-string value, unquote($font-family) will be an error in future versions of Sass. mat-typography-config
+
+				typography.scss文件中:
+
+					$fontFamily: "Microsoft YaHei", "微软雅黑", "苹方", system-ui, sans-serif;
+
+					$custom-typography: mat-typography-config(
+						$font-family: quote($fontFamily),			// 这里要用 quote()方法包起来,不然报错
+						$headline: mat-typography-level(28px, 40px, 300),
+						$body-1: mat-typography-level(14px, 20px, 300),
+						$subheading-2: mat-typography-level(14px, 1.5)
+					);		
 
 #. package.json
 
@@ -4040,13 +4113,13 @@ declarations 数组只能注入 管道，组件和指令
 
 #. Inject()装饰器
 
-	用来在类的构造函数中描述非Type类型的参数对象	
+	用来在类的构造函数中描述非Type类型（非类依赖，一直指的是 useValue这类）的参数对象	
 
 	config.ts
 
 		import { InjectionToken } from "@angular/core";
 
-		export const CONFIG = new InjectionToken<number>("defaultPropertyGridOpts);
+		export const CONFIG = new InjectionToken<number>("defaultPropertyGridOpts");
 
 
 	app.module.ts
@@ -4071,9 +4144,11 @@ declarations 数组只能注入 管道，组件和指令
 			console.log($event);
 		}
 
-		constructor(@Inject(CONFIG) private config: number) {
+		constructor(@Inject(CONFIG) private config: number) {	
 			console.log(config);	// 4
 		}
+
+		注意：@Inject(CONFIG) 这个方法里面不是字符串  不要带 引号
 
 #. @Self()  @Host()		
 
@@ -4178,3 +4253,97 @@ declarations 数组只能注入 管道，组件和指令
 			@ContentChildren(ItemComponent, { descendants: true })		// 读取的是ts组件
 			@ContentChildren(ItemComponent, { descendants: true, read: ElementRef })  // 读取的是DOM模板
 			itemLists: QueryList<ItemComponent>;		// 这里获取app-item有几个
+
+#. SafeHtml;
+
+	import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
+
+	peopleBankTemplate: SafeHtml;
+
+	constructor(private sanitizer: DomSanitizer) {}
+
+	this.peopleBankTemplate = this.sanitizer.bypassSecurityTrustHtml(
+		`
+			${datas.html}
+			<style type="text/css">
+				table {
+					width: 100%;
+				} 
+				input[name="doPrint"], input[name="goBack"] {
+					display: none;
+				}
+			</style>
+		`
+	));
+
+	HTML:
+
+		<div [innerHTML]="peopleBankTemplate" class="people-bank-table"></div>
+
+	注意: 渲染的是html或者iframe,如果需要修改它们的样式,在组件内修改不生效的话,如下:
+
+		.people-bank-table {
+			table {					// 这里的table指的是peopleBankTemplate里面的table
+				width: 100%;
+			}
+		}
+
+	发现上面那段样式并没有生效,这时可以采用下面的做法:
+
+		this.peopleBankTemplate = this.sanitizer.bypassSecurityTrustHtml(
+			`
+				${datas.html}
+				<style type="text/css">				// 直接在需要渲染的html后面写入样式,一定会生效
+					table {
+						width: 100%;
+					} 
+					input[name="doPrint"], input[name="goBack"] {
+						display: none;
+					}
+				</style>
+			`
+		));
+
+#. 服务的生命周期
+
+	@Component({
+		selector: "app-action-form",
+		templateUrl: "./action-form.component.html",
+		styleUrls: ["./action-form.component.scss"],
+		providers: [HeroService]		// 组件中注入的服务, 只能用于该组件及其子组件（包括实例）
+	})
+
+	服务的查找顺序（即: 注入器冒泡）
+
+		冒泡,就是从下往上的查找。
+
+		当一个组件申请获得一个依赖时，ng会先尝试该组件自己的注入器来满足它。
+
+		如果该组件的注入器没有找到相应的提供商，他就把这个申请转给他父组件的注入器来处理。
+
+		如果那个注入器也无法满足这个申请，它就继续转给他在注入器树种的父注入器。
+
+		这个申请继续往上冒泡，直到ng找到一个能处理此申请的注入器。
+
+		===== 简而言之:
+
+			DI框架会在注入器树种查找一个提供商，从该组件的局部注入器开始。如果需要，则沿着注入器树向上冒泡，知道根注入器
+
+		如果超出了组件树比如，如果提供商注册在该组件的本地注入器上，那么当该组件需要这个服务时，Angular 就不会去找能提供同一服务的其它提供中的祖先还未找到，ng就会抛出一个错。
+
+		* 如果你在不同的层级上为同一个DI令牌注册了提供商，那么ng所碰到的第一个注入器就会用来提供该依赖， 比如，如果提供商注册在该组件的本地注入器上，那么当该组件需要这个服务时，Angular 就不会去找能提供同一服务的其它提供
+
+		***. 服务都是单例模式, 不同组件引用的其实就是县共提供相同的实例
+
+		*. 使用参数装饰器来限定依赖查找方式
+
+
+
+#. constructor
+
+	class Person {
+
+		constructor(private userService: UserService, private loggerService: LoggerService) {}
+	}
+
+	constructor中可以理解为 该组件所需要的依赖。当所有的依赖就绪之后，该组件才会显示

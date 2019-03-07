@@ -261,6 +261,45 @@
 
         另一种方式的实现: origin.reduce( (prev, cur) => Object.assign( prev, { [cur.phone]: cur }), {});
 
+    解释:
+
+        Object.assign( prev, { [cur.phone]: cur })
+
+        其中, { [cur.phone]: cur } [cur.phone]并不是表示数组的意思,就相当于对象的key是一个变量,而不是单纯的字符串
+
+            const obj = {
+                [cur.phone]: cur
+            }
+
+        过程解析:
+
+            const result = origin.reduce( (prev, cur) => {
+                console.log(prev);          
+                const aa = Object.assign( prev, { [cur.phone]: cur });      // loop1: Object.assign({}, {15039217672: {...}})      aa(就是next loop的prev)= {15039217672: {...}}
+                                                                            // loop2: Object.assign({15039217672: {...}, {13723276068: {...}}})   aa={15039217672: {...}, {13723276068: {...}}
+                                                                            // ...以此类推
+                console.log("aa", aa);
+                return aa;
+            }, {});
+
+            ==== Good
+            
+            const result = origin.reduce( (prev, cur) => {
+                return Object.assign( prev, { [cur.phone]: cur });
+            }, {});
+
+            ==== Better
+
+            const result = origin.reduce( (prev, cur) => Object.assign( prev, { [cur.phone]: cur }), {});
+
+#. Object.assign
+
+    Object.assign( {}, { age: 12 }, { name: "apple" } );    // {age: 12, anme: "apple"}
+
+    Object.assign({ age: 12, name: "apple" }, {age: 3} );    // {age: 3, anme: "apple"}
+
+    其实就是合并对象的一个操作,如果有重复的key,后面的会覆盖前面的
+
 #（*）. 在特定条件退出reduce函数,并返回之前的累加和
 
     const items = [1, 2, 3, 4];
