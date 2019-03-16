@@ -47,13 +47,15 @@
 
 		impot { Color } form "./const/color.enum";		// 相对模块
 
-		api library
+		例如现在要生成 api library：
 
-		projects/api/	这里面是library,放置的是 api 的ts源码
+			projects/api/	这里面是library,放置的是 api 的ts源码
 
-		.lib/			跟projects同级目录，放置的编译后的 api library的js代码
+			.lib/			跟projects同级目录，放置的编译后的 api library的js代码
 
-		src 			跟projects、.lib同级目录，放置的ng源码
+			src 			跟projects、.lib同级目录，放置的ng源码
+
+			tsconfig.json	跟projects、.lib、src同级目录
 
 		tsconfig.json 中的 baseUrl: "src"	那么如果想在component中引用api library,如下
 
@@ -70,16 +72,15 @@
 					"baseUrl": ".", 			// This must be specified if "paths" is.
 					"baseUrl": "src", 			// 如果这里是src，那么path就要 ../xxxx
 					"paths": {
-					"jquery": ["node_modules/jquery/dist/jquery"] 	// 此处映射是相对于"baseUrl"
-					"jquery": ["../node_modules/jquery/dist/jquery"]
-				}
+						"jquery": ["node_modules/jquery/dist/jquery"] 	// 此处映射是相对于"baseUrl"
+						"jquery": ["../node_modules/jquery/dist/jquery"]
+					}
 			}
 		}
 
 #. tsc --traceResolution
 
 	追踪模块解析
-
 
 1. 基本数据类型：string number boolean array enum any viod
 
@@ -91,6 +92,7 @@
 	枚举类型: 是为一组数值定义一组更友好的名称,
 		a) 	enum Color{
 				Red, Green, Pink
+				"Red", "Green", "Pink"		// 带不带引号都可以
 			};
 			var en1:Color  = Color.Green; // 1
 			var en2:string = Color[1];   // Green
@@ -207,10 +209,11 @@
 
 			console.log(myStr(3,2));   // 3年级2班
 
-		F) 接口描述数组类型
+		F) 接口描述 可索引类型的定义（一般只对象和数组）
 			interface StringArr{
 				[index:number]:string;  // 该数组元素类型是string,并且只能通过number类型来索引,
 										// [index:number]是索引器
+										// 其实就是  key: value的类型
 
 				// age:number 需要注意的是，当接口定义的是数组类型时，则该接口中定义的其他属性的类型都有必须是该数组元素的类型,当前接口的元素类型是string，所以age为number类型是错的
 			};
@@ -1742,8 +1745,46 @@
 
 #. 类型合并
 
-	function merge<T, U>(x: T, y: U) {
-		return {...x, ...y};		// return的类型是 T & U
+	1. Intersection Types 交叉类型
+
+		交叉类型就是讲多个类型合并为一个类型
+
+		function merge<T, U>(x: T, y: U):  T & U {
+			return {...x, ...y};		// return的类型是 T & U
+		}
+
+#. type 类型别名 和 enum 枚举
+
+	type LevelCode = "RED" | "GREEN" | "PINK";
+
+	enum LevelCode {
+		"RED"  = "RED",
+		"GREEN" = "GREEN",
+		"PINK" = "PINK",
 	}
 
+	interface EnumEx {
+		code: LevelCode,
+		message: string;
+	}
+
+	==== 该interface可以用泛型实现
+
+		interface EnumEx<T> {
+			code: T,
+			message: string;
+		}
+
+		const result: EnumEx<LevelCode> = {
+			code: LevelCode.GREEN,
+			message: "guojihua"
+		}
+
+	const result: EnumEx = {
+		code: "PINK",			// 使用type别名时, success	
+		code: "WHITE",			// 使用type别名时, error
+		code: "PINK",			// 使用enum时, error
+		code: LevelCode.PINK,	// 使用enum时, success, ENUM值使用的时候必须 key.value 的形式使用
+		message: "hello"
+	};
 

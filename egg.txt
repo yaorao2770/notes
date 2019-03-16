@@ -1,0 +1,41 @@
+1. app/public 下面把 client dist下的代码cpoy过来
+
+2. 浏览器访问前缀  localhost:7001/public/index.html
+
+3. 加prefix : / 在 config.default.ts中, 浏览器访问 localhost:7001/index.html
+
+4. 如果想 localhost:7001 直接就跳转到 index.html，需要添加
+
+    config.errorFailOver = {
+        ignorePath: [/^\/api/, /^\/[a-zA-Z]+-api/],
+        failoverPath: path.resolve(appInfo.baseDir, "app", "public", "index.html"),
+    };
+
+    注意： config/plugin.ts 中也要写上下面，告诉去哪里找 error-fail-over
+
+        const plugin: EggPlugin = {
+            errorFailOver: {
+                enable: true,
+                package: "@gr-egg/error-fail-over",
+            }
+        };  
+
+    并且  controller/router.ts 中默认路由要去掉
+
+5. 不管当前是什么环境，都会执行 config.default.ts    
+
+    所以 其他环境的config文件，如 config.local.ts 等也会执行，相当于
+
+    同时会执行 config.default.ts  和 config.local.ts ，那么local文件中的同名属性 config.xxx会覆盖default文件中的
+
+6. server 下的 proxy-config.json  其实用到的是  api_proxy 这个库（gr-egg） 
+
+    "/demeter-api": {
+        "target": "DEMETER_ENDPOINT",
+        "logLevel": "debug",
+        "pathRewrite": {
+            "^/demeter-api": "/api/v1"
+        }
+    },
+
+    最后实际的api地址是：  DEMETER_ENDPOINT + pathRewrite （DEMETER_ENDPOINT/api/v1）

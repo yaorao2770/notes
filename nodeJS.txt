@@ -1,12 +1,19 @@
+******	 ERROR:
 
+	1. npm rebuild node-sass
+
+		module build failed: Error: no such file or directory, scandir 'E:/code/project/sif/client/sif-mgmet/node_module/node-sass/vendor'
+
+
+npm cache clean --force  强制清除缓存
 
 =========== nodejs 相关说明===========
 
 如果当前nodejs版本过低，想升级版本：
 
-where node 		得到安装路径
+	where node 		得到安装路径
 
-去官网下载最新的zip压缩包，替换到之前的安装路径下的nodejs目录，整个替换
+	去官网下载最新的zip压缩包，替换到之前的安装路径下的nodejs目录，整个替换
 
 自动刷新server文件, 而不用更改了每次都重启服务
 
