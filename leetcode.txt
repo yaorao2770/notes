@@ -1,0 +1,23 @@
+1. 旋转数组
+
+    方法1：
+
+        思路：arr.concat(arr) 移动后的数组第一位其实就是 arr.reverse后数组的 k-1 下标位上的元素，
+
+            然后利用 slice方法截取 concat后的数组
+
+            1 2 3 4 5 6 7 1 2 3 4 5 6 7     concat后的数组
+
+                    5 6 7 1 2 3 4           output的数组
+
+
+        var rotate = function(nums, k) {
+            const len = nums.length;
+            const repeatArr = nums.concat(nums);
+            const reverseArr = Object.assign([], nums).reverse();
+            const firstEle = reverseArr[k-1];
+            const firstEleIndexOfRepeatArr = repeatArr.indexOf(firstEle);
+            const rotateArr = repeatArr.slice(firstEleIndexOfRepeatArr, firstEleIndexOfRepeatArr+len+1);
+            return rotateArr;
+        }
+        console.log(rotate([1,2,3,4,5,6,7], 3));

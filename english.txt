@@ -221,3 +221,31 @@
 	freshwater pool
 
 	thread pool
+
+#. what decision to make when specific conditions are enocuntered.
+
+	specific
+
+	enocuntered
+
+#. fundamental
+
+	jobs are the most fundamental element of a .gitlab-ci.yml file
+
+#. constraints stating
+
+	defined with constraints stating under what conditions they should be executed.
+
+#. arbitrary
+
+	Top-level elements with an arbitrary name and must contain at least the script clause.
+
+	clause
+
+#. embedded
+
+	Each instance of Gitlab CI has an embedded debug tool called Lint,
+
+	which validates the content of your .gitlab-ci.yml files. You can find the Lint
+
+	under the page ci/lint of your project namespace.	
