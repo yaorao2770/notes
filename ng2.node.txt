@@ -4347,3 +4347,17 @@ declarations 数组只能注入 管道，组件和指令
 	}
 
 	constructor中可以理解为 该组件所需要的依赖。当所有的依赖就绪之后，该组件才会显示
+
+#. httpObserve
+
+	getOrderList(): Observable<OrderList> {
+        return this.http.get<OrderList>(API_PATH.Orders, { observe: 'body' });
+    }	
+
+	observe的值决定get方法的返回值类型，这取决与消费方在订阅时对那些东西感兴趣。可选值有：
+
+		events, 将返回一个 Observable<HttpEvent>以表示原始的 HTTPEvent流，默认还包括网络通讯进度时间
+
+		body	将返回一个 body 类型为 T 的 Observable<T> 对象。	
+
+		response  将返回一个 Observable<HttpResponse<T>>，HttpResponse 的 T 参数 取决于 responseType 以及可选提供的类型参数。

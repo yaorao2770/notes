@@ -84,7 +84,13 @@
             )
             .subscribe(val => console.log(val));     
 
-#. from                       
+#. from  
+
+    创建类操作符，是连接传统变成和响应式变成的强梁。
+
+    from： 可以把数组、Promsie以及 Iterable 转化为 Observable
+
+    fromEvent: 可以把事件转化为 Observable
 
     const obj = [
         {name: 'join', age: 12},
@@ -201,10 +207,42 @@
                             return of(null);
                         })
                     );
-    }                    
+    }     
+
+#. interval 和 take 结合
+
+    interval表示会不停的定时执行，每过1s就会执行对应的逻辑
+
+    take操作符：因为interval产生无限事件序列，因此这里只取5个事件；
+
+    interval(1000).pipe(take(1)).subscribe(() => console.log(111)); // 只会执行1s后的逻辑，其他的不会再执行了
+
+    interval(1000).subscribe(() => console.log(222));   // 不间断执行，每过1s就会执行相应逻辑
 
 #. delay
 
     关于时间的操作符
 
     延迟 xxx 时间后再进行其他操作
+
+#. combineLatest
+
+    https://www.jianshu.com/p/350487ef270f
+
+    const intervalOne$ = Rx.Observable.interval(1000);
+    const intervalTwo$ = Rx.Observable.interval(2000);
+
+    Rx.Observable.combineLatest(
+        intervalOne$,
+        intervalTwo$ 
+    ).subscribe(all => console.log(all));
+
+    当任意 Observable 发出值时让我知道，但还要给我其他 Observalbes 的最新值。(以数组的形式)
+
+#. timer
+
+    // 从3s后开始，每秒发射一个升序数字
+    timer(3000, 1000).subscribe(x => console.log("timer----two-num", x))
+
+    // 5s后发出一个数字
+    timer(5000).subscribe(x => console.log("timer----50000", x))

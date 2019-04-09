@@ -621,7 +621,7 @@
 
 	查看端口占用情况: netstat -nao | findstr "9229"
 
-	强制杀死进程:  taskkill /pid 3428 -t -f
+	强制杀死进程:  taskkill /pid 8480 -t -f
 
 #. ngFor 在每一行遍历出两个不同的值
 

@@ -39,3 +39,128 @@
     },
 
     最后实际的api地址是：  DEMETER_ENDPOINT + pathRewrite （DEMETER_ENDPOINT/api/v1）
+
+#. Context
+
+    Context指的是Koa的请求上下文，这是请求级别的对象，每次请求生成一个Context实例，通常也简写成 ctx。
+
+    Context上也挂在了Request 和 Response 两个对象。 
+
+        只读： this.ctx.query
+
+        只读： this.ctx.hostname
+
+        可写： this.ctx.body
+
+        可写： this.ctx.status
+
+
+
+    在所有的文档中，Context和ctx都是指Koa的上下文对象
+
+    ` middleware中 this 就是ctx，eg: this.cookies.get('foo');
+
+    ` controller中有两种写法：
+
+        类的写法通过 this.ctx
+
+        方法的写法直接通过 ctx入参
+
+    ` helper/service中的this指向它们本身，使用 this.ctx访问context对象， eg: this.ctx.cookies.get('foo');
+
+    ` 框架会把 app/extend/context.ts 中定义的对象与Koa Context的 prototype 对象进行合并，
+
+        在处理请求时会急于扩展后的 prototype 生成ctx对象
+
+        this.logger.info('[restful] %s %s', requestOptions.method, api);
+
+        this.app.logger.debug(`开始请求中间层`, url, opts);
+
+        为什么有的是 this.app.logger 有的是 this.logger 呢？？？？？？
+
+    ` controller / middleware / helper / service中都可以通过 this.app 访问到 Application 对象。
+
+        例如 this.app.config 访问配置对象。 在 app.js 中app对象回座位第一个参数注入到入口函数中
+
+    ` Request 对象 和 Response 对象
+
+        ctx.request
+
+            ctx上很多属性和方法都被代理到 request 对象上，对于这些属性和方法使用 ctx 和 使用 request去访问让他们是等价的。如
+
+            ctx.url === ctx.request.url
+
+        ctx.response
+
+            ctx上很多属性和方法都被代理到 request 对象上，对于这些属性和方法使用 ctx 和 使用 request去访问让他们是等价的。如
+
+            (ctx.status = 404) === (ctx.response.status = 404)
+
+#. /config 目录
+
+    config
+        config.default.ts
+        config.local.ts
+        config.prod.ts
+
+    在config.xx.ts中的定义的属性，可以在外面直接通过 this.config.xxx来访问，如下：
+
+        config.default.js:
+
+            exports.robot = {
+                ua: [
+                    /curl/i,
+                    /Baiduspider/i,
+                ]
+            };
+
+        app/service/some.js
+
+            const Service = require('egg').Service;
+
+            class SomeService extends Service {
+                async list() {
+                    const rule = this.config.robot.ua;
+                }
+            }
+
+#. Application对象
+
+    ` 在 controller 文件中以 this.app的形式获取（在继承与 Controller, Service 基类的实例中，可以通过 this.app 访问到 Application对象 ）
+
+        app/controller/user.js
+
+            class UserController extends Controller {
+                async fetch() {
+                    this.ctx.body = this.app.cache.get(this.ctx.query.id);
+                }
+            }
+
+    ` 在 Context 对象上，可以通过 ctx.app 访问到 Application 对象
+
+        app/controller/user.js
+
+            class UserController extends Controller {
+                async fetch() {
+                    this.ctx.body = this.ctx.app.cache.get(this.ctx.query.id);
+                }
+            }
+
+#. Controller
+
+    该基类有下列属性,可以通过 this.xxx 使用
+
+        ctx - 当前请求的 Context 实例。
+        app - 应用的 Application 实例。
+        config - 应用的配置。
+        service - 应用所有的 service。
+        logger - 为当前 controller 封装的 logger 对象。   
+
+#. logger
+
+    内置的
+
+    logger.debug()
+    logger.info()
+    logger.warn()
+    logger.error()             
