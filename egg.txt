@@ -40,6 +40,65 @@
 
     最后实际的api地址是：  DEMETER_ENDPOINT + pathRewrite （DEMETER_ENDPOINT/api/v1）
 
+#.  
+    1. 直接相当于 ctx.body
+
+        await this.ctx.render('news/list.html', {lists: newList}); 
+
+    2. 需要手动赋值
+
+        this.ctx.body = await this.ctx.renderString(`{{helper.lowercaseFirst("JOPIN")}}`, datas);
+
+        this.ctx.body = await this.ctx.renderView('news/list.html', datas);
+
+
+#. ctx.status = 403;
+    ctx.message = 'GO away, robot';
+
+    在client端看见的就是 httpcode 后面展示的文字，就是message的内容
+
+#. 使用html后缀模板文件
+
+    exports.view = {
+        defaultViewEngine: 'nunjucks',
+        // defaultExtension: '.html'            // 这里两种方式都可以
+        mapping: {
+            '.html': 'nunjucks'
+        }
+    };
+
+#. middleware 中获取config.default的配置
+
+    // config.default.js
+
+        exports.authGuard = {
+            enable: true
+        };
+
+    // auth-guard.js
+
+        module.exports = (options, app) => {
+            return async function authGuardMiddleware(ctx, next) {
+                const match = options.enable;
+                console.log('match----------', match);
+                await next();
+            };
+        };
+
+    总结： options 就等于 中间件的文件名，驼峰，即 options === app.config.authGuard
+
+#. index 页面的js加载不到是因为 路径不对，在本地的时候，build的文件都在dist目录下，js文件跟index是同级目录，所以 config.local.ts    
+
+    中应该设置 
+
+    const staticDir = path.join(appInfo.baseDir!, '..', 'dist');
+    
+    config.static = {
+        dir: staticDir,
+        gzip: true,
+        buffer: false,
+    };
+
 #. Context
 
     Context指的是Koa的请求上下文，这是请求级别的对象，每次请求生成一个Context实例，通常也简写成 ctx。
@@ -164,3 +223,17 @@
     logger.info()
     logger.warn()
     logger.error()             
+
+#. controller和serveice分别是做什么的
+
+    编码流程： 写路由文件，写对应的controller层，写对应的service层
+
+    controller层： 验证参数，调用服务层，返回client数据
+
+    service层： 访问持久化层，获取数据，返回格式化数据
+
+    重复性代码要么配置化，要么封装为函数调用，尽量让每个文件不要杂糅太多信息。
+
+    尽量使用 TypeScript 或者 ESLint 规范团队代码风格，使用 git + pre-commit 效果很不错哦。
+    
+    egg 项目开发请多参考 egg-example 开源项目，真的并不难哦。

@@ -1,0 +1,7 @@
+#. 三目运算符复制给变量的时候要仔细考虑一下
+
+    const zwMode = this.config.zwMode === 'false' ? False : true;
+
+    这个写法是错误的：
+
+    const zwMode = this.config.zwMode !== 'false';

@@ -1788,3 +1788,41 @@
 		message: "hello"
 	};
 
+#. 类型遍历
+
+	{
+		'10086': {
+			name: '中国移动',
+			website: 'http://www.10086.cn',
+		},
+		'10010': {
+			name: '中国联通',
+			website: 'http://www.10010.com',
+		},
+		'10000': {
+			name: '中国电信',
+			website: 'http://www.189.cn'
+		}
+	}
+
+	上面代码的类型定义是：
+
+		// 普通写法
+		interface ChinaMobile {
+			name: string;
+			website: string;
+		}
+
+		interface ChinaMobileList {
+			[phone: string]: ChinaMobile
+		}
+
+		// 用 in 编写
+
+			type ChinaMobilePhones = '10086' | '10010' | '10000'label
+
+			type ChinaMobileList = {
+				[phone in ChinaMobilePhones]: ChinaMobile
+			}
+
+			总结： ChinaMobileList只能 type 使用， interface 无法使用

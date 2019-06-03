@@ -1643,3 +1643,21 @@ npm cache clean --force  强制清除缓存
     JS 语言的一大特点就是单线程，也就是说，同一个时间只能做一件事
 
     单线程就意味着，所有任务需要排队，前一个任务结束，才回执行后一个任务。如果前一个任务耗时很长，后一个任务就不得不一直等着。
+
+#. lint --exclude
+
+	package.json
+
+		scripts: {
+			"lint": "ng lint --exclude=**/**.spec.ts",
+		}
+
+		lint的文件不报错 所有的 .spec.ts 文件
+
+		** 匹配模式用的是 git 的模式，LINK：https://git-scm.com/docs/gitignore
+
+		**用于整个项目中的递归调用,
+
+		ab/**  匹配目录“ abc” 内的所有文件
+
+		a/**/b 匹配“ a/b”，“ a/x/b”，“ a/x/y/b”等。斜杠后跟两个连续的星号，然后斜杠匹配零个或多个目录

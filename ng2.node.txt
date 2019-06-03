@@ -617,6 +617,23 @@ declarations 数组只能注入 管道，组件和指令
 	4. 使用服务		var result = this.heroService.log();  console.log(result);
 
 14. http模块
+
+	1. 返回数据不是json数据，比如是个string
+
+		preApply(): Observable<string> {
+			return this.http.get(API_PATH.PreApply, { observe: 'body', responseType: 'text' });
+
+			return this.http.get<string>(...)   // 这里不能指定类型，否则报错
+		}
+
+	2. 返回类型是json
+
+		getChannel(): Observable<Channel> {
+			return this.http.get<Channel>(API_PATH.ZWchannel, { observe: 'body' });   // GET
+
+			return this.http.post<ConfirmOrderResult>(API_PATH.ConfirmOrder, spec, { observe: 'body' });  // POST,注意payload的位置（即spec）
+		}
+
 	
 	http请求是在调用 subscribe 方法时才发送出去的，并不是在调用get/post方法时发送的
 
@@ -868,6 +885,8 @@ declarations 数组只能注入 管道，组件和指令
 		}
 
 21. 响应式编程
+
+	subscribe完整的签名函数是：
 
 	就是异步数据流编程
 
@@ -1397,6 +1416,8 @@ declarations 数组只能注入 管道，组件和指令
 		
 		` 为control设置validator
 			control.get("account").setValidators([Validators.required, LengthValidator.maxLenvalidator(20);
+
+		` https://github.com/krodyrobi/group-validator-str/blob/master/src/app/custom-validators.ts
 
 34. FormArray 是一个对象时
 
@@ -4361,3 +4382,24 @@ declarations 数组只能注入 管道，组件和指令
 		body	将返回一个 body 类型为 T 的 Observable<T> 对象。	
 
 		response  将返回一个 Observable<HttpResponse<T>>，HttpResponse 的 T 参数 取决于 responseType 以及可选提供的类型参数。
+
+#. built-in pipe		
+
+	number: a.b-c 格式解析:
+
+		a：在小数点前的最小位数。默认为 1
+
+		b：小数点后的最小位数。默认为 0
+
+		c：小数点后的最大位数。默认为 3
+
+	EG:
+
+		{{1000 | number:'1.0'}}		10,000
+
+		{{1000 | number:'1.2-2'}}		10,000.00 小数点后的最小位数是 2位
+
+#. reader.result as string
+
+
+	this.ds.bypassSecurityTrustResourceUrl(reader.result as string)

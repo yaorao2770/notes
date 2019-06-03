@@ -1,4 +1,19 @@
-﻿
+﻿俚语：
+
+	worked like charm 非常好用
+
+	can you attach the html code as well?
+
+	I also hit this issue.
+
+	I`m closing this issue, since vscode-tslint can do nothing to address it.
+
+	I also encounter this issue。
+
+=========
+
+
+
 1. Back in August 2012 I wrote a post on building a command line tool in NodeJs.
 	That post is now over two years old and plenty has changed, hence i thought it worth writing a new post building the same tool.showing how i`d do it now.
 
@@ -63,9 +78,9 @@
 
 		他们会采取认为必要的行动。
 
-#. reject	拒绝，排斥，抛弃，扔掉		
+#. reject
 
-#. ideal	理想的，完美的，
+#. ideal
 
 	the beach is ideal for children.
 
@@ -75,13 +90,13 @@
 
 		她是这项工作最合适的人选。
 
-#. mustache	胡子，须状物
+#. mustache
 
 	js中值模板插值表达式
 
 #. refactor	重构		/reifacter/	
 
-#. charm	魅力，魔力，使陶醉，对...使用魔法
+#. charm
 
 	works like a charm	非常管用，十分好用
 
@@ -93,7 +108,7 @@
 
 	批量采购要比零卖实惠很多。
 
-#. clues 线索
+#. clues
 
 	the response body may contain clues as to what went wrong.
 
@@ -257,3 +272,107 @@
 #. composable
 
 	Selectors are composable. they can be used as input to other selectors.
+
+#. migrate
+
+	to migrate the code follow the example below
+
+#. obtain
+
+	Selectors are pure function used for obtaining slices of store state.
+
+#. achieve
+
+	you can use createSelector to achieve just that.
+
+#. approaches
+
+	Both of these approaches represent the concept of a selector - we are 'selecting' state!
+
+#. pay close attention to 
+
+	let`s pay close attention to the structure of state.
+
+#. for the sake of 	
+
+	for the sake of clarity
+
+	for the sake of simplicity
+
+	for the sake of completeness
+
+	(Note that usually I would use an action creator to create the action inside the map, so it would just be map(todoListFetched) , but for the sake of clarity I created the action manually here.)
+
+#. internal
+
+	a switchMap takes an incoming observable, creates a new (internal) Observable, and emits those internal Observable’s values whenever it emits. 
+
+#. upstream Observable
+
+	on the other hand, catchError does not do any wrapping. it waits for the upstream Observable to fail, and if it does,
+
+	it will create a new Observable and replace upstream one with that one. Put simply, its internal logic is as follows: While the upstream Observable emits values, emit the same values; if the upstream Observable fails, start emitting values from the callback. The important part here is the realisation that once an Observable has failed, it will never go back to a successful state, so the catchError method lets you prevent that by replacing the failed one with a successful one. This is slightly unexpected but makes sense if you’re coming from a Promise-based world: In a promise, the .catch method lets you turn a failed promise back into a successful one. But because Promises are basically Observables of one value, this does not have any unexpected side effects, whereas in Observables saying “stop and emit this new value” will not allow future values to be emitted.
+
+	LINK: https://medium.com/city-pantry/handling-errors-in-ngrx-effects-a95d918490d9
+
+#. maintenance
+
+	Github pages is temporarily down for maintenance.
+
+#. without changing or affecting them in any way
+
+	concat will subscribe to first input Observable and emit all its values, without changing
+
+	or affecting them in any way.
+
+#. check out merge instead
+
+	if you would like to emit values from passed Observables concurrently, check out merge instead
+
+#. as a matter of fact
+
+	as a matter of fact, concat is an equivalent of merge operator with concurrent parameter set to 1.
+
+#. higher-order operator	
+
+#. process
+
+	such process is often referred to as flattening in documentation.
+
+#. be concerned with
+
+	if you`re not concerned with the order of emissions and is simply interested in all valued
+
+	coming out from multiple combined streams as if they were produced by one stream.
+
+#. gracefully
+	
+	Invokes a specified action after the source observable sequence terminates gracefully or exceptionally.
+
+#. encountered  / the final time
+
+	an observable calls this method after it has called onNext for the final time, if it has not encountered any error.
+
+#. reproduce
+
+	How I can reproduce your issues
+
+#.	regardless
+
+	regard 
+
+#. corresponing
+
+	in most case, we need to fetch data and render with template files.
+
+	So we need to use corresponing view engines.
+
+#. enlarge text	
+
+#. analogous to
+
+	the pipe() function is analogous to, but not the same thing as, the .pipe() method on an Observable.
+	
+#. scratch
+
+	creating new operators from scratch.

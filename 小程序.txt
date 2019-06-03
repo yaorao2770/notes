@@ -623,6 +623,8 @@
 
 	强制杀死进程:  taskkill /pid 8480 -t -f
 
+	mac：		lsof -i tcp:9229 （如果端口号未被占用，则什么都不会输出）
+
 #. ngFor 在每一行遍历出两个不同的值
 
 	<div *ngFor="let item of myArray; let i = index; let even = even;">
@@ -1219,5 +1221,98 @@
 			console.log(reader.result);		//读取完毕后输出结果
 		}
 
+#. find方法
+
+	find方法不会对空数组进行检测
+
+	找不到方法返回 undefined
+
+#. gem 和 npm 和 brew
+
+	npm 是 node的包管理器
+
+	gem 是 Ruby模块（叫做Gems）的包管理器，用于ruby软件包的下载安装使用。 ruby的软件包被称为gem
+
+	brew 是 Homebrew的简称，是 MAC OSX上的软件包管理工具，能在mac中方便的安装或卸载软件，相当于 linux的yum， apt-get等软件管理工具
+
+#. block元素水平居中
+
+	mx-auto
+	
+	为什么 margin: 0 auto;会实现块级元素的居中
+
+	包含块的宽度 = 元素本身width + margin-left + margin-right + padding-left + padding-right + border-width;
+
+	如果一个div，定宽，并且设置了 margin-left:auto; 那么就可以实现块右对齐的情况，
+
+	因为： 在包含快的宽度中，只有width和margin-left是有值得，其他都为0，所以相减就得到margin-left实际的width其实就是包含块宽度减去div本身的width
+
+#. 函数中的 side effects
+
+	https://blog.csdn.net/ustcyy91/article/details/80374401
+
+#. mac 共享的wifi老是密码连接错误
+
+	输入的密码明明正确的，但是老是提示密码错误
+
+	原因：蓝牙和普通wifi都是走的 2.4 GHz 的频道，当你电脑上插了 USB 3.0的设备，转接口，干扰了2.4 GHz的wifi信号，
+
+				但不会干扰 5.0 GHz 的wifi信号。 这也是为什么在插上 USB 3.0 设备后，你的蓝牙连接也不太稳定的原因，比如蓝牙鼠标飘忽不定、AirPods 声音有时会断断续续，罪魁祸首都是这个。
 
 
+#. 浏览器UA
+
+	user-agent
+
+#. package.json中添加 browserlist 属性
+
+	"browserlist":[
+     ">=1%",
+     "last 2 versions"
+   ],
+
+#. 当前页面停留3秒后跳转到新页面
+
+	<meta http-equiv="Refresh" content="5;url=http://baidu.com" />
+
+	效果就等同于：
+
+		setTimeout(() => {
+			window.location.href = 'http://baidu.com';
+		}, 5000);
+
+#.	npm 脚本
+
+	1. 定义在package.json里面的脚本，就称为 npm 脚本
+
+	2. npm run: 查看当前项目的所有 npm 脚本命令
+
+	3. "test": "mocha test"	
+	
+		 这个脚本就等于 
+
+		 "test": "./node_modules/.bin/mocha test"
+
+	4. 通配符
+
+		由于npm脚本就是Shell脚本，因此可以使用Shell通配符
+
+		"lint": "jshint *.js"
+		"lint": "jshint **/*.js"
+
+		上面代码中，*表示任意文件名，**表示任意一层子目录。
+
+	5. 执行顺序
+
+		如果是并行执行（即同时的平行执行），可以使用&符号。
+
+		如果是继发执行（即只有前一个任务成功，才执行下一个任务），可以使用&&符号。
+
+		可以用下面例子试验：
+
+			scripts: {
+				"a": "echo I run before the cy script",
+				"cy": "echo im cy",
+				"b": "echo I run after the cy script",
+				"c": "npm run a && npm run cy && npm run b"
+			}

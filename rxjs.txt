@@ -1,3 +1,8 @@
+
+tap在http调用失败时，不会触发。但是finalize操作符不管什么时候都会触发
+
+
+
 1. groupBy
 
     根据指定条件对数据源进行分组, 并得到Observable group, 需要通过key来取相应分组，得到的分组可以再次被订阅
@@ -246,3 +251,374 @@
 
     // 5s后发出一个数字
     timer(5000).subscribe(x => console.log("timer----50000", x))
+
+#. catchError
+
+    of(1,2,3,4,5).pipe(
+        tap(x => {                                      // 这里的tap 操作符可以用map，示例如下
+            if (x === 4) {
+                throw 'four!';
+            }
+        }),
+        catchError((err, caught) => {
+            throw 'oops' + err;
+        }),
+    ).subscribe(
+        x => console.log('catchError----------', x),
+        err => console.log('subscribe---second params', err)    // 关注subscribe的第二个参数
+    )
+
+    // tap -> map
+    map(x => {
+        if (x === 4) {
+            throw 'four!';
+        }
+        return x;
+    })
+
+#. concat
+
+    const obj1 = this.api.getProductList();
+    const obj2 = this.api.getOssUploadPolicy();
+
+    concat(obj1, obj2).subscribe(list => {
+        console.log('list', list);
+    });
+
+    在obj1, obj2都请求成功的情况下，list会依次（按照给定的顺序）输出两个接口的res，
+    注意，只有当上一个执行成功，并subscribe后，才会执行下一个流。如果是(obj2, obj1)这样的顺序，
+    那么就会先开始执行obj2，执行并emit出所有obj2的值后才会执行 obj1的流。
+
+    concat(obj1, obj2).subscribe((list, policy) => {
+        console.log('list', list);
+        console.log('policy', policy);
+    });
+
+    虽然input流是(obj1, obj2)，但是在订阅的时候不可以(list, policy)这样的形式订阅，不会报错，
+    但是policy什么都不会输出，可以理解为 concat 操作符的subscribe只能有一个参数
+
+    concat(obj1, obj2).subscribe(
+        res => console.log('next', res),
+        err => console.log('err', err),
+        () => console.log('complete)
+    );
+
+    1. 关于complete，只有所有input的流都执行完，concat才会complete
+        complete 和 err只会执行其中的一个（所以也就是为什么在 redux的effect中，如果发生了错误，并且
+        不做错误处理的话，再次dispatch action，并不会触发这个effect了。难道一个流只有complete了再次点击
+        才会正常的又去触发这个流的开始？而err不会？？？？？？？？）
+
+    2. 关于err, 如果concat的input流中有一个发生了错误，那么concat也会立马报错。并且这个流之后的流不会被订阅
+
+        如果obj1接口报错，那么会立即打印出 err，并且不会执行obj2
+
+        如果obj1接口正常，obj2接口报错，那么会正常执行完 obj1的流并且在subscribe中打印出值，然后执行到obj2时，
+
+        这时候concat整个流出错，执行err。即在这个应用场景下，最后会obj1的res和obj2的err
+
+    这里可以跟zip操作符相比较。如果zip中的有一个流失败，整个zip流失败。
+
+    zip(obj2, obj1).subscribe(
+        res => console.log('zip', res),
+        err => console.log('err', err),
+        () => console.log('complete')
+    )；
+    并且zip是只会触发一次subscribe。只有等所有的流都结束了，才会同意emit值。而concat和merge是input的每个流都会触发一次subscribe。
+
+    并且发生错误只会导致该流之后的流不会执行
+
+
+    concat(ob1, obj1, obj1).subscribe(res => console.log(res));
+    obj1.pipe( repeat(3) ).subscribe(res => console.log(res));
+
+    上面两个表达式的效果是一样的。concat可以有相同的input的流，会重复输出相同的结果。效果等于同 repeat操作符
+
+    const sequence = range(1, 10);
+    const timers = interval(1000).pipe(take(3));
+
+    concat(timers, sequence).subscribe(x => console.log(x));
+    // 0, 1, 2, 1, ... 9
+
+     先输出interval的值，然后输出1-10
+
+    concat(sequence， timers).subscribe(x => console.log(x));
+    // 1, ... 10, 0, 1, 2
+
+    先输出range的值，然后输出interval的值
+
+    总结：按照给定流的顺序执行。即使range(1, 100000)的执行很耗时间，也会等range先执行完，在执行其他的。
+    如果range是放在input流的第一个时。
+
+#. finalize
+
+    const obj1 = this.api.getOrderList();
+    const obj2 = this.api.getOssUploadPolicy();
+
+    concat(obj1, obj2).pipe(
+        finalize(() => console.log('finalize'))
+    ).subscribe(
+        x => console.log('next', x),
+        err => console.log('err', err),
+        () => console.log('complete')
+    );
+
+    // err { code: 500, message: 'xxx' }
+    // finalize
+
+    如果两个接口都成功，输出 next complete 以及finalize（为啥finailize会最后输出呢，在complete后面的）
+
+#. mapTo
+
+    1. 可以很好的观察值
+
+    const timer1 = interval(1000).pipe(take(5));
+    const timer2 = interval(2000).pipe(take(6));
+    const timer3 = interval(500).pipe(take(10));
+    
+    merge(timer1, timer2, timer3, 2).subscribe(x => console.log(x));
+
+    上面的值输出，根本不知道是哪个流输出的值，可以使用mapTo操作符，如下：
+
+        const timer1 = interval(1000).pipe(take(5), mapTo('timer1'));
+        const timer2 = interval(2000).pipe(take(6), mapTo('timer2'));
+        const timer3 = interval(500).pipe(take(10), mapTo('timer3'));
+
+#. zip和forkJoin
+
+    zip(a,b).subscribe(x => ...)        只会触发一次subscribe，并且x是数组
+    zip(a,b).subscribe([x, y] => ...)   解耦
+
+    concat(a,b).subscribe(x => ...)     会触发两次subscribe，有多少个input流，就出发多少次
+    merge(a,b).subscribe(x => ...)      同上
+
+#. forkJoin
+
+    只会取每个input流的最后一个值，并且只会触发一次subscribe，以数组的形式输出。
+
+    输出结果跟input流的顺序有关系的。
+
+    forkJoin(
+        interval(500).pipe(take(4), tap(() => console.log('timer2'))),  // emit 0, 1, 2, 3 every half a second and complete
+        interval(1000).pipe(take(3), tap(() => console.log('timer1'))), // emit 0, 1, 2 every second and complete
+    ).subscribe(
+        value => console.log(value),
+        err => {},
+        () => console.log('This is how it ends!'),
+    );
+
+    // [3, 2]
+
+    如果input流的顺序换一下，输出结果也是不一样的。
+    forkJoin(
+        interval(1000).pipe(take(3), tap(() => console.log('timer1'))), // emit 0, 1, 2 every second and complete
+        interval(500).pipe(take(4), tap(() => console.log('timer2'))),  // emit 0, 1, 2, 3 every half a second and complete
+    )
+
+    // [2, 3]
+
+    现在看来，唯一跟input流顺序没有关系的操作符就是 merge 了
+
+    ` 如果输入流中有空的流，整个forkJoin流会complete（zip同样适用。因为他们会执行完所有的input流再subscribe。而concat和merge不会）
+
+        forkJoin(
+            interval(1000).pipe(take(3), tap(() => console.log('timer1'))),
+            of()
+        ).subscribe(
+            value => console.log(value),
+            err => console.log('err', err),
+            () => console.log('This is how it ends!'),
+        );
+
+        // complete
+
+        concat(
+            of(),
+            interval(1000).pipe(take(3), tap(() => console.log('timer1'))),
+        ).subscribe(
+            value => console.log(value),
+            err => console.log('err', err),
+            () => console.log('This is how it ends!'),
+        );
+        
+        // 0 1 2  
+        of()这个空的流放在第一个还是第二个位置，结果都是一样的
+
+        总的来说，为了让forkJoin发出一个值，所有传递的Observable都必须至少发出一次并完成。
+
+#. scan
+
+    类似于 reduce ，累加器
+
+    fromEvent(document, 'click')
+        .pipe(
+            mapTo(1),
+            scan( (prev, cur) => prev + cur, 0)
+        )
+        .subscribe(x => console.log(x))
+
+    fromEvent(document, 'keydown')
+        .pipe(
+            map((detail: KeyboardEvent) => detail.key),
+            filter(key => key == 'e'),
+            mapTo(1),
+            scan(count => count + 1)            // 第二种用法
+        )
+        .subscribe(x => console.log('scan', x))
+
+#. of() 和 merge 和 combineLatest 的混合使用
+
+    const weight = of(70, 72, 76, 79, 75).pipe(tap(x => console.log('w-',x)));
+    const height = of(1.76, 1.77, 1.78).pipe(tap(x => console.log('h-',x)));
+
+    merge(height, weight).subscribe(
+        x => console.log('merge----timer-sequence', x),
+        err => console.log('err', err),
+        () => console.log('complete')
+    );
+
+    // 先输出height，emit完这个流所有的值后，开始输出 weight
+    // merge(weight, height) 先输出weight，emit完这个流所有的值后，开始输出 height  这个时候merge是跟输入顺序有关系的
+
+    combineLatest(weight, height).subscribe(x => console.log(x))
+    // [75, 1.76]
+    // [75, 1.77]
+    // [75, 1.78]
+    // 同理，会先执行完 weight的流，然后开始执行height流时，取weight流的最新值
+
+    const weight = of(70, 72, 76, 79, 75);
+    const height = of(1.76, 1.77, 1.78);
+    combineLatest(weight, height).subscribe(([x, y]) => {   // 因为输出的是数组，所以也可以解耦输出
+        console.log('x', x);
+        console.log('y', y);
+    });
+
+#. combineLatest
+
+    使用场景:
+
+    1. 上传身份证OCR认证时
+
+        private readonly frontSource = new Subject<string>();
+        private readonly backSource = new Subject<string>();
+        private readonly subscription: Subscription;
+
+        constructor() {
+            this.subscription = combineLatest(this.frontSource, this.backSource)
+                .pipe(
+                    tap(([front, back]) => {
+                        console.log('front-combineLatest', front);
+                        console.log('back-combineLatest', back);
+                    }),
+                    filter(([front, back]) => !!front && !!back),
+                    tap(() => this.busy = true),
+                    switchMap(([front, back]) => {
+                        return this.api.startOcrAnalyze({
+                            idcardBack: back,
+                            idcardFront: front
+                        }).pipe(
+                            tap(data => {
+                                this.identityNo.setValue(data.idcard);
+                                this.realName.setValue(data.name);
+                                this.valid = true;
+                            }),
+                            toastWhenError(this.store),
+                            catchError(() => {
+                                this.identityNo.reset();
+                                this.realName.reset();
+                                this.valid = false;
+                                return EMPTY;
+                            }),
+                            finalize(() => this.busy = false)
+                        );
+                    }),
+                )
+                .subscribe();
+        }
+
+        handleIdCardFront(file: File): void {
+            this.api.uploadFileByOssPolicy(file)
+                .pipe(
+                    toastWhenError(this.store),
+                    muteError(),
+                    tap(key => console.log('front', key))
+                )
+                .subscribe(key => this.frontSource.next(key));
+        }
+
+        handleIdCardBack(file: File): void {
+            this.api.uploadFileByOssPolicy(file)
+                .pipe(
+                    toastWhenError(this.store),
+                    muteError(),
+                    tap(key => console.log('back', key))
+                )
+                .subscribe(key => this.backSource.next(key));
+        }
+
+#. switchMap
+
+    var mainstream = Rx.Observable.interval(500);
+    mainstream.switchMap((x) => Rx.Observable.interval(200).take(5));
+
+    // 0 1 0 1 0 1....
+
+    用switchMap的时候，从流每次只能发射2个数据0-1，这是因为主流每发射一次触发了从流的发射，
+    但是在从流发射的过程中，如果主流又一次发射了数据，switchMap会阶段上一次的从流，相应本次的主流，
+    从未开启新的一段的从流发射。
+
+#. mergeAll
+
+    merge([obj2, obj1]).subscribe(() => console.log('zip', res))
+
+    输出结果是两个 observable，尽管已经有一个subscribe了，但是这个subscribe其实订阅的是outer observable，
+    即merge的订阅，inner observables并没有被订阅，那么我们就需要订阅两次。这个时候可以用 mergeAll,
+    MergeAll takes care of subscribing to the ‘inner’ Observable so that we no longer have to Subscribe two times as mergeAll merges the value of the ‘inner’ Observable into the ‘outer’ Observable. 
+
+    merge([obj2, obj1])
+        .pipe(mergeAll())
+        .subscribe(() => console.log('zip', res));
+    
+    Another example:
+
+        const getData = (param) => {
+            return of(`retrieved new data with param ${param}`).pipe(
+                delay(1000)
+        )
+        }
+
+        from([1,2,3,4]).pipe(
+            map(param => getData(param))
+        ).subscribe(val => val.subscribe(data => console.log(data)));
+
+
+        As you can might imagine this is far from ideal as we have to call Subscribe two times. 
+        This is where mergeMap comes to the rescue. MergeMap essentially is a combination of mergeAll and map. 
+        MergeAll takes care of subscribing to the ‘inner’ Observable so that we no longer have to Subscribe 
+        two times as mergeAll merges the value of the ‘inner’ Observable into the ‘outer’ Observable. This could look like this:
+
+            const getData = (param) => {
+                return of(`retrieved new data with param ${param}`).pipe(
+                    delay(1000)
+                )
+            }
+
+            from([1,2,3,4]).pipe(
+                map(param => getData(param)),
+                mergeAll()
+            ).subscribe(val => console.log(val));
+
+#. fromEvent
+
+    1、 假如我们想要监听点击事件(click event)，但点击一次之后不再监听。
+
+        fromEvent(document, 'click')
+            .pipe(
+                mapTo(1),
+                take(1)                 // ****
+            )
+            .subscribe(x => console.log(x))
+          
+
+        
+
+

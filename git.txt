@@ -154,3 +154,46 @@ test
 #. 修改本地分支名
 
 	$ git branch -m test new
+
+#. 合并多个commit为一个
+
+	yang:sigrdrifa chenyangyang1$ git log --oneline
+
+		249bec2 (HEAD -> ai, origin/shared-state) changes
+		13e5680 add common state component
+		d9aaeee shared state-result component								// 之上的三个都是我的分支上的三个commit，想将其合并成一个
+		0648bc7 (origin/dev, origin/HEAD, dev) Fix build error				// 这个是 dev 上最新的一个commit
+		387b32a Integration with ORC and identity check
+		9a83584 Merge branch 'orderNo' into 'dev'
+
+	1. reset
+
+		git reset HEAD^
+
+			出现下面的代码，表示,已经将 commit是changes这个的commit的代码，重新放回了本地的工作区
+
+			Unstaged changes after reset:
+			M       client/h5/src/app/page/products/product-list/product-list.component.html
+			M       client/h5/src/app/page/products/product-list/product-list.component.ts
+			M       client/h5/src/app/redux/reducers/order.reducer.ts
+			M       client/h5/src/app/shared/component/result-state/result-state.component.html
+			M       client/h5/src/app/shared/component/result-state/result-state.component.ts
+
+		git log --oneline
+
+			可以发现，只剩两个commit了，以此类推，再次执行 reset命令，会将三个commit所包含的代码都释放到本地工作区，然后再 git add . git ci -m 'xxxx' git ps 就好
+
+			13e5680 (HEAD -> ai) add common state component
+			d9aaeee shared state-result component
+			0648bc7 (origin/dev, origin/HEAD, dev) Fix build error
+
+		git reset HEAD^
+		git reset HEAD^
+		git st
+		git add .
+		git ci -m 'xxx'
+		git ps origin local:remote -f 	(一定要加 -f)
+
+#. 全局查看本机安装了多少个npm包
+
+	npm ls -g -depth=0

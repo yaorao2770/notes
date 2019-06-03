@@ -1,5 +1,16 @@
 ﻿Sass 笔记：
 
+mac上的安装（将sass文件编译成css文件）
+
+	ruby -v
+
+	sudo gem install sass	（因为sass是ruby编写的，而ruby的软件包是通过 gem 包管理下载的）
+
+	sass -v
+
+
+
+
 1. 后代选择器
 	
 	$main-color:blue;
@@ -307,6 +318,13 @@
 
 			这时候, / 不是表示的除法,即想用变量,又要确保/不是除法,就要使用插值表达式 #{}
 
+			$side: left;
+			.rounded {
+				border-#{$side}-radius: 5px;
+			}
+
+			如果变量需要镶嵌在字符串之中，就必须写在插值之中
+
 #. @extend  继承 
 	
 	.one {
@@ -367,6 +385,19 @@
 	使用方法:
 
 	<gr-svg-icon class="gr-2x"></gr-svg-icon>
+
+
+	@for $size from 1 through 5 {
+		.size-#{$size}x {
+			font-size: 0.5em + ($size - 1) * 0.25em;
+		}
+	}
+
+	// 0.5                      8
+	// 0.5 0.25 = 0.75          12
+	// 0.5 0.5 = 1              16
+	// 0.5  0.75 = 1.25         20
+	// 0.5 1     = 1.5          24
 
 #. @each
 

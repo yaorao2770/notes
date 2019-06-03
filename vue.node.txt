@@ -543,3 +543,30 @@ Vue.js
 		this.name = this.$refs.name.value;
 	}
 				
+#. ng-content  === slot
+
+    NG:
+
+        <order-risk>hello world</order-risk>
+
+        order-risk.component.html
+
+            <ng-content></ng-content>
+
+    VUE:
+
+        <order-risk>hello world</order-risk>
+
+        order-risk.component.html
+
+            <slot></slot>
+        
+        slot内也可以有内容：
+            order-risk.component.html
+
+                <slot>default</slot>
+
+            使用:
+
+                <order-risk></order-risk>   // 最后显示  default
+                <order-risk>hello</order-risk>   // 最后显示  hello, 覆盖了默认的内容

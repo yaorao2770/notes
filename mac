@@ -1,0 +1,43 @@
+#. 目录分类
+
+    ~ 表示 Home 目录
+
+    / 表示根目录
+
+    cd ~ 进入到home目录下：
+
+        yang:~ chenyangyang1$
+
+        ~之后的 chenyangyang1是本机的名字
+
+    输入 pwd 之后，用来查看当前所处的文件路径d, 在 yang:~ chenyangyang1$ 所处的位置输入pwd之后，显示
+
+        yang:~ chenyangyang1$ pwd
+        /Users/chenyangyang1
+
+    也就是说 ~ === /Users/chenyangyang1
+
+    也就是说，home目录其实是 Users 下的一个子目录， Users的上一层目录是root目录
+
+#. npm install package 成功，但是运行时总是报命令不存在 command not found
+
+    # 用一个通用的命令配置环境变量
+    ~$ echo -e "export PATH=$(npm prefix -g)/bin:$PATH" >> ~/.bashrc && source ~/.bashrc
+
+    # 上面的命令中使用 npm prefix -g 获取node安装目录
+
+    # 再执行命令
+    ~$ newman -v
+    3.3.0
+
+#. npm报错之cb() never called!
+
+    https://www.jianshu.com/p/61fb3cdba0fc
+
+    http://www.cnblogs.com/webdragon/p/9700879.html
+
+#. node-sass
+
+    https://www.cnblogs.com/justsilky/p/9552635.html
+    
+    sudo npm install node-sass --unsafe-perm --save-dev
