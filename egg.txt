@@ -237,3 +237,15 @@
     尽量使用 TypeScript 或者 ESLint 规范团队代码风格，使用 git + pre-commit 效果很不错哦。
     
     egg 项目开发请多参考 egg-example 开源项目，真的并不难哦。
+
+#. const { customerId } = this.ctx.params;
+
+    有两种写法：
+
+        router.get("/api/customer/:customerId/detail", customerCtrl.detail);    
+
+        router.get(API_PATH.FundCallbackStatus(':customerId'), customerCtrl.detail);
+
+        export const API_PATH = {
+            FundCallbackStatus: customerId => `/api/customer/${customerId}/detail`,
+        };

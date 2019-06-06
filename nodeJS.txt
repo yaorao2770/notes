@@ -1661,3 +1661,76 @@ npm cache clean --force  强制清除缓存
 		ab/**  匹配目录“ abc” 内的所有文件
 
 		a/**/b 匹配“ a/b”，“ a/x/b”，“ a/x/y/b”等。斜杠后跟两个连续的星号，然后斜杠匹配零个或多个目录
+
+#. 启用 hash 模式下的项目用node获取不到 # 之后的内容
+
+	下面用egg做为演示, 获取channel的值
+
+		http://localhost:4200/#/login?channel=12345
+
+		1. 新建一个html文件用于获取 # 之后的内容 app/view/redirect.html
+
+			<!DOCTYPE html>
+			<html lang="en">
+
+			<body>
+				<form method="post" style="display: none">
+					<input type="hidden" name="query">
+				</form>
+			</body>
+			<script>
+				let hash = window.location.hash;
+				let query = hash.split('?');
+
+				if (query.length > 1) {
+					document.querySelector('input[name="query"]').value = query[1];
+					location.hash = "";
+				}
+
+				document.querySelector('form').submit();
+			</script>
+			</html>
+
+		2. router.ts
+
+			router.get('/', controller.home.renderIndex);
+			router.get('/sso/redirect', controller.ssoRedirect.ssoRedirect);
+			router.post('/sso/redirect', controller.ssoRedirect.getQuery);			// 注意一个是post，一个是get
+		
+		3. controller/home.ts
+
+			const haveRequestRedirect = this.ctx.cookies.get('haveRequestRedirect');
+			
+			if (!haveRequestRedirect) {
+				await this.ctx.redirect('/sso/redirect');
+			} else {
+				await this.ctx.render('index.html', { gioKey, sentryKey, sentryEnv });
+			}
+
+		3. controller/sso-redirect.ts
+
+			import { Controller } from 'egg';
+			import { handler } from './base';
+
+			export default class SsoRedirectController extends Controller {
+
+				@handler()
+				async ssoRedirect(): Promise<void> {
+					await this.ctx.render('redirect');
+				}
+
+				@handler()
+				async getQuery(): Promise<void> {
+					const { query } = this.ctx.request.body;
+					let channel: string;
+
+					this.ctx.cookies.set('haveRequestRedirect', 'true');
+
+					if (query) {
+						channel = query.split('channel=')[1];
+						this.ctx.cookies.set('testChannel', channel);
+					}
+
+					await this.ctx.redirect('/');
+				}
+			}
