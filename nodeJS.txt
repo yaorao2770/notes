@@ -17,7 +17,6 @@ npm cache clean --force  强制清除缓存
 
 自动刷新server文件, 而不用更改了每次都重启服务
 
-	npm install -g nodemon
 
 	或 npm install -g supervisor
 
@@ -1734,3 +1733,14 @@ npm cache clean --force  强制清除缓存
 					await this.ctx.redirect('/');
 				}
 			}
+
+#. server上的静态资源路径请求
+
+	<img src="/assets/image/geerong.png" class='logo'>
+
+		最后完整的请求就是：  http://localhost:4200/assets/image/geerong.png 直接在服务器的根目录查找图片(egg中根目录就是 app/public/目录)
+
+	<img src="assets/image/geerong.png" class='logo'>
+
+		最后完整的请求就是：  http://localhost:4200/api/uranus/assets/image/geerong.png 在当前路径下查找图片
+

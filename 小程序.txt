@@ -1107,7 +1107,42 @@
 	// first就是数组元素，即对象
 
 	// 正常的写法是:  const first = arr[0];
-	
+
+#. 将对象转化为 查询参数字符串
+
+    Target:
+
+        const query = {
+            name: 'join',
+            age: 12,
+            sex: 'man',
+            phone: ''
+        };
+
+    Result:
+
+        ?name=join&age=12&sex=man
+    
+    ================
+
+    const search = Object.keys(query)
+        .filter(prop => !!query[prop])
+        .map(prop => `${prop}=${encodeURIComponent(query[prop])}`)
+        .join('&);
+
+    const url = '192.168.2.1:4200';
+
+    const result = [url, search].join('?');
+
+#. encodeURIComponent 和 encodeURI
+
+    encodeURI() 不会对本身属于URI的特殊字符进行编码。只会对空格编码(%20) 
+
+    encodeURIComponent() 使用的比上面的方法多，因为在实践中更常见的是对查询字符串参数而不是对基础URL进行编码，
+
+        会对所有非字母数字字符编码
+
+
 #. 将 BLOB 数据转化成 TEXT
 
 	API 返回的数据类型不是看这个类型像什么来判断的，比如netword中返回一个string, eg. 8f313846-e611-4d13-995b-5c31872f2d82d
@@ -1316,3 +1351,192 @@
 				"b": "echo I run after the cy script",
 				"c": "npm run a && npm run cy && npm run b"
 			}
+
+#. Shadow DOM
+
+	1. Element.attachShadow 给指定的元素挂载一个 Shadow DOM,返回值是 ShadowRoot
+
+	2. mode 为true时，可以用js获取到 ShadowRoot
+
+	3. Shadow boundary 影子边界，存在于shadow host 和 shadow root之间。
+	
+		影子边界保证主DOM写的css选择器和JS代码都不会影响到shadow dom, 当然也保护主文档不受 shadow DOM 样式的侵袭。
+
+    3. 代码实现
+
+        html:
+
+            <span class='shadow-host age' padding>
+                <!-- 这个是后备标签的意思，当浏览器不支持shadow dom 的时候，显示这个？ -->
+                <!-- 不是所有的标签都可以作为 shadow-host, a标签就不可以 -->
+                <a href="https://twitter.com/ireaderinokun">Follow @ireaderinokun </a>
+            </span>
+
+        JS:
+
+            const shadowEl = document.querySelector('.shadow-host');
+            const shadow = shadowEl.attachShadow({ mode: 'open' });
+            
+            const link = document.createElement('a');           // 创建Shadom dom的中内容
+            link.href = shadowEl.querySelector('a').href;
+            link.innerHTML = `
+                <span aria-label="Twitter icon"></span>
+                <i>ehehehhehe</i>
+                ${shadowEl.querySelector("a").textContent}
+            `;
+
+            shadow.appendChild(link);
+
+            const styles = document.createElement("style");     // Shadom dom的中样式
+            styles.textContent = `
+                :host-context(.age) i {                         // 当shadom host（这里是<span class='shadow-host age' padding>）本身或者它的父元素有 age 这个类时 shadow dom中的i元素应用的样式
+                    font-size: 30px;
+                }
+
+                :host([padding]) {                              // 去shadom host本身上找，<span padding></span> 所以这里是 :host([padding]); <span class='padding'></span>就应该是 :host(.padding) 不加引号
+                    padding: 0 20px;
+                    display: inline-block;
+                }
+
+                a, span {
+                    vertical-align: top;
+                    display: inline-block;
+                    box-sizing: border-box;
+                }
+
+                a {
+                    height: 20px;
+                    padding: 1px 8px 1px 6px;
+                    background-color: #1b95e0;
+                    color: #fff;
+                    border-radius: 3px;
+                    font-weight: 500;
+                    font-family:'Helvetica Neue', Arial, sans-serif;
+                    line-height: 18px;
+                    text-decoration: none;   
+                }
+
+                a:hover {  background-color: #0c7abf; }
+
+                span {
+                    position: relative;
+                    top: 2px;
+                    width: 14px;
+                    height: 14px;
+                    margin-right: 3px;
+                    background: transparent 0 0 no-repeat;
+                    background-image: url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2072%2072%22%3E%3Cpath%20fill%3D%22none%22%20d%3D%22M0%200h72v72H0z%22%2F%3E%3Cpath%20class%3D%22icon%22%20fill%3D%22%23fff%22%20d%3D%22M68.812%2015.14c-2.348%201.04-4.87%201.744-7.52%202.06%202.704-1.62%204.78-4.186%205.757-7.243-2.53%201.5-5.33%202.592-8.314%203.176C56.35%2010.59%2052.948%209%2049.182%209c-7.23%200-13.092%205.86-13.092%2013.093%200%201.026.118%202.02.338%202.98C25.543%2024.527%2015.9%2019.318%209.44%2011.396c-1.125%201.936-1.77%204.184-1.77%206.58%200%204.543%202.312%208.552%205.824%2010.9-2.146-.07-4.165-.658-5.93-1.64-.002.056-.002.11-.002.163%200%206.345%204.513%2011.638%2010.504%2012.84-1.1.298-2.256.457-3.45.457-.845%200-1.666-.078-2.464-.23%201.667%205.2%206.5%208.985%2012.23%209.09-4.482%203.51-10.13%205.605-16.26%205.605-1.055%200-2.096-.06-3.122-.184%205.794%203.717%2012.676%205.882%2020.067%205.882%2024.083%200%2037.25-19.95%2037.25-37.25%200-.565-.013-1.133-.038-1.693%202.558-1.847%204.778-4.15%206.532-6.774z%22%2F%3E%3C%2Fsvg%3E);
+                };
+            `;
+
+            shadow.appendChild(styles);
+
+    4. 用template元素优化上面代码
+
+        html:
+
+            <span class='shadow-host age' padding>
+                <a href="https://twitter.com/ireaderinokun">Follow @ireaderinokun </a>
+            </span>
+
+            <template id='shadow-twitter-button'>
+                <a href="https://twitter.com/ireaderinokun">
+                    <span aria-label="Twitter icon"></span>
+                    Follow @ireaderinokun
+                </a>
+
+                <style>
+                    :host-context(.age) i {
+                        font-size: 30px;
+                    }
+
+                    :host([padding]) {
+                        padding: 0 20px;
+                        display: inline-block;
+                    }
+
+                    a,
+                    span {
+                        vertical-align: top;
+                        display: inline-block;
+                        box-sizing: border-box;
+                    }
+
+                    a {
+                        height: 20px;
+                        padding: 1px 8px 1px 6px;
+                        background-color: #1b95e0;
+                        color: #fff;
+                        border-radius: 3px;
+                        font-weight: 500;
+                        font-family: 'Helvetica Neue', Arial, sans-serif;
+                        line-height: 18px;
+                        text-decoration: none;
+                    }
+
+                    a:hover {
+                        background-color: #0c7abf;
+                    }
+
+                    span {
+                        position: relative;
+                        top: 2px;
+                        width: 14px;
+                        height: 14px;
+                        margin-right: 3px;
+                        background: transparent 0 0 no-repeat;
+                        background-image: url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2072%2072%22%3E%3Cpath%20fill%3D%22none%22%20d%3D%22M0%200h72v72H0z%22%2F%3E%3Cpath%20class%3D%22icon%22%20fill%3D%22%23fff%22%20d%3D%22M68.812%2015.14c-2.348%201.04-4.87%201.744-7.52%202.06%202.704-1.62%204.78-4.186%205.757-7.243-2.53%201.5-5.33%202.592-8.314%203.176C56.35%2010.59%2052.948%209%2049.182%209c-7.23%200-13.092%205.86-13.092%2013.093%200%201.026.118%202.02.338%202.98C25.543%2024.527%2015.9%2019.318%209.44%2011.396c-1.125%201.936-1.77%204.184-1.77%206.58%200%204.543%202.312%208.552%205.824%2010.9-2.146-.07-4.165-.658-5.93-1.64-.002.056-.002.11-.002.163%200%206.345%204.513%2011.638%2010.504%2012.84-1.1.298-2.256.457-3.45.457-.845%200-1.666-.078-2.464-.23%201.667%205.2%206.5%208.985%2012.23%209.09-4.482%203.51-10.13%205.605-16.26%205.605-1.055%200-2.096-.06-3.122-.184%205.794%203.717%2012.676%205.882%2020.067%205.882%2024.083%200%2037.25-19.95%2037.25-37.25%200-.565-.013-1.133-.038-1.693%202.558-1.847%204.778-4.15%206.532-6.774z%22%2F%3E%3C%2Fsvg%3E);
+                    }
+
+                    ;
+                </style>
+            </template>
+
+        JS:
+
+            const shadowEl = document.querySelector('.shadow-host');
+            const shadow = shadowEl.attachShadow({ mode: 'open' });
+            const template = document.getElementById('shadow-twitter-button');
+            const templateContent = document.importNode(template.content, true);
+
+            shadow.appendChild(templateContent);
+
+        优点: 这个标签不会被渲染，包括标签下的img、style、script等都不会被加载或执行。
+
+            可以在js中使用 getElementById 之类的方法得到 <template> 标签对应的节点，但是却无法直接访问到其内部的节点
+
+            因为默认他们只是模板，在浏览中表现为 #document-fragment （即 文档片段），可以通过节点对象的content属性来访问
+
+            到这个DocumentFragment 对象
+
+            通过 document-fragment 对象，就可以访问到 template 内部的节点了，通过 document.importNode 方法，
+            
+            可以将 document-fragment 对象创建一份副本，然后可以使用一切 DOM 属性方法替换副本中的模版内容，
+            
+            最终将其插入到 DOM 或是 Shadow DOM 中。
+
+#. template
+
+	前身是：
+
+		<script type="text/template">
+		// ...
+		</script>
+
+	1. 复制template的内容
+
+		document.importNode(template.content, true);
+
+		a. importNode() 方法把一个节点从另一个文档复制到该文档以便应用。如果第二个值设置为true，那么还要复制该节点的所有子孙节点
+
+		b. template.content 返回值是  #document-fragment ，可以理解为一个文档片段即另一个document
+
+#. 正则匹配
+
+	{} 一般用来表示匹配的长度。比如 \s{3} 表示匹配三个空格。 \s{1,3} 表示匹配一到三个空格
+
+	const str = '1       456';
+	const reg = /\s{3}/;			// false,只能有三个空格
+	const reg = /\s{1,3}/;			// false,只能有一到三个空格
+	const reg = /\s{1,}/;			// true,至少有一个空格
+	console.log(reg.test(str));

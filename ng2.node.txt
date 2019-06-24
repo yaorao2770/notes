@@ -4403,3 +4403,55 @@ declarations 数组只能注入 管道，组件和指令
 
 
 	this.ds.bypassSecurityTrustResourceUrl(reader.result as string)
+
+#. 组件样式
+
+	hero.component.ts
+
+		@Component({
+			encapsulation: ViewEncapsulation.ShadowDom  // 默认值是 Emulated,ng框架会对组件的所有样式进行预处理，让他们模仿出标准的 Shadow CSS 作用域规则
+		})
+
+		@HostBinding('class') get themeClass() { // 最后编译后就是  <hero class='theme-light'></hero>
+			return 'theme-light';
+		}
+
+	hero.component.html:
+
+		<div class="balalala">hello world</div>
+		<input type="button" value="button">
+		<button>dfafadfad</button>
+
+	hero.component.scss:
+
+		.balalala {				// 默认使用这个
+			color: blue;
+		}
+
+		:host-context(.theme-light) .balalala {			// ViewEncapsulation.ShadowDom 、Emulated都适用 
+			color: pink!important;
+		}
+
+		解释： :host-context 的意思就是在当前组件的祖先节点中查找这个css类,如果找到了这个css，那么就应用新的样式
+
+			在hero组件及它的父组件上查找 theme-light 这个css类，如果找到，那么hero组件内的 balalala css类就改变颜色为pink,
+
+			没有找到balalala还是blue
+
+#. @HostBinding
+    
+
+	1. h100 并没有应用在任何地方，但是照样起作用
+
+		@HostBinding('class.h-100')
+		readonly h100 = true;
+
+	2. 直接添加css类
+
+		@HostBinding('class') get themeClass() { // 最后编译后就是  <hero class='theme-light'></hero>
+			return 'theme-light';
+		}
+
+	3. 有条件的添加css并应用
+
+		@HostBinding('class.valid') get valid() { return this.control.valid; }

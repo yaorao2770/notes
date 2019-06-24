@@ -1826,3 +1826,116 @@
 			}
 
 			总结： ChinaMobileList只能 type 使用， interface 无法使用
+
+#. declare const URANUS_MODE: string;
+
+	表示全局变量
+
+	angular/ main.ts
+		
+		declare const SENTRY_KEY: string;  // SENTRY_KEY 变量是从node server传递过来的
+		declare const SENTRY_ENV: string;
+
+		try {
+			if (SENTRY_KEY) {
+				Sentry.init({
+					dsn: SENTRY_KEY,
+					environment: SENTRY_ENV || 'dev'
+				});
+			}
+		} catch (err) {
+			console.log('No sentry key provided, skip sentry init phase');
+
+	nodeServer/ home.ts
+
+        const sentryKey = thirdPartyConfig.sentryKey;
+        const sentryEnv = thirdPartyConfig.sentryEnv;
+        await this.ctx.render('index.html', { sentryKey, sentryEnv });
+
+	client/ index.html
+
+		{% if sentryKey %}
+			<script>
+				var SENTRY_KEY = '{{ sentryKey }}';
+				var SENTRY_ENV = '{{ sentryEnv }}'
+			</script>
+		{% endif %}
+
+#. extends 和 keyof 实现类型约束
+
+	1. keyof T 索引类型查询操作符, keyof 可以用来取得一个对象接口的所有key值
+
+		interface Foo {
+			name: string;
+			age: number;
+		}
+
+		type T = keyof Foo;	// "name" | "name"
+
+		test: T = name;			// OK
+		test: T = 'name';		// OK
+
+	2. in可以遍历枚举类型
+
+		type CustomT = {
+			[P in T]: boolean;			// === [P in keyof Foo]: boolean
+		};
+
+		test: CustomT = {
+			name: 'cc',
+			age: 12
+		};						// ERROR，因为这个时候Foo的所有属性都是boolean类型
+
+	3. T[K] 索引访问操作符
+
+	4. K extends keyof T 意思是将K限制在T的键值列表中。也可以理解为 对于K的约束要求（通过extends关键字实现约束）
+
+		const obj = { name: '123', age: 12 };
+
+		getProperty(obj, 'name');  		// OK
+		getProperty(obj, 'address');  	// ERROR, getProperty的第二个实参类型只能obj的key之一
+
+    5.
+        function getProperty<T, K extends keyof T>(obj: T, key: K): T[K] {
+            return obj[key];
+        }
+
+        ==== 下面的写法
+
+        function getProperty1<T>(obj: T, key: keyof T): T[keyof T] {
+            return obj[key];
+        }
+
+    6. 
+        namePartial: Partial<Foo> = {       // OK
+            name: 'join'
+        };      
+        nameReadonly: Readonly<Foo> = {     // ERROR，每一个属性都是只读的，不能修改
+            name: 'cc',
+            age: 12,
+            address: '12'
+        };
+
+    7. 交换数组元素
+
+        function swap<T, U>(tuple: [T, U]): [U, T] {
+            return [tuple[1], tuple[0]];
+        };
+
+        swap([1, 2]);   // [2, 1]
+
+#. 标准库
+
+	1. 将传入的属性变为必选项 （-? 意思就是将？去掉，与之对应的还有+?）
+
+		type Required<T> = {
+			[P in keyof T]-?: T[P]
+		}
+
+    2. mutable的意思是可变的，可选的。意思是去掉只读，让对象可以被再复制
+
+        type Mutable<T> = {
+            -readonly [P in keyof T]: T[P]
+        }
+
+    3. Parti
