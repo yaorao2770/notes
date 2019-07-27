@@ -376,3 +376,17 @@
 #. scratch
 
 	creating new operators from scratch.
+
+#. forward  towards
+
+	a big step forward towards the future of the web: Web Component.
+
+#. tipping point
+
+	i believe web components represent a tipping point.
+
+	and as i mentioned before there may be some developers that experience the transition
+
+	refusing and resisting instead of embracing the improvements.
+
+#. sentry is a tool that can help after our applications are on production.

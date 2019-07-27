@@ -41,3 +41,11 @@
     https://www.cnblogs.com/justsilky/p/9552635.html
     
     sudo npm install node-sass --unsafe-perm --save-dev
+
+#. 升级完包执行 ng build --prod报错，
+
+    npm cache clean --force
+
+    Delete your node_modules from project.
+
+    npm i

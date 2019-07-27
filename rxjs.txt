@@ -349,6 +349,19 @@ tap在http调用失败时，不会触发。但是finalize操作符不管什么�
     总结：按照给定流的顺序执行。即使range(1, 100000)的执行很耗时间，也会等range先执行完，在执行其他的。
     如果range是放在input流的第一个时。
 
+    因为
+
+#. range
+
+    range(start, length) 开始数字，第二个参数是范围
+
+    是同步产生数据的，一口气把数据传递给下游，不存在时间间隔,即使range(1, 10000)也会吐完这个范围内的数字后才会执行其他的流（如果有其他的流的话） 
+
+    range(1.5, 3).subscribe(x => console.log('range', x));  // 1.5  2.5   3.5
+
+    range(3, 10)    // 3, 4, 5, ... 12
+
+
 #. finalize
 
     const obj1 = this.api.getOrderList();
@@ -618,7 +631,21 @@ tap在http调用失败时，不会触发。但是finalize操作符不管什么�
             )
             .subscribe(x => console.log(x))
           
+#. empty 和 mergeMap
 
+    this static operator is useful for creating a simple Observable that only emits the complete notification
+
+    interval(1000).pipe(
+        mergeMap(x => {
+            console.log('---', x % 2 === 1)
+            return x % 2 === 1 ? of('a', 'b', 'c') : empty();
+        })
+    ).subscribe(
+        x => console.log(x),
+        err => console.log(err),
+        () => console.log('complete')
+    )
         
+    x % 2 === 1 为false的时候，什么都不会输出，为true的话，输出a b c
 
 

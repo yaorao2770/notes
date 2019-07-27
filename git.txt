@@ -197,3 +197,9 @@ test
 #. 全局查看本机安装了多少个npm包
 
 	npm ls -g -depth=0
+
+#. git rev-parse HEAD
+
+	获取最新的commit号
+
+	git rev-parse --short HEAD
