@@ -1,0 +1,99 @@
+#. 增强对空值的判断
+
+    Mine:
+
+        selectedBank: {
+            code: this.cardInfo && this.cardInfo.bankCode,
+            icon: this.cardInfo && this.cardInfo.bankImg,
+            name: this.cardInfo && this.cardInfo.bankName,
+        }
+
+    Better:
+
+        selectedBank: this.cardInfo && {
+            code: this.cardInfo.bankCode,
+            icon: this.cardInfo.bankImg,
+            name: this.cardInfo.bankName,
+        }
+
+#. 如果strAction不存在， new Buffer(strAction, 'base64')的时候就会报错
+
+	mine:
+	
+		const strAction = this.ctx.cookies.get(URANUS_BIND_CARD);
+		this.logger.debug('Uranus bind card content from cookie %s: %s', URANUS_BIND_CARD, strAction);
+
+		if (strAction) {
+			const decodeContent = new Buffer(strAction, 'base64').toString('utf-8');
+			this.logger.debug('Decode..get: %s', decodeContent);
+			this.ctx.body = JSON.parse(decodeContent) as BindCard;
+		} else {
+			this.ctx.status = 204;
+		}
+
+
+	Better:
+
+		const strAction = this.ctx.cookies.get(URANUS_BIND_CARD);
+		this.logger.debug('Uranus bind card content from cookie %s: %s', URANUS_BIND_CARD, strAction);
+
+		if (!strAction) {
+			this.ctx.status = 204;
+			return;
+		}
+		const decodeContent = new Buffer(strAction, 'base64').toString('utf-8');
+		this.logger.debug('Decode..get: %s', decodeContent);
+		this.ctx.body = JSON.parse(decodeContent) as BindCard;
+
+
+#. Object.assign(EggLoader.prototype, loader);
+
+	const loaders = [
+		require('./mixin/plugin'),
+		require('./mixin/config'),
+		require('./mixin/extend'),
+		require('./mixin/custom'),
+		require('./mixin/service'),
+		require('./mixin/middleware'),
+		require('./mixin/controller'),
+		require('./mixin/router'),
+	];
+
+	// loader === { test: function() {} }
+	for (const loader of loaders) {
+		Object.assign(EggLoader.prototype, loader);
+	}
+
+	
+=======  源码阅读	
+
+1. 获取字符串的第一个字符
+
+	var str = '/time.js';
+
+	// 下面这三种写法都是看第一个字符是否匹配/
+	console.log( str[0] === '/' )
+	console.log( str.charAt(0) === path.sep )		
+	console.log( str.substr(0, 1) === '/' )
+
+2. 递归一个目录下的所有文件
+
+	readdir(root, files: string[] = [], prefix = '') {
+        const dir = path.join(root, prefix);
+        if (!fs.existsSync(dir)) return files;
+        if (fs.statSync(dir).isDirectory()) {
+            fs.readdirSync(dir)
+                .filter(filename => this.notDotFile(filename))
+                .forEach(filename => {
+                    this.readdir(root, files, path.join(prefix, filename));
+                });
+        } else {
+            files.push(prefix);
+        }
+
+        return files;
+    }
+
+    notDotFile(filename) {
+        return filename[0] !== '.';
+    }

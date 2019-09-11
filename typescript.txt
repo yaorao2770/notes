@@ -35,6 +35,51 @@
 			]
 		}
 
+#. tsc test.ts
+
+	tsc 编译单个ts文件，支持编译后缀名有 '.ts', '.tsx', '.d.ts'
+
+	要想tsc将整个目录的ts文件编译成js文件，需要运行: tsc -p tsconfig.json
+
+	-p 就是project的意思，找到当前目录下的ts配置文件，去编译ts文件
+
+	{
+		scripts: {
+			tsc: tsc -p tsconfig.json,
+			tsc:w: tsc -p tsconfig.json -w,		// 可以持续编译
+		}
+	}
+
+
+	注意： 1. 要想将编译后的js文件，集中输出到特定目录，需要修改  tsconfig.json 的outDir属性， 否则编译后的js文件就会放在每一个ts文件的旁边
+
+		"compilerOptions": {
+			"outDir": "./build", 
+		}
+
+		而且采用 outDir 将所有编译后js的输出到指定目录，还有一个好处是，编译前的目录结构是怎么样的，编译后的js文件还保持在之前的目录中
+
+
+	如: 
+
+		controller
+			some.ts
+		
+		service
+			test.ts
+
+		router.ts
+
+	编译后的js也会保持这样的目录结构（前提是指定了outDir）
+
+		controller
+			some.js
+		
+		service
+			test.js
+
+		router.js
+
 #. tsconfig.json 参数解析
 
 	1. baseUrl

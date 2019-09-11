@@ -21,3 +21,74 @@
             return rotateArr;
         }
         console.log(rotate([1,2,3,4,5,6,7], 3));
+
+2. 整数翻转
+
+    输入: 123
+    输出: 321
+
+    输入: -123
+    输出: -321
+
+    输入: 120
+    输出: 21
+
+
+
+
+
+
+
+
+
+
+=============
+
+1. 整数翻转
+
+    function reverseNum(num) {
+        num = num + '';
+        let result;
+        if (num[0] === '-') {
+            result = +`${num[0]}${num.substr(1).split('').reverse().join('')}`;
+        } else if (/0$/g.test(num)) {
+            result = +num.replace(/0$/g, '');
+        } else {
+            result = +num.split('').reverse().join('');
+        }
+        if (num < Math.pow(-2, 31) || num > Math.pow(2, 31) - 1) {
+            return 0;
+        }
+        return result;
+    }
+    console.log(reverseNum(120))
+
+    function reverseNum(num) {
+        num = num.toString();
+        if (num < 0) {
+            num = num.substr(1).split('').reverse().join('');
+            num = +`-${num}`;
+        } else {
+            num = +num.split('').reverse().join('');
+        }
+        if (num < Math.pow(-2, 31) || num > Math.pow(2, 31) - 1) {
+            return 0;
+        }
+        return num;
+    }
+    console.log(reverseNum(120))
+
+    function reverseNum(num) {
+        num = num.toString();
+        if (num < 0) {
+            num = [...num.substr(1)].reverse().join('');
+            num = +`-${num}`;
+        } else {
+            num = +[...num].reverse().join('');
+        }
+        if (num < Math.pow(-2, 31) || num > Math.pow(2, 31) - 1) {
+            return 0;
+        }
+        return num;
+    }
+    console.log(reverseNum(120))

@@ -134,6 +134,8 @@
 
     算法:
 
+        Object.keys(json).map(item => Object.assign({"name": item}, json[item]));
+        
         const result = Object.keys(json).reduce( (prev, cur, idx) => {
             json[cur]["name"] = cur;
             prev[idx] = json[cur];

@@ -5,6 +5,10 @@
 		module build failed: Error: no such file or directory, scandir 'E:/code/project/sif/client/sif-mgmet/node_module/node-sass/vendor'
 
 
+npm list --depth=0
+
+npm ls @angular/cli -g   查看本地指定npm包版本
+
 npm cache clean --force  强制清除缓存
 
 =========== nodejs 相关说明===========
@@ -1089,6 +1093,19 @@ npm cache clean --force  强制清除缓存
 
 	Content-Disposition: attachment;filename=test.pdf
 
+
+	eggjs中可以这样操作:
+
+		this.ctx.attachment('test.js');
+		this.ctx.body = await fs.readFileSync(path.join(this.ctx.app.baseDir, 'app', 'test.js'));
+
+		这样响应报文中，就会有这两个头字段
+
+	PS:  fs.readFileSync 方法如果指定了编码格式，如UTF-8，那么content-type: text-plain 读取的文件内容就是文本格式，
+
+		不指定编码的话，读取的文件是流的形式，即Content-Type: application/octet-stream
+
+
 #. Content-Disposition
 
 	当用户想把请求所得的内容存为一个文件的时候提供一个默认的文件名
@@ -1131,9 +1148,9 @@ npm cache clean --force  强制清除缓存
 
 			rs.pipe(res);  // 使用pipe可以解决读写不平衡问题
 
-			因为pipe方法每次写数据的时候，都会判断是否谢成功。如果写失败，会等待可写流触发 drain 事件,
+			因为pipe方法每次写数据的时候，都会判断是否写成功。如果写失败，会等待可写流触发 drain 事件,
 
-			表示可写流可以继续写数据了,然后pipe才回继续写数据.
+			表示可写流可以继续写数据了,然后pipe才会继续写数据.
 
 			也就是说，normal的写法中我们没有判断 res.write(chunk) 是否执行成功,就继续写，这样如果文件比较大，
 
@@ -1155,7 +1172,7 @@ npm cache clean --force  强制清除缓存
 
 			当内存中无法一次装下需要处理的数据时，或者一边读取一遍处理更加高效时，我们就要用到数据流
 
-		优化（不适用pipe方法）:
+		优化（不使用pipe方法）:
 
 			var http = require("http");
 			var fs = require("fs");
@@ -1483,7 +1500,7 @@ npm cache clean --force  强制清除缓存
 
 			env | grep HELLO
 
-		f. 设置制度环境变量
+		f. 设置只读环境变量
 
 			export MY=yangyang
 
@@ -1743,4 +1760,224 @@ npm cache clean --force  强制清除缓存
 	<img src="assets/image/geerong.png" class='logo'>
 
 		最后完整的请求就是：  http://localhost:4200/api/uranus/assets/image/geerong.png 在当前路径下查找图片
+
+#. npm link
+
+	主要用于本地模块（自己开发的npm package）调试，避免了改动就频繁npm publish
+
+	npm link <package-name> 的包，其实是以软连接的方式先安装到全局npm包目录下，然后再安装到要运行的项目的node_modules目录下，这两个目录下的这个package都是软连接的方式
+
+		软连接就相当于与windows上的快捷方式	
+
+		被link的这个package，里面实时修改了内容，比如写了一个console.log，在运行的项目中也会实时打印出这个log的（如果没有实时打印，重启一下运行项目的服务即可）
+
+	npm unlink <package-name> 去掉软连接
+
+	my-webapp/
+
+		package.json 中声明对 egg-ua 的依赖（即，本地模块）
+
+			{
+				"dependencies": {
+					"egg": "^1.0.0",			// 正常这里的依赖应该是版本信息，这些包在npm服务器上
+					"@gr-egg/egg-ua": "../egg-ua"		// 这里应该写成相对路径，要测试的本地模块的path
+					// egg-ua这个key，对应的应该是插件的包名，  后面 ../egg-ua 这里的egg-ua对应的是包目录的名字
+				},
+			}
+
+		plugin.js
+
+			exports.ua = {					// exports.ua 这里的ua是 egg-ua 插件的package.json中的 eggPlugin.name
+				enable: true,
+				package: '@gr-egg/egg-ua'	// 这里应该写包名，而不是目录名(egg-ua)。这里的package其实是去 node_modules 下面查找 @gr-egg/egg-ua 这个package
+
+											   本地的包怎么会在my-webapp的node_modules下面呢？原因是我们执行了 npm link命令，将本地的npm 模块链接到对应的运行项目中去，
+
+											   方便地对模块进行调试和测试
+			}
+
+	egg-ua/
+
+		package.json
+		
+		{
+			"name": "@gr-egg/egg-ua",		// 包名
+			"eggPlugin": {
+				"name": "ua"
+			},
+		}
+
+	在my-webapp项目下的terminal运行：
+
+		npm link ../egg-ua		// 这一句其实是将本地的这个包，会被链接到（即安装）到了my-webapp/node_modules下面，是
+
+								   如果egg-ua 与my-webapp 不在一起，npm link from/path/to/another/path 这样就太麻烦了，解决办法是，
+								   
+								   先cd到 egg-ua下，执行 npm link,将其链接到全局，再到 my-webapp 下执行 npm link @gr-egg/egg-ua 就行了
+
+		npm i 					// 这一步其实是安装egg-ua模块下的依赖项（是安装在egg-ua自己模块下，不是在my-webapp下）
+
+									在这个包中打印的log，当my-webapp执行到这个包的相关地方时，也会打印出来（是打印在my-webapp的terminal下）
+
+#. nodejs中 响应报文不手动设置 content-length, node就会默认使用chunk传输
+
+#. path.extname							
+
+	1. 如果给出的路径中，第一个字符是 . 返回空
+
+		path.extname('.')
+
+	2. 如果给出的路径中，第一个字符是 . 返回空
+
+		path.extname('.js')
+
+	3. 如果给出的路径中，不包含 . 返回空
+
+		path.extname('index')
+
+	4. normal：
+
+		path.extname('a.js')	// .js
+		path.extname('a.')		// .
+
+	======
+
+		mime-types 库源码中,
+
+			var extension = path.extname('x.' + pathname).toLowercase().substr(1)	// pathname='index' result='index'
+
+			path.extname('x.' + pathname).toLowercase(）	// .js		substr(1)	js
+
+#. require
+
+	const json = require('./name.json');
+
+	const json = fs.readFileSync('./name.json', 'utf-8');
+
+	上面两种方式都可以读取文件内容啊
+
+	====
+
+	require的时候，其实已经执行了整个文件，
+
+	mine.lookup('a.js');	
+
+		mine-index.js
+
+			const a = 10;
+			const b = 10;
+			const c = a + b;
+			console.log(c);				// require的时候，该文件的公共部分也会执行，不仅只有 loopup 方法会执行
+
+			exports.lookup = function(pathname) {
+				return 123;
+			}
+
+#. 分块传输 or content-length
+
+	其实在服务器上，分块传输就相当于创建 stream 去读取文件，
+
+	content-length 就是使用 fs.readFileSync 去读取文件，这个时候，肯定是读取完了之后才返回给客户端，那么响应的数据长度就是已知的
+
+	例子：
+
+		const zlib = require('zlib');
+		const fs = require('fs');
+		const http = require('http');
+
+		http.createServer((req, res) => {
+			var file = '/Users/chenyangyang1/Documents/code/project/sigrdrifa/dist/0.js';
+			var readStream = fs.createReadStream(file);
+			const writeStream = fs.createWriteStream("0.js.gz");
+			res.setHeader('content-encoding', 'gzip');
+			readStream.pipe(zlib.createGzip()).pipe(res);
+		}).listen(8000);
+
+		响应报文中: 
+			
+			content-encoding: gzip 
+			transfer-encoding: chunked
+
+			为什么会自动加上一个  chunked传输？？？
+
+	eggjs例子：
+
+		test.controller.ts
+
+			const readStream = fs.createReadStream(path.join(this.ctx.app.baseDir, '..', 'dist', 'polyfills.js'));
+			this.ctx.set('content-encoding', 'gzip')
+			console.log(Buffer.isBuffer(readStream));   // false ReadStream 不是buffer！！！ 为什么
+			this.ctx.body = readStream.pipe(zlib.createGzip());
+
+		eggjs 其实是扩展了 koa 的response对象，新增了 set/get length 方法，源码如下:
+
+			set length(len) {
+				this.set('content-length', len);
+			},
+
+			get length() {
+				const len = this.header['content-length'];
+				const body = this.body;
+
+				if (len == null) {
+					if (!body) return;
+					if (typeof body === 'string') return Buffer.byteLength(body);	// Buffer.byteLength 获取一个字符串的实际字符长度
+					if (Buffer.isBuffer(body)) return body.length;					// chunk 传输 ReadStream 不等于 buffer
+					if (isJSON(body)) return Buffer.byteLength(JSON.stringify(body));
+					return;
+				}
+
+				return parseInt(len, 10);
+			},
+
+
+#. res.write( string | buffer )
+
+	使用write方法可以传输 string 或者 buffer， 不能传输 stream 给client
+
+#. gzip压缩有两种
+
+	1. 直接压缩 读取好的内容
+
+		http.createServer((req, res) => {
+			var buffer = fs.readFileSync(file);
+			var gzipBuffer = zlib.gzipSync(buffer);			// 这里使用的是 zlib.gzip()
+			res.setHeader('content-encoding', 'gzip');		// 必须正确设置这里
+			res.write(gzipBuffer);
+			res.end();										// 这里必须要有，表示server数据发送完毕
+		}).listen(8000);
+
+	2. 压缩流
+
+		http.createServer((req, res) => {
+			var file = '/Users/chenyangyang1/Documents/code/project/sigrdrifa/dist/0.js';
+			var readStream = fs.createReadStream(file);
+			res.setHeader('content-encoding', 'gzip');
+			readStream.pipe(zlib.createGzip()).pipe(res);		// 注意这里使用的压缩不一样  zlib.createGzip()
+		}).listen(8000);
+
+#. 
+	zlib.createGzip  		创建并返回一个新的 Gzip 对象
+	zlib.gzip(file, cb)		使用 gzip 异步压缩对象
+	zlib.gzipSync()			使用 gzip 同步步压缩对象
+
+#. fs.existsSync(path)
+
+	目录结构:
+
+		test.js
+		test.json
+		node_modules
+
+	fs.existsSync(path.join('.', 'test' ))	// false 好像会优先去查找有没有 test/ 目录，如果不是目录，为啥不继续往下找？？？
+
+	fs.existsSync(path.join('.', 'test.js' ))	// true 只能写完整路径
+
+#. require(path)
+
+	path可以是 js 、 json 都可以正确加载到文件内容，但是css html 会报错，检测到文件的第一个字符就会报错
+
+		li {  unexpected  token
+
+		<!DOCTYPE html>  unexpected  token
 

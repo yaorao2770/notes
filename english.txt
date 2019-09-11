@@ -361,11 +361,17 @@
 
 	regard 
 
-#. corresponing
+#. corresponding
 
 	in most case, we need to fetch data and render with template files.
 
-	So we need to use corresponing view engines.
+	So we need to use corresponding view engines.
+
+#. corresponds
+
+	the lifetime of an in-memory cache is attached to the lifetime of a render process,
+
+	which roughly corresponds to a tab.
 
 #. enlarge text	
 
@@ -390,3 +396,5 @@
 	refusing and resisting instead of embracing the improvements.
 
 #. sentry is a tool that can help after our applications are on production.
+
+#. fatal is the most severe and debug is the least.

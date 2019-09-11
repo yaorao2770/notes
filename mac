@@ -1,3 +1,5 @@
+#. mac 显示隐藏文件 cmd + shift + .
+
 #. 目录分类
 
     ~ 表示 Home 目录
@@ -49,3 +51,27 @@
     Delete your node_modules from project.
 
     npm i
+
+#. 修改terminal其起始路径
+
+    vim ~/.zshrc
+
+    或者 
+
+    vim ~/.bash_profile
+
+
+    添加一下内容：
+
+        # 修改shell的默认路径
+        cd /Users/chenyangyang1/Documents/code
+
+#. 查看mac上的dns缓存
+
+    nslookup
+
+#. 查看进程ID
+
+	sudo lsof -nP | grep LISTEN | grep 9229
+
+	sudo kill -9 <PID>

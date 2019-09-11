@@ -1,8 +1,46 @@
-1. app/public 下面把 client dist下的代码cpoy过来
+#. router.js 这个文件没有任何逻辑，而是直接指向一个处理请求的controller，只起到一个目录和索引的作用
 
-2. 浏览器访问前缀  localhost:7001/public/index.html
+   controller 应该放业务逻辑，负责调用并组合service，最后将响应提交给client端
 
-3. 加prefix : / 在 config.default.ts中, 浏览器访问 localhost:7001/index.html
+
+#. 要想知道当前的egg 环境变量(这个环境变量，主要用在config/config.{env}.ts中) ，可以通过下面命令获取
+
+    如在router.js，console.log(this.config.env)  // local
+
+    config/
+        config.default.ts
+        config.local.ts
+        config.prod.ts
+
+#. 生产环境部署应用时，应该运行 npm install --production, 只安装 dependencies 的依赖。因为 devDependencies 中的模块过大而且生产环境不会使用
+
+#. egg-scripts  egg的部署工具，支持线上环境的运行和停止
+
+#. LB load balance 负载均衡
+
+#. egg怎么和client端做桥接。
+
+    client端每次修改了代码，都会触发ngc编译器运行，打出一个dist包，
+    
+    然后我们需要将这个静态资源包（dist包）的路径配置到server的view配置中（config.view），然后启动egg服务，
+
+    默认ng会运行在localhost:4200上，如果还想保持运行在这个端口上，需要在server里设置 port:
+
+        "debug": "egg-bin debug --env=local --port=4200 --host=0.0.0.0",
+
+    如果不设置port，egg默认会启动7001端口进行监听，如果7001被占用了，就会用7002
+
+
+#. package.json
+
+    {
+        script: {
+            "start": "egg-scripts start --title=sigrdrifa-server --env=prod --port=80",
+            "stop": "egg-scripts stop --title=sigrdrifa-server",
+            "debug": "egg-bin debug --env=local --port=4200 --host=0.0.0.0",
+        }
+    }
+
 
 4. 如果想 localhost:7001 直接就跳转到 index.html，需要添加
 
@@ -21,13 +59,7 @@
         };  
 
     并且  controller/router.ts 中默认路由要去掉
-
-5. 不管当前是什么环境，都会执行 config.default.ts    
-
-    所以 其他环境的config文件，如 config.local.ts 等也会执行，相当于
-
-    同时会执行 config.default.ts  和 config.local.ts ，那么local文件中的同名属性 config.xxx会覆盖default文件中的
-
+    
 6. server 下的 proxy-config.json  其实用到的是  api_proxy 这个库（gr-egg） 
 
     "/demeter-api": {
@@ -249,3 +281,167 @@
         export const API_PATH = {
             FundCallbackStatus: customerId => `/api/customer/${customerId}/detail`,
         };
+
+#. 静态资源路径问题
+
+    egg下面的 assets 目录应该放在 app/view 下面还是 app/public 下面？
+
+        放在view下面，路径引用问题，一直404，
+
+        app/view/contracts.html
+
+            <img src="/assets/geerong.png" class='logo'>  （图片放在 app/view/assets/ 下面）
+
+            src不管怎么写，都报错。只好将图片资源放在了 app/public/assets 下面
+
+            <img src="/public/assets/geerong.png" class='logo'>  这就可以正确找到图片了（css也可以放在public下， app/public/css/）
+
+    ==== view下面只放模板，只用在controller中引用。而静态资源（图片，css、js）都应该放在public下？
+
+#. app/view 下面的模板
+
+    app/controller/home.js
+
+        class HomeController extends Controller {
+            async index() {
+                const contracts = [
+                    {name: '注册协议', url: 'http://www.baidu.com'},
+                    {name: '还款协议', url: 'http://www.baidu.com'},
+                    {name: '运营商登录协议', url: 'http://www.baidu.com'},
+                ];
+                // 默认去 app/view 下面找render的文件
+                await this.ctx.render('contracts.html', { contracts });
+            }
+        }
+
+        module.exports = HomeController; 
+
+        
+    1. 不要忘了给客户端放回数据，都应该用await修饰一下
+
+    2. this.ctx.render('contracts.html', { contracts });  这里的 contracts.html 的前缀是 app/view，可以省略，框架自动会去这下面找
+
+#. controller
+
+    const Controller = require('egg').Controller;
+
+    class SomeController extends Controller {
+        async index() {
+            const body = await this.ctx.service.some.list();
+            console.log('ua', body)
+            this.ctx.body = body;       // 注意这里，直接写  await 'hello'; 是不对的
+        }
+    }
+
+    module.exports = SomeController;
+
+
+    总结： await后面只能是一个promise，正常的字符串，应该总是用 this.ctx.body = string; 返回给client
+
+
+#. service中的返回
+
+    const Service = require('egg').Service;
+
+    class SomeService extends Service {
+        async list() {
+            return this.config.robot.ua;
+        }
+    }
+
+    module.exports = SomeService;
+
+    返回给controller的如果是字符串或者数组等数据，应该用return，（疑问？async里面可以不用await关键字么，那这个方法还是promise么）
+
+#. yml里面export出去的环境变量是为了暴露给rancher， 在config/config.prod.ts 里面去取环境变量，config.aeolipileEndpoint = process.env.AEOLIPILE_ENDPOINT;
+
+    这个时候的process.env.AEOLIPILE_ENDPOINT   去取的是rancher里面的环境变量
+
+#. 插件  plugin
+
+    插件目录结构中可以有 app.js
+
+    框架目录结构中也可以有 app.js
+
+    应用(app) 中没有app.js   （也可以用app.js，但是我们的实践项目中没有用而已）
+
+    · 插件的寻址规则 其实就是去哪里找到这个插件，提供了两种模式 path package, 思考一下package的寻找路径规则
+
+#. egg-static
+
+	config.static = {
+        prefix: '/',    // 静态资源访问前缀 localhost:4200/index.html 默认前缀是 /public (localhost:4200/public/index.html),
+        dynamic: true,  // 如果当前访问的静态资源没有缓存,则缓存静态文件
+    };
+
+   第一次访问，响应状态是200，response有一个cache-control: public, max-age=31536000 表示缓存的文件目录是public，缓存有效期是 xxx 秒。第二次刷新页面的时候，就会读取缓存中的文件，状态304，如果不强制刷新或清除缓存，则会在 31536000s内一直读取缓存
+
+
+#. extend2 
+
+    config配置文件使用 extend2 模块进行深度拷贝,
+
+    const extend = require('extend2');      // 内置模块，不用install
+
+    const obj1 = {
+        static: {
+            prefix: '/',
+            dynamic: false
+        },
+        arr: [1,2,3]
+    };
+    const obj2 = {
+        static: {
+            prefix: '../dist/',
+            gzip: true
+        }
+    };
+
+    const obj3 = extend(true, obj1, obj2);
+    // {
+        static: {
+            prefix: '../dist/',
+            dynamic: false,
+            gzip: true
+        }
+    }
+
+    对对象会进行深度遍历，同名字段字段进行覆盖，不是同名字段，则保留
+
+    const obj3 = Object.assign(obj1, obj2);     // static: { prefix: '../dist/', gzip: true }
+
+    可以看出来，Object.assign 只是覆盖，不会对对象进行深层次的遍历
+
+#. egg设置响应头
+
+    ctx.set('Content-Encoding', 'gzip');        // 设置单个 响应头
+    ctx.set(headers);                           // 设置多个 响应头
+
+    this.ctx.type = '.html';            // this.ctx.type 是设置 Content-type 头
+    this.ctx.type = 'html';
+    this.ctx.type = 'json';
+    this.ctx.type = 'application/json';
+    this.ctx.type = 'png';
+
+
+    ctx.type = path.extname(ctx.path);          // eg: path.extname('/favicon.ico') 去后缀名 .ico, 即 最后是 ctx.type = '.ico';
+                                                // Content-type: image/vnd.microsoft.icon
+#. egg内置的中间件
+
+    meta middleware 设置了下面两个header
+
+        x-readtime: 7           // total response time header 这个是什么单位？ Date.now() - ctx.starttime
+
+        keep-alive: timeout=5   // 5000ms = 5s 进行下取整 Math.floor(ctx.app.server.keepAliveTimeout / 1000)
+
+    在客户端的报文中可以看到这两个头字段
+
+#. SIG_SESSION 的value相当于是 session_id?
+
+    A: 不是 session_id ，就是session对象，只不过是加密后，放在了cookie中，其实内容还是存在客户端的
+
+    egg 的session中间件 (其实内部require了 koa-session 中间件,做了一些default的session配置 )    
+
+#. cookie到期了，客户端会自己清除掉？
+
+    会清除掉，但是只有在发起新的请求的时候，去检查是否过期，如果发现过期了，才会去清除掉     

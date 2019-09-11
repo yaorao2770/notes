@@ -1,0 +1,36 @@
+style-loader
+
+    能够在需要载入的html中创建一个<style></style>标签，标签里的内容就是CSS内容。
+
+    负责将css-loader加载到的css样式动态的添加到html-head-style标签中
+
+css-loader
+
+    是允许在js中import一个css文件，会将css文件当成一个模块引入到js文件中。  可以在js中加载css
+
+    只负责加载css模块,不会将加载的css样式应用到html
+
+postcss-loader
+
+    自动添加浏览器前缀
+
+sass-loader
+
+    将sass编译成css
+
+
+
+
+==========================
+
+
+    为什么有laoder？ 因为webpack本身只认识js，对于非js类型的文件，就需要要调用不同的laoder先去解析，然后转化成 js 语言后再去进行打包优化等动作
+
+
+    loader支持链式传递，一组链式loader将按照相反的顺序解析。 import Styles from 'style-loader!css-loader?modules!./styles.css'; 从右向左解析，并将结果传递给下一loader
+
+    laoder链中的第一个loader返回值给下一个laoder， 在最后一个loader，返回webpack所预期的js
+
+#. webpack的entry，指的是入口，不管是单入口还是多入口，其他的模块需要通过 import require url等与入口文件建立其关联
+
+    

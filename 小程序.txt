@@ -1556,3 +1556,18 @@
 #. tsconfig.json 配置编辑器编译ts文件，其中的target是将最终编译成的js代码到什么程度。
 
 	babel是编译js文件的，
+	
+#. typeof 返回是字符串
+
+	typeof 1;
+	typeof 'hello';
+	typeof true;
+	typeof Symbol();
+
+	typeof null;
+
+	typeof undefined;
+	
+	typeof class C();
+	typeof Math.sin;
+	typeof new Function();

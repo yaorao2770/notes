@@ -61,6 +61,8 @@
 
 		生成的文件中可以删除CommonModule引用及@NgModule中的东西
 
+#. ng server 不会生成dist包, 只有ng build才会生成		
+
 =========== angular2 ===========
 
 create a new ng2 project：

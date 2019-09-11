@@ -1,0 +1,92 @@
+用户给出了静态资源目录 dir
+
+    readdir   循环递归目录，将所有目录下的文件放在数组返回
+
+    loadFile    fileManager.get 有值, 更新 该文件的value 对象
+
+                没有值，fileManager.set(filename, {})
+
+    readdir().forEach(file => loadFile(...))    加载dir目录下的所有文件，组成 {[file]: {....}}
+
+
+
+
+
+
+每一个经过 static-cache 中间件的请求分两种:
+
+    非HEAD GET接口请求不处理
+
+    不是规定 options.prefix 前缀的请求不处理
+
+    fileManager.get(ctx.path)
+
+        有值
+
+            200响应
+            
+            组装响应头部 
+            
+                vary last-modified 
+                
+                是否fresh 返回304 return ctx.status=304;    下面的步骤都不用走了
+                
+                content-type content-length cache-control content-md5 
+
+            HEAD 请求到此结束 return （而不是 return next await()）
+
+            gzip 压缩
+
+                acceptEncoding 是否支持 gzip 压缩
+
+                var shouldGzip     当前请求的资源是否可以被gzip压缩,满足一下条件: options.gzip acceptGzip compressible file.length > 1024
+
+                filemanager.file.buffer 
+
+                    存在， 
+
+                        shouldGzip === true，   ctx.body = await zlib.gzip(file.buffer)
+
+                        shouldGzip === false    ctx.body = file.buffer
+
+                    不存在
+
+                        var stream = fs.createReadStream(file.path);
+                        
+                        contentMd5
+
+                        不可以被压缩，直接返回流:   ctx.body = stream;
+
+                        可以压缩:
+                        
+                            ctx.set('content-encoding', 'gzip');
+                            ctx.body = stram.pipe(zlib.createGzip());
+
+
+
+        没有值
+
+            ctx.path 是以下几种情况的，不予处理，直接 return await next():
+
+                1. . 点缀的文件
+
+                2. options.dynamic === true
+
+            可以处理的情况:
+
+                filename = path.normalize(ctx.path).slice(1);   // 即去掉/前缀
+                fullpath  = path.join(dir, filename)            // xx/dist/api/render-uranus
+
+                3. 还有一种文件不处理 对于根目录的请求 / fullpath实际就等于dir
+
+                var result;
+                try {
+                    result = fs.statSync(fuulpath);
+                } catch (err) {
+                    return await next();
+                }
+
+                4. 不是文件的不予处理  if (result.isFile()) return await next();
+
+
+=== ctx.path 有可能是 静态资源 请求，也有可能是 api 的请求

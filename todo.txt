@@ -524,6 +524,74 @@
 
 			this.getListDatas(page, formData);
 		}
+TODO TODAY:
+
+1. Contex.ts 中 的this.local从哪里来的
+
+2. ChangeDetectorRef
+
+3. JS 是如何工作的系列文章
+
+https://segmentfault.com/a/1190000018033709 
+
+4. Webpack 练习
+
+	ng的内置配置是啥
+
+5. Nz-zorro 的文档是怎么编写的，是markdown么？  ionic的文档是怎么编写的
+
+6. gitlab + docer 
+将生产环境容器化已经是一种架构标准
+https://segmentfault.com/a/1190000014387755
+
+https://github.com/angular/angular-cli/blob/master/docs/design/docker-deploy.md
+
+可以将 error-fail-over 包试着配置一下gitlab ci，因为这个包是ts编写的，在上传到gitlab的时候，需要有编译的过程
+
+ ng docker
+4. Web component 
+
+	H5 slot 属性
+
+	Ionic4.x 基于 Web Components.跟其他之前的饿版本相比，重新以标准的web component 重新写了组件
+
+https://ionicthemes.com/tutorials/about/ionic-4-tutorial-mastering-web-components-in-ionic-4
+
+https://ionicthemes.com/tutorials/about/ionic-4-vs-ionic-3
+
+https://blog.bitsrc.io/introducing-ionic-4-0-how-web-components-changed-the-game-44556173f98e
+
+https://medium.com/@javier.ramos1/introduction-to-web-components-4c9bd528baee
+
+2. try  catch 原理
+
+promise是在什么时候执行的，是在then的时候么，还是写完就立马执行？就像rxjs的subscribe一样？
+如果不是写完立马就执行，那么当一个接口依赖另一个接口的时候，怎么串联
+
+then里面的return
+（then返回的必须是一个promise实例）
+
+webview  微信小程序中可以嵌套H5，开放了webview？？？？？
+
+3. tree shaking的源码？
+
+4. Number('hello');
+
+4. Git diff
+
+	vdom diff
+
+	linux diff
+
+5. Leetcode 练习递归，就是给定一种数据结构，用递归实现
+
+4. npm I —save lodash-es  当发现第三方库不能被tree shaking 时，可以下载这种 xx-es 的库？？？这种库是官方自己维护的么  es6 模块输出的方式
+
+5. avatar@2x.png  avatar@3x.png
+
+	2x是双倍图，3x是三倍图，使用哪一个主要看设备的dpi是多少
+
+所以 PWA 中的不同尺寸的图片是干什么用的
 
 
 #. 正常的node暴露出来的接口，通过 client层的api.service.ts 发起请求，但是img.src可以直接请求node的接口，方法都是get
