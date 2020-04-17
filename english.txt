@@ -398,3 +398,9 @@
 #. sentry is a tool that can help after our applications are on production.
 
 #. fatal is the most severe and debug is the least.
+
+#. you branch and origin/master have diverged.
+
+#. side effects		layout affected
+
+#. can use hardware acceleration

@@ -5,3 +5,39 @@
 	2. 限定字段的输入类型，如电话，验证码，只能输入数字，type=number
 
 	3. input长度限制
+
+#. 参考vue的目录组织结构
+
+	shared/
+		constants.js
+		util.js
+
+	constants.js文件:
+		export const SSR_ATTR = 'data-server-rendered'
+
+		export const ASSET_TYPES = [
+			'component',
+			'directive',
+			'filter'
+		]
+
+	util.js文件:
+		export const emptyObject = Object.freeze({})
+
+		export function isUndef (v: any): boolean %checks {
+			return v === undefined || v === null
+		}
+
+		export function isDef (v: any): boolean %checks {
+			return v !== undefined && v !== null
+		}
+
+		export function isTrue (v: any): boolean %checks {
+			return v === true
+		}
+
+		export function isFalse (v: any): boolean %checks {
+			return v === false
+		}
+
+	

@@ -819,7 +819,7 @@ npm cache clean --force  强制清除缓存
 
 	状态码
 
-#. http模块
+#. http模块 【创建server服务器的两种方式】
 
 	http.createServer( (req, res) => {});
 
@@ -839,7 +839,7 @@ npm cache clean --force  强制清除缓存
 
 		1. 
 			const http = require("http");
-			const server = http.createServer();
+			const server = http.createServer();	// server是一个 eventEmitter 的实例，所以可以使用 on 监听某个事件，当emit的时候，可以接收到消息
 			server.on("request", (req, res) => {
 				res.statusCode = 200;
 				const method = req.method;		// 请求方法 POST  GET  DELETE ...
@@ -1085,6 +1085,8 @@ npm cache clean --force  强制清除缓存
 
 #. Content-Type: application/octet-stream
 
+	透明的二进制数据	意思是不知道文件内容是什么格式的，传递到客户端客户端也不知道怎么解析。除非明确定制 content-type
+
 	以流的形式下载文件, 这样可以实现任意格式的文件下载
 
 	如果想指定文件名的话，配合 Content-Disposition 使用
@@ -1092,6 +1094,17 @@ npm cache clean --force  强制清除缓存
 	Content-Type: application/octet-stream
 
 	Content-Disposition: attachment;filename=test.pdf
+	Content-Disposition: inline;filename=test.pdf
+
+	注意: attachment表示直接下载文件，不会显示文件内容 【不管有没有显示的指定 content-type 的具体内容（具体内容指的是除了octet-stream之外的类型）】
+
+		const dist = path.join(this.ctx.app.baseDir!, '..', 'client', 'dist');
+        const buffer = fs.readFileSync(path.join(dist, 'h5/assets', 'image', 'gr-logo.png'));
+        this.ctx.type = 'image/png';
+        this.ctx.set('Content-Disposition', 'inline;filename=logo.png');
+
+		客户端会正确显示这张图片，并且在用户右键保留该图片的时候，会显示文件名是 logo.png 如果不写 content-Disposition inline，保存的时候文件名
+		反正inline的区别就是保存的时候是否指定了文件名
 
 
 	eggjs中可以这样操作:
@@ -1480,7 +1493,7 @@ npm cache clean --force  强制清除缓存
 
 			env 只查看用户级别的环境变量
 
-		b. 	export HELLO=hello 设置环境变量
+		b. 	export HELLO=helålo 设置环境变量
 
 			echo $HELLO 		查看环境变量
 
@@ -1690,7 +1703,7 @@ npm cache clean --force  强制清除缓存
 			<html lang="en">
 
 			<body>
-				<form method="post" style="display: none">
+				<form method="post" style="display: none" action='sso/redirect'> action其实就是url
 					<input type="hidden" name="query">
 				</form>
 			</body>
@@ -1935,6 +1948,14 @@ npm cache clean --force  强制清除缓存
 
 	使用write方法可以传输 string 或者 buffer， 不能传输 stream 给client
 
+	var buffer = fs.readFileSync(file);  读取到的文件内容就是 buffer， 判断一个类型是不是buffer类型，可以用 Buffer.isBuffer 判断
+	文件的大小是字节为单位，在node中获取文件大小可以用 buffer.length 比如 co-1.js 通过目录看大小就是 769字节， 用 buffer.length 获取到的也是这个
+
+	content-length 返回数据大小：
+		if (typeof data === 'string') return Buffer.byteLength(data);
+		if (Buffer.isBuffer(data)) return data.length;
+		if (isJson(data)) return Buffer.byteLength(JSON.stringify(data));
+
 #. gzip压缩有两种
 
 	1. 直接压缩 读取好的内容
@@ -1981,3 +2002,128 @@ npm cache clean --force  强制清除缓存
 
 		<!DOCTYPE html>  unexpected  token
 
+
+#. nodejs 传递JSON字符串给客户端，客户端 JSON.parse 的时候报错，不是合法的JSON
+
+	this.ctx.render('third-party/repayment-recent', { nonce: JSON.stringify({"name":"join"}), title: '极融' });
+
+	改成下面这样：
+
+	this.ctx.render('third-party/repayment-recent', { nonce: encodeURIComponent(JSON.stringify({"name":"join"})), title: '极融' });
+
+		window.grThirdPartyContext = JSON.parse(decodeURIComponent('{{ __context__ }}'));
+
+
+#. 相对路径
+
+	./a.js === a.js  都是相对路径，一般情况下可以省略 ./
+
+
+#.  将 req.headers 以json的形式输出到client上
+
+	 JSON.stringify(req.headers, true, 2)				// 最重要的是这个2,表示有2个空格
+
+	http.createServer(function (req, res) {
+		res.writeHead(200, { 'Content-Type': 'text/plain' });
+		res.write('request successfully proxied to port 9000!' + '\n' + JSON.stringify(req.headers, true, 2));
+		res.end();
+	}).listen(8002);
+
+
+#. 将 png 进行 base64 编码  【base64 编码和 base64 数据不是一个意思!! 'data:image/png;base64,'】
+
+	nodejs中的所有数据，最终都可以表示成 buffer 和 stream 
+
+	Buffer.from()  可以将一个数据转化为 buffer 数据
+
+	// 这种是 base64 编码
+	Buffer.from('hello').toStirng('base64')			// aGVsbG8=
+	Buffer.form('aGVsbG8=', 'base64')				// 把 base64 转换成buffer对象
+	Buffer.form('aGVsbG8=', 'base64').toStirng()		// hello
+
+	// base64 data 
+	const imageData = fs.readFileSync('./avatar.png').toString('base64')
+	const imagePrefix = 'data:image/png;base64,';			// 这个格式其实就是 data:<content-type>;base64,
+	const base64Data = `${imagePrefix}${imageData}`;		// 拿到的数据很长，可以直接复制到浏览器地址栏中打开该图片
+
+	不同数据类型转换为 base64 data 之后的前缀格式:
+
+		图片类型
+			png			data:image/png;base64,
+			jpeg		data:image/jpeg;base64,
+			svg			data:image/svg+xml;base64,
+
+		pdf		data:application/pdf;base64,			
+
+#. 将 base64 data 格式的图片转化为 png 图片
+
+	https://mp.weixin.qq.com/s/nD92XCgOgiQ6HRqYyjSpkA
+
+	// 怎么获取到 base64 data 的字符串, 可以先找一张图片转化为 base64 data 拿到
+	// fs.readFileSync('./avatar.png').toString('base64')  拿到 data，然后拼接 base64 前缀就是完整的 base64 data
+	const base64Data = 'data:image/png;base64,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'
+	const removePrefixData = base64Data.replace('data:image/png;base64,', '');
+	const bufferData = Buffer.from(removePrefixData, 'base64')		// 将 base64 转化为buffer对象
+	const path = `images/${Date.now()}.png`;		// 注意使用 writeFile 时，目录必须存在才能写入成功
+	fs.writeFile(path, bufferData, (err) => {
+		if (err) {
+
+		} else {
+			console.log('写入成功')
+		}
+	})
+
+
+#. nodejs中跨平台的兼容性问题
+
+    1. 兼容环境变量的设置， windows 跟 Unix系的 环境下不一样，我们用的是 cross-env
+            wins  set HELLO=hello
+                  echo %HELLO%         查看的时候时 %%
+
+            unix  export  HELLO=hello
+                  echo $HELLO       查看的时候也不一样 ,$  
+
+    2. 路径 \ / 不一样，应该总是用  path.join()
+
+
+#. readline
+
+	交互式命令行:
+
+		const readline = require('readline');
+		const fs = require('fs');
+
+		const r1 = readline.createInterface({
+			input: process.stdin,
+			output: process.stdout,
+		});
+
+		r1.question('web帅不帅呀？', val => {
+			console.log('你的回答是: [%s]', val);
+			r1.close();
+		});
+
+	// 第二种使用方式
+	const r1 = readline.createInterface({
+		input: fs.createReadStream('./access.log')
+	});
+
+	// 监听的是line事件
+	r1.on('line', line => {
+		const data = line.split(' ');
+		console.log('time: %s %s, Url: %s', data[0], data[1], data[13]);
+	})	
+
+	.access.log文件:
+		[2016-12-09 13:56:48.407] [INFO] access - ::ffff:127.0.0.1 - - "GET /oc/v/account/user.html HTTP/1.1" 200 213125 "http://www.example.com/oc/v/account/login.html" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.98 Safari/537.36"
+		[2016-12-09 14:00:10.618] [INFO] access - ::ffff:127.0.0.1 - - "GET /oc/v/contract/underlying.html HTTP/1.1" 200 216376 "http://www.example.com/oc/v/account/user.html" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.98 Safari/537.36"
+		[2016-12-09 14:00:34.200] [INFO] access - ::ffff:127.0.0.1 - - "GET /oc/v/contract/underlying.html HTTP/1.1" 200 216376 "http://www.example.com/oc/v/account/user.html" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.98 Safari/537.36"	
+
+
+#. path.join 拼接路径，主要是为了兼容不同平台下分隔符不同的问题
+
+	winds 下 \
+	unix 下 / 
+
+	path.join(appInfo.baseDir, 'app/view')					// 这种就是错误的，不应该显示的用分隔符，为了兼容不同平台，应该总是用下面那种方式
+	path.join(appInfo.baseDir, 'app', 'view')

@@ -75,3 +75,10 @@
 	sudo lsof -nP | grep LISTEN | grep 9229
 
 	sudo kill -9 <PID>
+
+
+====
+
+    vscode 安装
+
+        settings 中搜索插件名字  vetur 配置默认的选项

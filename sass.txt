@@ -186,7 +186,7 @@ mac上的安装（将sass文件编译成css文件）
 			content: "1111"
 		}
 
-		这个时候没有优先顺序, 只要是!default之外又重新定义了该变量值,那么久使用该变量值
+		这个时候没有优先顺序, 只要是!default之外又重新定义了该变量值,那么就使用该变量值
 
 
 7. 局部使用的sass文件
@@ -338,6 +338,15 @@ mac上的安装（将sass文件编译成css文件）
 	}
 
 	<div class="two">我是卖报的小行家</div>
+
+	编译后:
+		.one, .two {
+			width:100px;
+			height:100px;
+		}
+		.two {
+			color: red;
+		}
 
 	使用完 @extend, div的class实际就是 <div class="one two"></div>
 

@@ -18,13 +18,45 @@ sass-loader
 
     将sass编译成css
 
+raw-loader  
+    将源文件里的内容以字符串形式返回。
+    module.exports = function (content, map, meta) {
+        const code = JSON.stringify(content);
+        return `module.exports=${code}`;
+    }
+
+url-loader
+    文件大小小于多少字节时，可以返回 dataurl
+    但是有的文件并不是一个字符串就可以解决的，比如图片，音频、视频，对这种数据的数据，需要利用源文件的buffer
+    开启buffer类型的content:  在该loader js文件的最后 module.exports.raw = true
+
+    流程是: 读取源文件buffer, 将buffer.toString('base64') return输出，最后再 module.exports.raw = true 就可以了
+
+
+bundle-loader
+    实现动态按需加载
+
+    loader调用的时候是从右到左，但是实际上在从右到左执行loader之前，会先从左到右调用laoder上的pitch方法。如果某一个loader的pitch方法返回了结果，那么这个loader后面的所有loader就会跳过。
+    [a, b, c, d] 其中b loader的pitch方法返回了结果，那么 c d loader就会被跳过，
+    然后根据 import/require 路径获取资源的内容。
+    然后 b-loader 执行
+    然后 a-loader 执行
+
+    什么样的情况下需要跳过剩下的loader。最常见的就是动态加载和缓存读取了。 
+
+    
+    
+
 
 
 
 ==========================
 
+#. 为什么有laoder？
 
-    为什么有laoder？ 因为webpack本身只认识js，对于非js类型的文件，就需要要调用不同的laoder先去解析，然后转化成 js 语言后再去进行打包优化等动作
+    webpack本身只认识js，对于非js类型的文件，就需要调用不同的laoder先去解析，然后转化成js语言。
+
+    比如 直接加载json，因为没有module.exports，是无法被识别的。你需要json-loader或者raw-loader, 而这两个loader做的事情就是将在你的json内容前面加上 export default 或者 module.exports =  具体用哪种导出预发，可以通过 loader-utils 中 getOptions方法去判断
 
 
     loader支持链式传递，一组链式loader将按照相反的顺序解析。 import Styles from 'style-loader!css-loader?modules!./styles.css'; 从右向左解析，并将结果传递给下一loader
@@ -33,4 +65,47 @@ sass-loader
 
 #. webpack的entry，指的是入口，不管是单入口还是多入口，其他的模块需要通过 import require url等与入口文件建立其关联
 
-    
+#. webpack 是基于node的，node的模块规范是commonJs    
+
+#. 即使在引入模块时使用了 es6 但是引入的那个模块却是使用 commonjs 进行输出,这也无法使用 tree_shaking
+
+
+
+#. es6 module 和 commonjs module
+
+    commonjs 导出的值是拷贝类型【外面对数据的改变不会影响模块内的数据】
+
+        1.js:
+            var counter = 3;
+            function add() {
+                counter++;
+            }
+            module.exports = {
+                counter,
+                add
+            }
+
+        2.js:
+            const mod = require('./1.js');
+            console.log(mod.counter);       // 3
+            mod.add();
+            console.log(mod.counter);       // 3
+
+    es6 导出的值是引用类型的【外面数据的改变会影响模块内的同名数据】            
+
+        1.js:
+            export let counter = 3;
+            export function add() {
+                counter++;
+            }
+
+        2.js:
+            import { counter, add }  from './1.js';
+            console.log(counter);       // 3
+            add();
+            console.log(counter);       // 4
+
+
+
+
+

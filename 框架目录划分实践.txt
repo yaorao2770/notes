@@ -1,0 +1,44 @@
+#. egg-security 插件
+    helper 目录的实现
+
+    lib/helper
+        index.js
+        escape.js
+        sjs.js
+        surl.js
+        spath.js
+
+    index.js
+        module.exports = {
+            surl: require('./surl'),
+            sjs: require('./sjs'),
+            spath: require('./spath'),
+            escape: require('./escape'),
+        };
+
+    escape.js
+        const BASIC_ALPHABETS = new Set('abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ.-_'.split(''));
+
+        function cliFilter(string) {
+            const str = '' + string;
+            let res = '';
+            let ascii;
+
+            for (let index = 0; index < str.length; index++) {
+                ascii = str[index];
+                if (BASIC_ALPHABETS.has(ascii)) {
+                res += ascii;
+                }
+            }
+            return res;
+        }
+        module.exports = cliFilter;        
+
+#. vue源码中 utils
+
+    下面的index.js 组织结构跟上面的差不都
+
+
+#. @ngrx/store 源码
+
+    store/src/index.ts 可以直接把要导出的内容写在一个内容上，然后 index.ts 在一层层导出

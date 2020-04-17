@@ -16,6 +16,39 @@
             name: this.cardInfo.bankName,
         }
 
+#. 减少 const 变量
+
+	mime:
+
+		commit(): void {
+			const spec = this.creditForm.value;
+			const file = this.fileCtrl.value;
+
+			switch (this.data.type) {
+				case CreditFormType.INITIALIZE:
+					this.initialCredit(spec, file);
+					break;
+				case CreditFormType.IMPORT:
+					this.grantCredit(spec, file);
+					break;
+			}
+		}
+
+	Better:
+
+			commit(): void {
+				const [spec, file] = [this.creditForm.value, this.fileCtrl.value];
+				switch (this.data.type) {
+					case CreditFormType.INITIALIZE:
+						this.initialCredit(spec, file);
+						break;
+					case CreditFormType.IMPORT:
+						this.grantCredit(spec, file);
+						break;
+				}
+			}
+
+
 #. 如果strAction不存在， new Buffer(strAction, 'base64')的时候就会报错
 
 	mine:
@@ -64,6 +97,155 @@
 		Object.assign(EggLoader.prototype, loader);
 	}
 
+#. 函数体内也可以 抽取出来公共函数
+
+	字符串的异位词算法
+
+    给定两个字符串 s 和 t ，编写一个函数来判断 t 是否是 s 的字母异位词。
+
+    输入: s = "anagram", t = "nagaram"
+    输出: true
+
+    输入: s = "rat", t = "car"
+    输出: false
+
+    思路！！
+
+
+	function test(s, t) {
+		if (s.length !== t.length) return false;
+		s = s.toLowerCase();
+		t = t.toLowerCase();
+		return [...s].sort().join('') === [...t].sort().join('');
+	}
+
+	上面这段代码有没有可以优化的地方？
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	可以抽取一个函数
+	function test(s, t) {
+		if (s.length !== t.length) return false;
+		s = s.toLowerCase();
+		t = t.toLowerCase();
+		let action = x => [...x].sort().join('');
+		return action(s) === action(t);
+	}
+
+
+#. 优化 if-else
+
+	export enum RepaymentRepayState {
+		ToRepay = 0,    // 待还款
+		Cleared = 1,    // 已还款
+		Overdue = 2,    // 已逾期
+		Pending = 3,    // 还款中
+		EarlyPay = 4,    // 提前还款
+	}
+
+	Normal:
+
+		if (repayState === RepaymentRepayState.ToRepay) {
+            return this.todayIsRepayDate(repayDate) ? '立即还款' : '查看详情';
+        }
+
+        if (repayState === RepaymentRepayState.Cleared) {
+            return '查看详情';
+        }
+
+        if ([RepaymentRepayState.Overdue, RepaymentRepayState.EarlyPay].indexOf(repayState) > -1) {
+            return '立即还款';
+        }
+
+        if (repayState === RepaymentRepayState.Pending) {
+            return '还款处理中';
+        }
+
+	Better:
+
+		switch (repayState) {
+			case RepaymentRepayState.ToRepay:
+				return this.todayIsRepayDate(repayDate) ? "立即还款" : "查看详情";
+			case RepaymentRepayState.Cleared:
+				return "查看详情";
+			case RepaymentRepayState.Overdue:
+			case RepaymentRepayState.EarlyPay:
+				return "立即还款";
+			case RepaymentRepayState.Pending:
+				return "还款处理中";
+			default:
+				return "";
+		}
+
+	Best:
+
+		const map = {
+			[RepaymentRepayState.ToRepay]: this.todayIsRepayDate(repayDate) ? "立即还款" : "查看详情",
+			[RepaymentRepayState.Cleared]: "查看详情",
+			[RepaymentRepayState.Overdue]: "立即还款",
+			[RepaymentRepayState.EarlyPay]: "立即还款",
+			[RepaymentRepayState.Pending]: "还款处理中",
+		};
+
+		console.log('buttonText', map[repayState] || '');
+		return map[repayState] || '';		// 使用 || '' 作为默认值
+
+	使用 Map 来优化，
+
+	在 if-else 嵌套过多的情况下，导致代码越来越胖，可以使用 反条件前置+return 的方式将不符合的条件过滤掉
+
+		if (a) {					// 1
+
+		} else {					// 2
+			if (b) {
+				if (c) {
+
+				} else {
+
+				}
+			} else {				// 3
+
+			}
+		}
+
+	=== 优化后
+
+		if (a) {
+			return;
+		}
+
+		if (b) {
+			return;
+		}
+
+		...		// 3
+
+
+
+
+
+
+
 	
 =======  源码阅读	
 
@@ -97,3 +279,50 @@
     notDotFile(filename) {
         return filename[0] !== '.';
     }
+
+#. 定义了两个实参，第二个参数是可选参数，判断第二个参数是否传入了值
+
+	手写reduce
+
+	1. reduce(fn, init)
+	2. init 不是必填，有值时， fn的第一个参数是init，否则就是 arr[0]
+
+	Mine:
+
+		Array.prototype._reduce = function (fn, init) {
+            if (typeof fn !== 'function') return new TypeError(`${fn} is not a function`);
+
+            // 深拷贝
+            const arr = [...this];
+            if (arguments.length === 2) {
+                arr.unshift(init);
+            }
+            let result = arr[0];
+            for(let i=1, len=arr.length; i< len; i++) {
+                result = fn(result, arr[i], i-1, this);
+            }
+
+            return result;
+        }
+
+#. 如何准确判断一个属性是不是属于一个对象中
+
+	方案一：
+
+		const obj = {
+			name: 'apple',
+			age: 12,
+			sex: 'man',
+			address: undefined,
+		}
+		console.log( obj.age )
+		console.log( obj.address )  // 这种不能准确判断属性是不是该对象的，因为如果对象中该属性的值显示的设置成了 undefined 辨别不出来
+
+
+
+	方案二：
+
+		console.log( obj.hasOwnProperty('address') )    // true
+		console.log( obj.hasOwnProperty('age') )        // true		
+
+

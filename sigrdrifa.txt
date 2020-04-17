@@ -1,0 +1,89 @@
+#. BFF 打包
+
+    server/
+        app.ts
+        package.json                     
+        package-lock.json                     
+        app/
+            controller/
+            service/
+            router.ts
+        config/
+            locales/                    // 注意这个目录用 tsc 也不会编译的，也就是说不会出现在 最终的 build 目录，需要手动cp过去
+                zh-CN.json
+            config.default.ts
+            config.local.ts
+            config.preprod.ts
+        env/
+            dev.json
+            sit.json
+            preprod.json
+        view/
+            contract.html
+            redirect.html                   // 检测当前是不是在微信浏览器打开的
+            uranus-error.html
+        test/
+            a.ts
+
+    tsconfig.prod.json 文件:
+        {
+            compilerOptions: {
+                baseUrl: './',
+                outDir: '../build/sigrdrifa'
+            },
+            exclude: [
+                'test'              // 因为 test 目录下是测试用例，在最后的打包上传时，并不需要这个测试用例也传上去，所以排除在外
+            ]
+        }
+    npm scripts = {
+        // 将 tsc 不能编译的文件手动 copy 到最终的build目录去
+        "cp": "cp ./package-lock.json ./package.json ../build/sigrdrifa && cp -r ./config/locales ../build/sigrdrifa/config && cp -r ./app/view ../build/sigrdrifa/app",
+        "build": "ets && tsc -p tsconfig.prod.json && npm run cp",
+        "build:origin": "ets && tsc -p tsconfig.prod.json"    
+    }
+
+    npm run build:origin 的时候默认只会把server目录下的ts文件编译，那么 view/ 目录下的html文件是不会出现在最后的 build 目录的【package.json                     
+        package-lock.json    也不会出现，因为他们是json文件，tsc只能编译ts文件，所以都需要我们手动copy过去】
+
+
+#. 生产环境打包 以及 开发环境打包
+
+    build/          这个包就是最终生产环境打出的包
+    client/
+    server/
+
+    生产环境:
+        client端的打包
+            都是运行 npm run build
+            vue的配置:
+                'build': 'vue-service-cli build --dest ../../build/sigrdrifa/app/public/third-party'
+
+            ng的配置:
+                'build': 'ng build --prod'  
+                angular.json 文件中还需要配置:
+                    architect/build/configurations/productions/outputPath = "../../build/sigrdrifa/app/public/h5"
+
+        server端的打包
+            'cp': 'cp ./package.json ./package-lock.json ../app/sigrdrifa && cp -r ./config/locales ../build/sigrdrifa/config && cp -r ./app/view ../build/sigrdrifa/app",
+            'build': 'ets && tsc -p tsconfig.prod.json && npm run cp'
+
+        最终在docker中的就是个node项目，client端的所有代码是放在 public 目录下的
+
+
+    开发环境:
+        client/
+            dist/                       h5 和 third-party两个目录下实时build出来的包都放在这个包下，然后server配置static和view的path路径来这里读
+            h5/
+            third-party/                           
+
+
+                
+
+
+#. egg-view 插件
+
+    this.ctx.render('index.html', { title: '极融' });       // 实际上就是去
+
+
+
+

@@ -1,5 +1,34 @@
 ﻿知识汇总：
 
+#. 如果接口要求同时上传 表单值和上传文件的值
+
+	<div [formGroup]="baseFormGroup">
+		111: <input type="text" formControlName="name"> <br>
+		222: <input type="text" formControlName="age"> <br>
+		333: <input type="text" formControlName="sex"> <br>
+	</div>
+	文件上传： <input type="file" (change)="fileChange($event)">
+
+	readonly baseFormGroup = this.fb.group({
+        name: ['', Validators.required],
+        age: ['', Validators.required],
+        sex: ['', Validators.required],
+    });
+
+	fileChange(event): void {
+        const [ formValue, file ] = [this.baseFormGroup.value, event.srcElement.files[0]]
+
+        const formdata = new FormData();
+        formdata.append('file', file);
+
+		// 注意这里 使用了 blob对象，来重新定义传给后台的值
+        formdata.append('formValue', new Blob([JSON.stringify(formValue)], { type: 'application/json' }));
+
+        myAjax(formdata);
+    }
+
+
+
 1. ajax
 	
 	上传进度和下载进度调用的是两个事件,progress事件
@@ -1885,17 +1914,11 @@
 	    var cancel = document.getElementById('cancel');
 
 	    new Promise(function(resolve, reject){
-	        cancel.onclick = reject;
-	        confirm.onclick = resolve;			//  用户点击哪个按钮就执行哪个逻辑，
-											        后面如果加上()，不用用户点击，
-											        就顺序执行第一个resolve方法，
-											        如果reject点击函数放在resolve前面，
-											        就先执行reject
-	    }).then(
-	        data => {
-	            console.log('你确定么');
-	        }
-	    ).catch( reason =>{
+	        cancel.onclick = reject;        // 状态的改变只能有一次，pending->resovle 或者 pending->reject 所以这两个不可能都执行，
+	        confirm.onclick = resolve;			
+	    }).then( data => {
+			console.log('你确定么');
+		}).catch( reason =>{
 	        console.log('取消关闭--catch');
 	    })
 
@@ -2107,52 +2130,9 @@
 
 	setTimeout不止可以有三个，可以有更多的参数。第三个及之后的参数都是作为 fn的形参使用的（ setTimeout( fn, time ) ）
 
-#. this
-
-	this的指向只有在运行的时候才能确定，最终指向的时那个调用他的对象		
-
-	1. 	var obj = {
-			a:10,
-			b:{
-				fn:function(){
-					console.log(this.a);
-				}
-			}
-		};
-		obj.b.fn();	// undefined,this指向b,b中没有a，所以undefined
-
-	2. 	function fn(){
-			var user = 'join';
-			console.log(this.user);		
-			console.log(this);
-		}
-
-		fn();	// undefined  window
-
-		this指向最终调用者,这里的调用其实是:window.fn();所以this指向window
-
-	3. 接着例子1的代码写：
-
-		var j = obj.b.fn;
-		j();		// 最终调用:window.j(),所以最终调用者是window,undefined
-
 #. jsonp的原理
 
 	jsonp主要利用script标签没有跨域限制这一特性，通过在客户端注册一个callback方法,然后把callback的名字传递给服务器，服务端得到请求的数据后，将数据包裹在callback中返回给客户端，这样服务器生成的json数据就能被客户端正确接受了	
-
-#. 304
-
-	表示页面资源没有修改，直接使用浏览器缓存
-
-#. 请列举三种禁止浏览器缓存的头字段
-
-	Pragma: no-cache
-	Cache-control: no-cache	
-	Expires: -1/0
-
-#. TCP/IP四层协议：
-
-	应用层、传输层、网络层、数据链路层 (http协议对应的是应用层)
 
 #. 从输入URL到浏览器显示页面发生了什么
 
