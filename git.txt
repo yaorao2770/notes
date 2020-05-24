@@ -95,6 +95,7 @@
 	git config --global alias.cp cherry-pick
 	git config --global alias.st status
 	git config --global alias.ck checkout
+	git config --global alias.ps push
 
 8. 创建git仓库有两种方法：
 

@@ -1,3 +1,5 @@
 #. open in browser
 
     ALT + B
+
+ 设置默认打开的浏览器: settings -> 搜 open in browser 然后有个default，填 chrome 就可以了

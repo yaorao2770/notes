@@ -1,0 +1,939 @@
+#. render() 方法可以返回 return null 来阻止组件渲染
+
+#. props:
+
+    class Welcom extends React.Component {
+        render() {
+            return <h1>Hello, {this.props.name}</h1>;   // 1. 单花括号 2. this.props 是个对象，存储的是当前组件被调用时传进来的属性
+        }
+    }
+
+    pros定义:
+        当react元素是自定义组件时，它会将JSX所接收到的属性以及子组件转换成单个对象传递给组件，这个对象就是props
+
+    使用:
+    <Welcom name='cyy'></Welcom>        // 其实就是 { name: 'cyy' } props对象
+
+    区别:
+        UI:
+            <Welcom [name]="'cyy'">  或者 <Welcom [name]="name"> this.name='cyy'
+        Component:
+            class WelcomComponent {
+                @Input() name:string;
+            }   
+    // Angular 中动态属性用中括号表示 [name]='name'
+
+#. ReactDOM.render(element, root)
+
+    更新UI的方法
+
+    element，原生标签or自定义组件 【这个参数可以使用 JSX 语法】
+
+    ReactDOM.render(
+        <h1>hello world</h1>,               // JSX 和 原生html标签
+        document.querySelector('#app')
+    );
+
+    const name = 'world';
+    ReactDOM.render(
+        <h1>hello {name}</h1>,               // 变量包裹在 单花括号内
+        <h1>hello {"world"}</h1>,            // 单花括号内 既可以是变量也可以是字符串
+        document.querySelector('#app')
+    );
+
+
+    ReactDOM.render(
+        <LikeButton />,                     // LikeButton 自定义组件【如果这里直接写组件标签，意味着使用的是JSX，如果不用JSX，并且不是原生HTML标签的话，可以用 React.createElement(LikeButton)】
+        document.querySelector('#app')
+    );
+
+    // Case 3 p1参数是原生HTML标签，但是有多个时，可以赋值给一个变量
+    const el = (
+        <div>
+            <h1>hello world</h1>
+            <h2>it is {new Date().toLocaleDateString()}</h2>
+        </div>
+    );
+
+    ReactDOM.render(
+        el,                     // 这里可以直接写 <h1>hello world</h1> 但是当有嵌套标签时，直接写在这里比较冗余，所以可以赋值给一个变量
+        document.querySelector('#app')
+    );
+
+
+    class LikeButton extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = { liked: false };
+        }
+        render() {
+            if (this.state.liked) {
+                return 'cyy';
+            }
+            // render方法中的return出去的才是真正在UI界面上显示的内容
+            return (
+                <button onClick={() => this.setState({liked: true})}>join</button>
+            );
+        }
+    }
+
+    这种在一个项目中只有初次渲染的时候才会使用，感觉类似 new Vue(opts)
+
+#. render() 方法中的this指向哪里？？    
+
+#. state
+
+    state 和 props 类似，但是state是私有的，并且完全受控于当前组件
+
+    1. state的赋值必须在 constructor 内，其他地方需要需要更改 state 中的值，需要调用 setState 更新
+
+    2. this.setState({...}) setState的参数可以是对象也可以是 函数
+
+        this.setState((state, props) => {
+            counter: state.counter + props.increment
+        });
+        
+    3. setState 去更新某个值，会做一个合并
+
+        this.state = {
+            name: 'join',
+            age: 12
+        }
+
+        this.setState({age: 24})    // 那么最终state = { name: 'join', age: 24 }
+
+    4. setState 的第二个参数
+
+        this.setState({ temperature: e.target.value }, () => console.log('setState完成', this.state.temperature));
+
+
+    class App extends Component {
+        constructor(props) {
+            super(props);
+            this.state = { liked: false };          // 构造函数是唯一可以给 state 直接赋值的地方，其他地方改变state中的值，都必须要调用 setState 方法
+        }
+        render() {
+            return (
+                <div>{this.state.liked}</div>
+            );
+        }
+    }
+
+#. lifecycle
+
+    componentDidMount       组件被渲染到DOM后调用【即先执行组件的render方法，在调用该方法】
+
+    componentWillUnmount
+
+
+#. 更新UI的方法
+
+    1. ReactDOM.render( <Clock />, root)
+
+        循环调用该方法去更新UI
+
+        function tick() {
+            ReactDOM.render( <Clock />, root);
+        }
+
+        setIniterval(tick, 1000)                // 每s都会调用 ReactDOM.render 方法，但其实只有date字段在更新，不会整个dom都更新
+
+    2. this.setState({}) 底层其实调用还是组件的render方法
+
+        class Clock extends Component {
+            constructor(props) {
+                super(props);
+                this.state = { date: new Date() };
+            }
+            componentDidMount() {
+                this.timer = setInterval(() => {
+                    this.setState({ date: new Date() });        // 实际上 setState 底层调用的还是 rende 方法去更新的界面【可以在 render 方法中log, 并在这个hook中也log,看下调用顺序】
+                }, 1000);
+            }
+            componentWillUnmount() {
+                clearInterval(this.timer);
+            }
+            render() {
+                return (
+                    <div>
+                        <h1>hello world</h1>
+                        <h2>time is: {this.state.date.toLocaleTimeString()}</h2>  // 这里要注意写 toLocaleTimeString 否则会报错
+                    </div>
+                );
+            }
+        }
+
+        ReactDOM.render(<Clock />, root);
+
+#. 事件
+
+    小驼峰写法
+    需要传入一个函数
+
+    class App extends Component {
+        tap(e) {
+            console.log('tap');
+            e.preventDefault();     // 阻止默认行为或者冒泡，需要显示的调用该方法，不能直接在html中写
+        }
+        render() {
+            return (
+
+                // Case 1
+                <button onClick={this.tap}>click</button>
+
+                // Case 2
+                <button onClick={ () => console.log('tap') }>click</button>
+            );
+        }
+    }
+
+    注意: 
+        1. 对于 Case 1的写法，如果想要在 tap 函数内使用 this，会发现this是undefined, 方法一 可以手动 Bind 一下this
+
+            constructor(props) {
+                super(props);
+                this.tap = this.tap.bind(this);     // 在构造函数中bind
+            }
+            tap() {
+                console.log(this.props.text);       // 只有在constructor上bind了this，这里才能获取到 this.props
+            }
+
+            方法二: 直接在 onClick 中bind
+                <button onClick={ this.tap.bind(this) }>{this.state.isToggleOn ? 'ON' : 'OFF'}</button>
+
+
+            方法三: 箭头函数
+                <button onClick={ () => console.log(this.props.text) }>{this.state.isToggleOn ? 'ON' : 'OFF'}</button>
+
+            方法四:
+
+                tap = () => {
+                    console.log(this.props.text); 
+                }
+
+                这种写法，编译成原生js后，就相当于实例方法，而不是原型方法
+
+                function Person () {
+                    this.name = 'join';
+                    this.run = function() {
+                        return '100m';      // 实例方法
+                    }
+                }
+                Person.prototype.say = function() {
+                    console.log(123);
+                }
+
+                class Person {
+                    name = '100m';
+                    run = () => {
+                        return '100m';
+                    }
+                    say() {
+                        console.log(123);
+                    }
+                }
+
+#. 需要传递给事件的参数
+
+    default: 
+        class App extends Component {
+            constructor(props) {
+                super(props);
+                this.state = { ...props };          // 如果想修改 props 中的值, 就要赋值给 state 去操作，因为默认情况下class组件是纯函数, props应该是只读的,
+            }
+            tap = (a, b, e) => {            // 需要需要传值给 点击事件,形参的最后一个值是 event 对象
+                console.log(a, b, e)
+                this.setState({ btnText: 'modify' })
+            }
+            render() {
+                const { btnText, date } = this.state;
+                return (
+                    <div className="container">
+                        // 注意, 需要传值的话, 这里的点击事件要显示传e，因为默认情况下点击事件的第一个参数是e
+                        <button onClick={ e => this.tap('hello', 'world', e) }>{btnText}</button>
+                        <h1>{date.toLocaleTimeString()}</h1>
+                    </div>
+                );
+            }
+        }
+        ReactDOM.render(
+            <App btnText='百度' date={new Date()}/>,
+            root
+        );
+
+#. 注意括号包裹住对象，作为return值
+
+    class Toggle extends Component {
+        constructor(props) {
+            super(props);
+            this.state = { isToggleOon: true };
+            this.tap = this.tap.bind(this);
+        }
+        tap() {
+            this.setState(state => ({ isToggleOon: !state.isToggleOon }))            // 注意这里一定要用括号包裹 相当于 return 返回值，否则就是普通的函数体，没有return值
+        }
+        render() {
+            return (
+                <button onClick={this.tap}>{this.state.isToggleOon ? 'ON' : 'OFF'}</button>
+            );
+        }
+    }
+
+#. 条件渲染
+
+    三目运算符
+    render方法直接return null 来隐藏组件【相关的组件DOM完全从DOM树中移除了 类似于 v-if 】
+
+    class UserGreeting extends Component { 
+        render() {
+            return <h1>欢迎回来</h1>;
+        }
+    }
+    class GuestGreeting extends Component {
+        render() {
+            return <h1>请先登录</h1>;
+        }
+    }
+
+    class Greeting extends Component {
+        render() {
+            const { isLoggedIn } = this.props;
+            return isLoggedIn ? <UserGreeting /> : <GuestGreeting />;
+        }
+    }
+
+    ReactDOM.render(
+        <Greeting isLoggedIn={true} />,
+        root
+    );
+
+#. 条件渲染完整demo
+
+    class UserGreeting extends Component { 
+        render() {
+            return <h1>欢迎回来</h1>;
+        }
+    }
+    class GuestGreeting extends Component {
+        render() {
+            return <h1>请先登录</h1>;
+        }
+    }
+    class Greeting extends Component {
+        render() {
+            const { isLoggedIn } = this.props;
+            return isLoggedIn ? <UserGreeting /> : <GuestGreeting />;
+        }
+    }
+    class App extends Component {
+        constructor(props) {
+            super(props);
+            this.state = { isLoggedIn: false };
+        }
+        tap = () => {
+            this.setState( ({ isLoggedIn }) => ({ isLoggedIn: !isLoggedIn }));
+        }
+        render() {
+            const { isLoggedIn } = this.state;
+            return (
+                <div className='container'>
+                    <Greeting isLoggedIn={isLoggedIn} />
+                    <button onClick={ this.tap }>{ isLoggedIn ? '退出' : '登录' }</button>
+                </div>
+            );
+        }
+    }
+
+    ReactDOM.render(
+        <App />,
+        root
+    );
+
+#. {}
+
+    括号内可以是变量、字符串、html标签、组件和函数【即 props可以接受任意类型】
+
+    <App name={ name }>
+    <App name={ 'cyy' }>
+    { num > 100 ? <h2>hello world</h2> : 200 }
+    <App left={ <Concat /> } />
+    <TemperatureInput onTempChange={ this.handleChange }>       // 接受函数
+
+#. &&
+
+    花括号内，不仅可以写表达式，也可以写 html 标签【厉害】
+
+    class MailBox extends Component {
+        render() {
+            const { unreadMsg } = this.props;
+            return (
+                <div>
+                    <h1>hello</h1>
+                    {
+                        unreadMsg.length && <h2>you have { unreadMsg.length } unread messages.</h2>
+                    }
+                </div>
+            );
+        }
+    }
+
+    ReactDOM.render(
+        <MailBox unreadMsg={['React', 'Re: React', 'Re:Re: React']} />,
+        root
+    );
+
+
+#. key
+
+    key 不仅可以用再 list 列表中，可以用在任何元素上面【前提是在一个 loop 环境中】
+
+    const num = [1, 2, 3];
+    
+    <ul>
+        { num.map(item => <li key={item.toString()}>{ item }</li>) }
+    </ul>
+
+    注意: 自定义的组件宿主元素上面不能写key, 不会报错，但是在 组件内去获取这个key值是获取不到的
+
+            posts.map(item => 
+                // 这里的key，在Content组件内的 this.props 上面是没有的
+                <Content key={item.id} posts={ posts } />
+            )
+
+#. v-for
+
+    react中的for循环可以用 array.map 但是要求一定要有 return 才可以
+
+    Array<Component> 自定义组件的数组可以直接放在 {} 内,就会当成一个列表渲染
+
+    用法:
+        const products = [
+            {category: "Sporting Goods", price: "$49.99", stocked: true, name: "Football"},
+            {category: "Sporting Goods", price: "$9.99", stocked: true, name: "Baseball"},
+            {category: "Sporting Goods", price: "$29.99", stocked: false, name: "Basketball"},
+            {category: "Electronics", price: "$99.99", stocked: true, name: "iPod Touch"},
+            {category: "Electronics", price: "$399.99", stocked: false, name: "iPhone 5"},
+            {category: "Electronics", price: "$199.99", stocked: true, name: "Nexus 7"}
+        ];
+
+        // TODO-CY 一次性输出两个自定义组件不可以，后面 B 组件会覆盖 A 组件，最后只会显示 B
+        // 如果想要输出多个组件的数组的话，可以另外定义数组，然后再 push 
+        products.map(({ category, name, price }) => (
+            <A category={ category } key={ category }/>,
+            <B name={ name } price={ price } key={ name } />
+        ));
+
+        正确用法:
+            const rows = [];
+            last lastCategory = null;
+            products.map(({ category, name, price }) => {
+                if (category !== lastCategory) {
+                    rows.push(<A category={ category } key={ category }/>)
+                }
+                rows.push(<B name={ name } price={ price } key={ name } />)
+                lastCategory = category;
+            });
+
+        渲染: 
+            <table>
+                <tbody>{ rows }</tbody>         // 这里直接渲染的就是rows列表
+            </table>
+    
+
+#. Form 表单
+
+    const { name, value, checked, selectedOptions } = e.target;
+
+    Normal:
+        <textarea name="" id="" cols="30" rows="10">hello world</textarea>
+
+    React:
+        // value={ this.state.value }
+        <textarea value='hello cyy' onChange={ this.handleChange } />
+
+    react中 textarea 是单标签，并且新增了一个 value 属性
+
+    1. 在react中, 所有表单元素: input textarea select 标签上都需要配合 value + onChange + state 使用
+
+
+#. select
+
+    single:
+
+        <select value={ this.state.value } onChange={ this.handleChange }>
+            <option value='apple'>apple</option>
+            <option value='bear'>bear</option>
+            <option value='orange'>orange</option>
+        </select>
+
+        this.state = { value: 'apple' }
+
+        handleChange = e => {
+            this.setState({ value: e.target.value })
+        }
+
+        submit = e => {
+            console.log(this.state.value);
+        }
+
+
+    multiple:
+
+        <select multiple={ true } value={ this.state.value } onChange={ this.handleChange }>
+            <option value='apple'>apple</option>
+            <option value='bear'>bear</option>
+            <option value='orange'>orange</option>
+        </select>
+
+        this.state = { value: ['apple'] }       // multiple 的初始值必须是 array 类型
+
+        handleChange = e => {
+            const { selectedOptions } = e.target;
+            this.setState({ value: [...selectedOptions].map(item => item.value) });     // ***
+        }
+
+#. 区分表单中不同的 control
+
+    方法一:
+        input value={ this.state.inputVal } onChange={ e => this.handleChange('input', e) }
+        textarea value={ this.state.textareaVal } onChange={ e => this.handleChange('textarea', e) }
+
+
+        // 通过传递 type 来区分
+        handleChange = (type, e) => {
+            this.setState({
+                [type + 'Val']: e.target.value
+            });
+        }
+
+    方法二:
+        input type='checkbox' name='isGoing' value={ this.state.isGoing } onChange={ this.handleChange }
+        input type='number' name='numOfGuests' value={ this.state.numOfGuests } onChange={ this.handleChange }
+
+
+        this.state = {
+            isGoing: true,
+            numOfGuests: 2
+        };
+
+        // 通过 name 来区分不同的control
+        handleChange = e => {
+            const { name, value, checked } = this.state;
+            this.setState({
+                [name]: name === 'isGoing' ? checked : value
+            });
+        }
+
+#. refs
+
+    1. 使用 ref 编写form control
+        class App extends Component {
+            constructor(props) {
+                super(props);
+                this.ref = React.createRef();
+            }
+            handleChange = () => {
+                // 当ref被传递给 render 中的元素时，对该节点的引用可以在ref的current属性中被访问
+                // 通过 current 来访问DOM节点
+                console.log(this.ref.current.value);
+            }
+            render() {
+                // ref 属性跟value属性是互斥的【好像是吧，value属性的话，就属于受控组件了】
+                return <input ref={ this.ref } onChange={ this.handleChange } />
+            }
+        }
+
+    2. 使用 value 编写form control
+
+        class App extends Component {
+            constructor(props) {
+                super(props);
+                this.state = { value: 'cyy' }
+            }
+            handleChange = e => {
+                console.log(e.target.value)
+            }
+            render() {
+                return <input value={ this.state.value } onChange={ this.handleChange } />
+            }
+        }
+
+#. 父子组件通信
+
+    1. 使用 ref 获取子组件实例上的属性和方法
+
+        // 当点击button之后，实现input focus
+        class Child extends Component {
+            constructor(props) {
+                super(props);
+                this.inputText = React.createRef();
+            }
+            tap = () => {
+                this.inputText.current.focus();
+            }
+            render() {
+                return (
+                    <div>
+                        // 在 unControlled 组件内, 可以使用 defaultValue 来设置初始值
+                        <input defaultValue='cyy' ref={ this.inputText } />
+                        <input type='button' value='点击之后实现input聚焦' onClick={ this.tap } />
+                    </div>
+                );
+            }
+        } 
+
+        class Parent extends Component {
+            constructor(props) {
+                super(props);
+                this.ref = React.createRef();
+            }
+            componentDidMount() {
+                // mounted之后直接执行子组件的click函数去聚焦input
+                // 此时的 this.ref.current 拿到的就是 child 组件的实例对象，里面包括子组件的属性和方法
+                this.ref.current.tap();     
+            }
+            render() {
+                return (
+                    <Child ref={ this.ref } />
+                );
+            }
+        } 
+
+    注意: 如果只有 child 组件时，想在已进入页面就聚焦，可以在 Child 组件中加入下面语句 
+            componentDidMount() {
+                this.inputText.current.focus();
+            }
+
+
+#. ng-Content 【slot 插槽】
+
+    Angular写法:
+
+        welcome.component.ts
+            <sig-welcome>               // 组件名字都是纯小写
+                <h1 className='dialog-title'>Welcome</h1>
+                <p className='dialog-msg'>thank you for visting our spacecraft!</p>
+            </sig-welcome>
+
+            <div>
+                <ng-content></ng-content>       // 占位符
+            </div>
+
+    React写法:
+
+        class WelcomeDialog extends Component {
+            render() {
+                const { children } = this.props;
+                return <div>{ children }</div>          // chidlren就是react中的占位符，这是个特殊的props
+            }
+        }
+            
+
+        <WelcomeDialog>     // 默认情况下是单标签
+            <h1 className='dialog-title'>Welcome</h1>
+            <p className='dialog-msg'>thank you for visting our spacecraft!</p>
+        </WelcomeDialog>
+
+
+    如果有多个插槽的话，可以定义为 props
+
+        class App extends Component {
+            render() {
+                return (
+                    <Dashborard left={ <SideBar /> } right={ <Content /> } />       // props可以直接传递 自定义组件的
+                );
+            }
+        }
+
+        class Dashborard extends Component {
+            render() {
+                const { left, right } = this.props;
+                return (
+                    <div className='container'>
+                        <div className='split-pane-left'>{ left }</div>
+                        <div className='split-pane-right'>{ right }</div>
+                    </div>
+                );
+            }
+        }
+
+        function SideBar() {
+            return <div className='sidebar'></div>
+        }
+        function Content() {
+            return <div className='content'></div>
+        }
+
+
+#. context
+
+    props的值需要在嵌套的深层次组件树中传递时，可以使用context，就不用层层传递下去了，只需要在第一层的时候包裹在 <xx.Provider value='test'>自定义组件</xx.Provider>
+
+    1. 普通写法
+
+        App -> A -> B -> button 需要将 App 组件上的 theme 传递到button中,就需要一层层向下传递
+
+        class A extends Component {
+            render() {
+                return <B theme={ this.props.theme } />
+            }
+        }
+        class B extends Component {
+            render() {
+                return <button style={ { background: this.props.theme } }>Baidu</button>
+            }
+        }
+        class App extends Component {
+            render() {
+                return <A theme='pink' />
+            }
+        }
+
+        ReactDOM.render(<App />, root);
+
+    2. 使用Context
+        
+        // 使用方法跟自定义组件一样, 但是是由闭合标签的
+        // pink 是theme的默认值
+        const ThemeContext = React.createContext('pink');
+
+        class A extends Component {
+            render() {
+                return <B />
+            }
+        }
+        class B extends Component {
+            static contextType = ThemeContext;
+            render() {
+                return <button style={ { background: this.context } }>Baidu</button>
+            }
+        }
+        class App extends Component {
+            render() {
+                return (
+                    // 用法跟自定义组件一样，但是要加上 .Provider value='green'会覆盖pink
+                    <ThemeContext.Provider value='green'>
+                        <A />
+                    </ThemeContext.Provider>
+                );
+            }
+        }
+
+
+#. react.Fragment
+
+    <Fragment>
+        <A />
+        <B />
+        <C />
+    </Fragment>
+
+    Fragment 标签就相当于 vue 中的 template 标签
+
+    该标签上唯一可以写的属性是 key【在循环中，第一层元素必须要有 key】
+
+        class App extends Component {
+            render() {
+                const { list } = this.props;
+                return (
+                    <dl>{
+                        list.map(({ id, term, desc }) => (
+                            // 第一层元素必须要有 key 不管是什么元素
+                            <Fragment key={ id }>
+                                <dt>{ term }</dt>
+                                <dt>{ desc }</dt>
+                            </Fragment>
+                        ))
+                    }</dl>
+                );
+            }
+        }
+
+        const list = [
+            { id: 1, term: 'apple', desc: 'hello world' },
+            { id: 2, term: 'join', desc: 'cyy' },
+            { id: 3, term: 'mike', desc: 'memrotad' },
+        ]
+
+
+#. PropTypes
+
+    对 props 进行类型定义
+
+    const { string, number, array, bool, func, object, oneOf, element } = PropTypes;    // 注意这里大写
+
+    class App extends Component {
+
+        // 这些属性默认都是 optional 的, <App num={ 100 } /> 也不会报错, 如果是必填属性, 需要添加 .isReuqired
+        static propTypes = {
+            list: array,
+            num: number,
+            str: string,
+            show: bool,
+            left: element,                              // <A />
+            type: oneOf(['RED', 'PINK']),
+            test: oneOfType([string, number]),          // string | number 这里面的方括号表示的是 当有多个值的话，其中一个都满足，而不是表示数组的意思
+            arr: arrayOf(number),                       // number[]
+            obj: objectOf(string),                      // { [index: any]: number }  key是任意类型, value是number类型
+            obj2: shape({
+                name: string.isRequired,
+                age: number,
+                address: symbol,
+                arr: arrayOf(number),
+                show: bool
+            }),
+            obj3: shape({
+                petStore: shape({
+                    // animals: objectOf(object)
+                    animals: shape({
+                        '23': shape(obj3ItemShape),
+                        '29': shape(obj3ItemShape).isRequired,
+                    })
+                })
+            })
+        }
+        render() {
+            const { list } = this.props;
+            return (
+                <ul>
+                    list.map(({ id, name, desc }) => (
+                        <Fragment key={ id }>
+                            <li>{ name }</li>
+                            <li>{ desc }</li>
+                        </Fragment>
+                    ))
+                </ul>
+            );
+        }
+    }
+
+    const list = [
+        { id: 1, name: 'apple', desc: 'hello world' },
+        { id: 2, name: 'join', desc: 'cyy' },
+        { id: 3, name: 'mike', desc: 'memrotad' },
+    ];
+
+    ReactDOM.render(
+        <App 
+            list={ list }
+            num={ 100 }
+            str='haha'
+            isShow={ true }
+            user={ { address: 'HN' } }
+            type={ 'RED' }                  // oneOf(['RED', 'PINK']), 只能是这两个值，别的值会报错
+            child={ <A /> }
+            arr = { [1,2,3] }
+        />,
+        root
+    )
+
+    注意: 以下类型对不上的时候，报错不明显
+
+        static propTypes = {
+            test: oneOfType([string, number]),
+        };
+
+        <App test={ { name: 'apple' } }>  
+        -> Failed prop type: Invalid prop `test` supplied to `Glossary`.  这个报错信息不能明显知道是 test 属性的类型赋值错误了
+
+
+#. oneOfType 类型 【 对应ts中 string | number 】
+
+    static propTypes = {
+        test: oneOfType([string, number]),
+        type: oneOf(['RED', 'PINK']),
+    };
+
+    <App test={ { name: 'apple' } }>  
+
+    test 字段的值只能是  string | number 类型，其他类型会报错。oneOfType([..]) 这里的方括号意思不是数组的意思，是正则里面[] 或的意思, 对应ts中的 string | number;
+
+    type字段的值只能是 'RED' | 'GREEN' 这两个具体值
+
+#. objectOf 类型 【 对应ts中的 { [index: any]: string } 】    
+
+    // obj: objectOf(string)
+    const obj = {
+        name: 'join',
+        age: '12',
+        [Symbol('address')]: 'HN'
+    }
+
+#. shape 可以定义对象中每一个value的类型值 【shape本身就代表了这是一个 obejct 类型】
+
+    等同于
+        interface User {
+            name: string;
+            age: number;
+            address: symbol;
+            arr: number[];
+            show: boolean;
+        }
+
+    const user = {
+        name: 'join',
+        age: 12,
+        address: Symbol('HN'),
+        arr: [1,2,3],
+        show: true,
+    }  
+
+    // 注意: propTypes中定义的类型默认都是 optional 的, 最终 user = { show: true } 也不会报错,因为其他属性本来就是可选的
+    // 如果想要必填,需要 isRequired 
+    user: shape({
+        name: string.isRequired,                // name是必填属性，其他默认都是 optional 属性
+        age: number,    
+        address: symbol;
+        arr: arrayOf(number),
+        show: bool,
+    })      
+
+    ###. demo 1 
+        // 类型
+        obj3: shape({
+            petStore: shape({
+                animals: objectOf(object)
+            })
+        })
+
+        // 也可以定义通用类型定义
+        // 类型定义可以直接赋值给 变量
+        const obj3ItemShape = {
+            name: string,
+            type: string, 
+            age:  number
+        }
+        obj3: shape({
+            petStore: shape({
+                animals: shape({
+                    '23': shape(itemShape),         // 可以直接使用一个定义好的类型变量
+                    '29': shape(itemShape).isRequired,
+                })               
+            })
+        })
+
+        const obj3 = {
+            petStore: {
+                animals: {
+                    '23': { name: 'Snuffles', type: 'dog', age: 13 },
+                    '29': { name: 'Mittens', type: 'cat', age: 7 }
+                }
+            }
+        }
+
+#. defaultProps
+
+    function C(props) {
+        return <h1>{ props.name }</h1>
+    }
+    C.defaultProps = {
+        name: 'cyy'
+    }
+
+
+    ReactDOM.render(
+        <C />,                  // 等同于 <C name='cyy' />,
+        root
+    );
+
+#. props 虽然是只读的，但是如果传递进来的props是引用数据类型的，在子组件中修改了props，对应的父组件也会修改
